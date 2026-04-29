@@ -371,9 +371,7 @@ function checkCloseBanner() {
 
 function closeMonth() {
   var mc = getMC();
-  if(!confirm('Fechar '+mc.label+'?
-
-Os dados serão arquivados no histórico.')) return;
+  if(!confirm('Fechar '+mc.label+'? Os dados serao arquivados no historico.')) return;
   if(!state.months[mc.key]) state.months[mc.key] = {};
   state.months[mc.key].closed = true;
   state.months[mc.key].closedAt = new Date().toISOString();
