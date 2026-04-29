@@ -155,7 +155,7 @@ table.dt tr:hover td{background:var(--s3);}
   </div>
   <div class="auth-bar">
     <span class="auth-lbl off" id="authLbl">⚠️ Não conectado ao Google Sheets — clique para conectar e compartilhar dados com todos os gestores</span>
-    <button class="btn-goo con" id="authBtn" onclick="connectGoogle()" disabled style="opacity:0.5;">Aguardando Google...</button>
+    <button class="btn-goo con" id="authBtn" onclick="connectGoogle()">Conectar com Google ↗</button>
   </div>
 </div>
 <div class="profbar">
@@ -431,12 +431,20 @@ function initGSI() {
 }
 
 function connectGoogle() {
-  if (!_tokenClient) {
-    showToast('Aguardando Google carregar...');
-    setTimeout(connectGoogle, 500);
+  if (_tokenClient) {
+    _tokenClient.requestAccessToken({ prompt: 'consent' });
     return;
   }
-  _tokenClient.requestAccessToken({ prompt: 'consent' });
+  // Carrega GSI na hora do clique se ainda não carregou
+  var s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.onload = function() {
+    initGSI();
+    setTimeout(function() {
+      if (_tokenClient) _tokenClient.requestAccessToken({ prompt: 'consent' });
+    }, 500);
+  };
+  document.head.appendChild(s);
 }
 function setAuthUI(on) {
   var lbl = document.getElementById('authLbl');
