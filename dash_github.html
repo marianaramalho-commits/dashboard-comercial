@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <title>Konsi Comercial</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -181,7 +182,7 @@ table.dt tr:hover td{background:var(--s3);}
 </div>
 <div id="panel-head" class="panel on">
   <div class="main">
-    <div class="tstrip ts-head"><div class="tsl"><div class="tsi" style="background:var(--headd);">👑</div><div><div class="tsname" style="color:var(--head);">Visão Geral · Head</div><div class="tssub">Consolidado automático · Carteira + Ativação + Novos</div></div></div><span class="chip chip-h">AUTO</span></div>
+    <div class="tstrip ts-head"><div class="tsl"><div class="tsi" style="background:var(--headd);">👑</div><div><div class="tsname" style="color:var(--head);">Visão Geral · Head</div><div class="tssub">Consolidado automático · Carteira + Ativação + Novos Usuários</div></div></div><span class="chip chip-h">AUTO</span></div>
     <div class="krow kr4">
       <div class="kpi" style="position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--head),transparent);"></div><div class="kl">Fat. Total</div><div class="kv" id="hf">R$0</div><div class="ks" id="hfs">meta —</div><div class="kb"><div class="kbf" id="hfb" style="width:0%"></div></div></div>
       <div class="kpi" style="position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),transparent);"></div><div class="kl">Pagos</div><div class="kv" id="hp">0</div><div class="ks" id="hps">leads —</div></div>
@@ -191,7 +192,7 @@ table.dt tr:hover td{background:var(--s3);}
     <div class="hgrid">
       <div class="hgc" style="background:var(--cartd);border-color:var(--cartb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--cart);margin-bottom:8px;">🟦 Carteira</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hcc_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hcc_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hcc_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hcc_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hcc_b" style="width:0%;background:var(--cart)"></div></div></div>
       <div class="hgc" style="background:var(--atvd);border-color:var(--atvb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--atv);margin-bottom:8px;">🔴 Ativação</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hca_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hca_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hca_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hca_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hca_b" style="width:0%;background:var(--atv)"></div></div></div>
-      <div class="hgc" style="background:var(--novd);border-color:var(--novb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--nov);margin-bottom:8px;">🟡 Novos</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hcn_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hcn_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hcn_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hcn_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hcn_b" style="width:0%;background:var(--nov)"></div></div></div>
+      <div class="hgc" style="background:var(--novd);border-color:var(--novb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--nov);margin-bottom:8px;">🟡 Novos Usuários</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hcn_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hcn_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hcn_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hcn_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hcn_b" style="width:0%;background:var(--nov)"></div></div></div>
     </div>
     <div class="card"><div class="ch"><div class="ct">🏆 Ranking Geral <span class="chip chip-h">TODOS OS TIMES</span></div></div>
     <div class="tw"><table class="dt"><thead><tr><th class="L">#</th><th class="L">Vendedor</th><th>Time</th><th>Fat.</th><th>Pagos</th><th>Leads</th><th>Conv.%</th><th>Tkt</th><th>% Meta</th><th>Status</th></tr></thead><tbody id="rankBody"></tbody></table></div></div>
@@ -409,26 +410,33 @@ function getTD(tid) { initT(); return state.months[currentMonthKey].teams[tid]; 
 
 
 // GOOGLE AUTH
-function loadGSI(cb) {
-  if (window.google && window.google.accounts) { cb(); return; }
-  var s = document.createElement('script');
-  s.src = 'https://accounts.google.com/gsi/client';
-  s.onload = cb;
-  document.head.appendChild(s);
-}
-function connectGoogle() {
-  loadGSI(function() {
-    google.accounts.oauth2.initTokenClient({
-      client_id: CLIENT_ID,
-      scope: 'https://www.googleapis.com/auth/spreadsheets',
-      callback: function(resp) {
-        if (resp.error) { showToast('Erro: ' + resp.error); return; }
-        gToken = resp.access_token;
-        setAuthUI(true);
-        loadFromSheets();
-      }
-    }).requestAccessToken();
+
+var _tokenClient = null;
+
+function initGSI() {
+  if (!window.google || !window.google.accounts) {
+    setTimeout(initGSI, 300);
+    return;
+  }
+  _tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: 'https://www.googleapis.com/auth/spreadsheets',
+    callback: function(resp) {
+      if (resp.error) { showToast('Erro Google: ' + resp.error); return; }
+      gToken = resp.access_token;
+      setAuthUI(true);
+      loadFromSheets();
+    }
   });
+}
+
+function connectGoogle() {
+  if (!_tokenClient) {
+    showToast('Aguardando Google carregar...');
+    setTimeout(connectGoogle, 500);
+    return;
+  }
+  _tokenClient.requestAccessToken({ prompt: 'consent' });
 }
 function setAuthUI(on) {
   var lbl = document.getElementById('authLbl');
@@ -516,7 +524,7 @@ function kpiHtml(lbl,val,sub,color,pct) {
 function buildUI() {
   // Team tabs
   var wrap=document.getElementById('teamTabsWrap'); wrap.innerHTML='';
-  [{id:'head',label:'Head',c:'var(--head)',on:'on-head'},{id:'cart',label:'Carteira',c:'var(--cart)',on:'on-cart'},{id:'atv',label:'Ativação',c:'var(--atv)',on:'on-atv'},{id:'nov',label:'Novos',c:'var(--nov)',on:'on-nov'}].forEach(function(tab){
+  [{id:'head',label:'Head',c:'var(--head)',on:'on-head'},{id:'cart',label:'Carteira',c:'var(--cart)',on:'on-cart'},{id:'atv',label:'Ativação',c:'var(--atv)',on:'on-atv'},{id:'nov',label:'Novos Usuários',c:'var(--nov)',on:'on-nov'}].forEach(function(tab){
     var d=document.createElement('div'); d.className='ttab'+(ui.team===tab.id?' '+tab.on:'');
     d.innerHTML='<div class="dot" style="background:'+tab.c+';"></div>'+tab.label;
     d.onclick=(function(id){return function(){swTeam(id);};})(tab.id);
@@ -525,7 +533,7 @@ function buildUI() {
   // Profile btns
   var pb=document.getElementById('profileBtns'); pb.innerHTML='';
   var inits={giovanna:'GC',mariana:'MR',flavio:'FM',icaro:'IS'};
-  var lbs={giovanna:'Head',mariana:'Carteira',flavio:'Ativação',icaro:'Novos'};
+  var lbs={giovanna:'Head',mariana:'Carteira',flavio:'Ativação',icaro:'Novos Usuários'};
   Object.keys(PROFILES).forEach(function(pid){
     var p=PROFILES[pid]; var on=currentProfile===pid;
     var btn=document.createElement('button');
