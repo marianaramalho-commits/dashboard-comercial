@@ -660,9 +660,7 @@ function removeSeller(tid, i) {
   var allSellers=getTeamSellers(tid);
   var s=allSellers[i];
   if(!s) return;
-  if(!confirm('Remover '+s.n+' do time este mês?
-
-Os dados já lançados serão mantidos no histórico.')) return;
+  if(!confirm('Remover '+s.n+' do time? Os dados já lançados serão mantidos.')) return;
   var td=getTD(tid);
   var baseLen=TEAMS[tid].sellers.length;
   if(i >= baseLen) {
@@ -978,9 +976,7 @@ function addVendedor() {
 function removeVendedor(tid, i) {
   var t = TEAMS[tid];
   var nome = t.sellers[i].n;
-  if (!confirm('Remover ' + nome + ' do time?
-
-Os dados lançados para este vendedor serão mantidos no histórico.')) return;
+  if (!confirm('Remover ' + nome + ' do time? Os dados lançados serão mantidos.')) return;
   t.sellers.splice(i, 1);
   MONTHS.forEach(function(mc) {
     if (state.months[mc.key] && state.months[mc.key].teams && state.months[mc.key].teams[tid]) {
