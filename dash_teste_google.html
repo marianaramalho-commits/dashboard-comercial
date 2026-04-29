@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Konsi Comercial</title>
+<!-- Carrega Google Identity Services IMEDIATAMENTE no head -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#07090F;color:#E8EDF8;font-size:13px}
+.topbar{background:#0C0F18;border-bottom:1px solid #1E2740;padding:12px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.logo{font-size:15px;font-weight:700;color:#00CFA8}
+.btn-green{background:#1EC97A;color:#000;border:none;border-radius:6px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer}
+.btn-red{background:#FF3D5C;color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer}
+.status{font-size:12px;font-family:monospace;padding:6px 12px;border-radius:6px}
+.status.off{background:rgba(240,188,48,.1);color:#F0BC30;border:1px solid rgba(240,188,48,.3)}
+.status.on{background:rgba(30,201,122,.1);color:#1EC97A;border:1px solid rgba(30,201,122,.3)}
+#log{background:#111622;border:1px solid #1E2740;border-radius:8px;padding:12px;font-family:monospace;font-size:11px;color:#7A849E;margin:12px 16px;min-height:80px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Konsi.Comercial</div>
+  <span class="status off" id="statusLbl">⚠️ Não conectado</span>
+  <button class="btn-green" id="btnConnect" onclick="doConnect()">Conectar com Google</button>
+  <button class="btn-red" id="btnDisconnect" onclick="doDisconnect()" style="display:none">Desconectar</button>
+</div>
+
+<div id="log">Aguardando... (se Google carregar, aparecerá "Google GSI carregado" abaixo)</div>
+
+<script>
+var CLIENT_ID = '869641235108-o7bu1gnae0cu09gkkss18rpgkgbg3pce.apps.googleusercontent.com';
+var SHEET_ID  = '1Y_19Y7dtENvM49gwed1wG7FuZ75CDN5VUlmddNYNxjM';
+var gToken    = null;
+var tokenClient = null;
+
+function log(msg) {
+  var el = document.getElementById('log');
+  el.innerHTML += '<br>' + new Date().toLocaleTimeString('pt-BR') + ' — ' + msg;
+  console.log(msg);
+}
+
+// Verifica se Google carregou
+function checkGSI() {
+  if (window.google && window.google.accounts) {
+    log('✅ Google GSI carregado com sucesso!');
+    initTokenClient();
+  } else {
+    log('⏳ Aguardando Google GSI...');
+    setTimeout(checkGSI, 500);
+  }
+}
+
+function initTokenClient() {
+  try {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/spreadsheets',
+      callback: handleToken
+    });
+    log('✅ Token client inicializado — pode clicar em Conectar!');
+  } catch(e) {
+    log('❌ Erro ao inicializar token client: ' + e.message);
+  }
+}
+
+function handleToken(resp) {
+  if (resp.error) {
+    log('❌ Erro OAuth: ' + resp.error + ' — ' + (resp.error_description || ''));
+    return;
+  }
+  gToken = resp.access_token;
+  log('✅ Token recebido! Testando acesso ao Sheets...');
+  testSheets();
+}
+
+function testSheets() {
+  fetch('https://sheets.googleapis.com/v4/spreadsheets/' + SHEET_ID + '/values/Dados!A1', {
+    headers: { Authorization: 'Bearer ' + gToken }
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.error) {
+      log('⚠️ Sheets respondeu com erro: ' + d.error.message);
+      if (d.error.code === 403) log('→ Verifique se a planilha está compartilhada ou se a API está ativa');
+    } else {
+      log('✅ SHEETS FUNCIONANDO! Dados: ' + JSON.stringify(d).slice(0, 100));
+      document.getElementById('statusLbl').textContent = '✅ Conectado ao Google Sheets!';
+      document.getElementById('statusLbl').className = 'status on';
+      document.getElementById('btnConnect').style.display = 'none';
+      document.getElementById('btnDisconnect').style.display = '';
+    }
+  })
+  .catch(function(e) { log('❌ Erro de rede ao acessar Sheets: ' + e.message); });
+}
+
+function doConnect() {
+  if (!tokenClient) {
+    log('❌ Token client não inicializado ainda. Aguarde...');
+    checkGSI();
+    return;
+  }
+  log('🔄 Solicitando token OAuth...');
+  tokenClient.requestAccessToken({ prompt: 'consent' });
+}
+
+function doDisconnect() {
+  if (gToken) google.accounts.oauth2.revoke(gToken);
+  gToken = null;
+  document.getElementById('statusLbl').textContent = '⚠️ Não conectado';
+  document.getElementById('statusLbl').className = 'status off';
+  document.getElementById('btnConnect').style.display = '';
+  document.getElementById('btnDisconnect').style.display = 'none';
+  log('Desconectado.');
+}
+
+// Inicia verificação quando página carrega
+window.onload = function() {
+  log('Página carregada. Verificando Google GSI...');
+  checkGSI();
+};
+</script>
+</body>
+</html>
