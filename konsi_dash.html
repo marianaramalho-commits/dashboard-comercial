@@ -610,51 +610,60 @@ function renderMetas(tid,t){
     var ativo=ms.ativo!==false;
     var diasLiq=Math.max(mc.dias-ferias,1);
     var metaDia=ms.metaFat>0&&ativo?ms.metaFat/diasLiq:0;
+    var leadsNec='—';
+    if(ativo&&ms.metaFat>0&&ms.metaTkt>0&&ms.metaConv>0){
+      leadsNec='~'+Math.ceil((ms.metaFat/ms.metaTkt)/(ms.metaConv/100)/diasLiq)+'/dia';
+    }
+    var toggleStyle='background:'+(ativo?'rgba(30,201,122,.12)':'rgba(240,188,48,.12)')+';color:'+(ativo?'var(--green)':'var(--yellow)')+';border:0.5px solid '+(ativo?'rgba(30,201,122,.3)':'rgba(240,188,48,.3)')+';border-radius:5px;padding:2px 9px;font-family:monospace;font-size:9px;cursor:pointer;font-weight:600;min-width:58px;';
+    var toggleLabel=ativo?'✅ Ativo':'🏖️ Férias';
     var tr=document.createElement('tr');
     tr.style.opacity=ativo?'1':'0.5';
-    tr.innerHTML=
-      // Vendedor
-      '<td class="L" style="padding:6px 10px;"><div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+'</div></td>'
-      // Ativo/Férias toggle
-      +'<td style="padding:6px 10px;text-align:center;">'
-        +'<button onclick="toggleAtivo(''+tid+'','+i+')" style="background:'+(ativo?'rgba(30,201,122,.12)':'rgba(240,188,48,.12)')+';color:'+(ativo?'var(--green)':'var(--yellow)')+';border:0.5px solid '+(ativo?'rgba(30,201,122,.3)':'rgba(240,188,48,.3)')+';border-radius:5px;padding:2px 9px;font-family:monospace;font-size:9px;cursor:pointer;font-weight:600;min-width:58px;">'
-          +(ativo?'✅ Ativo':'🏖️ Férias')
-        +'</button>'
-      +'</td>'
-      // Férias (dias) — só aparece quando em férias
-      +'<td style="padding:6px 10px;text-align:right;">'
-        +(!ativo?'<input type="number" class="ni" style="width:70px;" value="'+(ferias||'')+'" placeholder="0" min="0" max="'+mc.dias+'" title="Dias de férias — meta/dia recalculada sobre dias úteis restantes" oninput="updM(''+tid+'','+i+','ferias',this.value)">':'<span style="font-family:monospace;font-size:9px;color:var(--t3);">—</span>')
-      +'</td>'
-      // Meta Fat
-      +'<td style="padding:6px 10px;text-align:right;"><input type="number" class="ni" value="'+(ms.metaFat||'')+'" placeholder="0" oninput="updM(''+tid+'','+i+','fat',this.value)" '+(ativo?'':'disabled style="opacity:.35;cursor:not-allowed;"')+'></td>'
-      // Meta Conv
-      +'<td style="padding:6px 10px;text-align:right;"><input type="number" class="ni" style="width:70px;" value="'+(ms.metaConv||'')+'" placeholder="0" step="0.1" oninput="updM(''+tid+'','+i+','conv',this.value)" '+(ativo?'':'disabled style="opacity:.35;cursor:not-allowed;"')+'></td>'
-      // Meta Ticket
-      +'<td style="padding:6px 10px;text-align:right;"><input type="number" class="ni" value="'+(ms.metaTkt||'')+'" placeholder="0" oninput="updM(''+tid+'','+i+','tkt',this.value)" '+(ativo?'':'disabled style="opacity:.35;cursor:not-allowed;"')+'></td>'
-      // Meta/Dia líquida
-      +'<td style="padding:6px 10px;text-align:right;font-family:monospace;font-size:10px;color:var(--cart);">'
-        +(ativo&&ms.metaFat>0?fmtR(metaDia)+'/d <span style="color:var(--t3);font-size:8px;">('+diasLiq+'d)</span>':'—')
-      +'</td>'
-      // Leads/dia necessários
-      +'<td style="padding:6px 10px;text-align:right;font-family:monospace;font-size:10px;color:var(--yellow);">'
-        +(function(){
-          if(!ativo||!ms.metaFat||!ms.metaTkt||!ms.metaConv)return'—';
-          var pagosNec=ms.metaFat/ms.metaTkt;
-          var leadsNec=pagosNec/(ms.metaConv/100);
-          return'~'+Math.ceil(leadsNec/diasLiq)+'/dia';
-        }())
-      +'</td>'
-      // Remover (último)
-      +'<td style="padding:6px 10px;text-align:center;">'
-        +'<button onclick="removeVendedor(''+tid+'','+i+')" title="Remover vendedor" style="background:var(--rd);color:var(--red);border:0.5px solid rgba(255,61,92,.3);border-radius:4px;padding:2px 8px;font-family:monospace;font-size:9px;cursor:pointer;">✕</button>'
-      +'</td>';
+    // Build cells
+    var cells='<td class="L" style="padding:6px 10px;"><div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+'</div></td>';
+    // Toggle button
+    var togBtn=document.createElement('button');
+    togBtn.style.cssText=toggleStyle;
+    togBtn.textContent=toggleLabel;
+    togBtn.onclick=(function(t2,i2){return function(){toggleAtivo(t2,i2);};})(tid,i);
+    var togTd=document.createElement('td');togTd.style.cssText='padding:6px 10px;text-align:center;';togTd.appendChild(togBtn);
+    // Ferias input
+    var ferTd=document.createElement('td');ferTd.style.cssText='padding:6px 10px;text-align:right;';
+    if(!ativo){
+      var ferInp=document.createElement('input');ferInp.type='number';ferInp.className='ni';ferInp.style.width='70px';
+      ferInp.value=ferias||'';ferInp.placeholder='0';ferInp.min=0;ferInp.max=mc.dias;
+      ferInp.oninput=(function(t2,i2){return function(){updM(t2,i2,'ferias',this.value);};})(tid,i);
+      ferTd.appendChild(ferInp);
+    }else{ferTd.innerHTML='<span style="font-family:monospace;font-size:9px;color:var(--t3);">—</span>';}
+    // Meta inputs
+    function makeNi(field,val,w){
+      var inp=document.createElement('input');inp.type='number';inp.className='ni';
+      if(w)inp.style.width=w+'px';inp.value=val||'';inp.placeholder='0';
+      if(!ativo){inp.disabled=true;inp.style.opacity='0.35';}
+      inp.oninput=(function(t2,i2,f2){return function(){updM(t2,i2,f2,this.value);};})(tid,i,field);
+      var td2=document.createElement('td');td2.style.cssText='padding:6px 10px;text-align:right;';td2.appendChild(inp);return td2;
+    }
+    tr.innerHTML=cells;
+    tr.appendChild(togTd);tr.appendChild(ferTd);
+    tr.appendChild(makeNi('fat',ms.metaFat));
+    tr.appendChild(makeNi('conv',ms.metaConv,70));
+    tr.appendChild(makeNi('tkt',ms.metaTkt));
+    // Meta/dia
+    var mdTd=document.createElement('td');mdTd.style.cssText='padding:6px 10px;text-align:right;font-family:monospace;font-size:10px;color:var(--cart);';
+    mdTd.innerHTML=ativo&&ms.metaFat>0?fmtR(metaDia)+'/d <span style="color:var(--t3);font-size:8px;">('+diasLiq+'d)</span>':'—';
+    tr.appendChild(mdTd);
+    // Leads/dia
+    var ldTd=document.createElement('td');ldTd.style.cssText='padding:6px 10px;text-align:right;font-family:monospace;font-size:10px;color:var(--yellow);';
+    ldTd.textContent=leadsNec;tr.appendChild(ldTd);
+    // Remove btn
+    var rmBtn=document.createElement('button');rmBtn.title='Remover vendedor';
+    rmBtn.style.cssText='background:var(--rd);color:var(--red);border:0.5px solid rgba(255,61,92,.3);border-radius:4px;padding:2px 8px;font-family:monospace;font-size:9px;cursor:pointer;';
+    rmBtn.textContent='✕';rmBtn.onclick=(function(t2,i2){return function(){removeVendedor(t2,i2);};})(tid,i);
+    var rmTd=document.createElement('td');rmTd.style.cssText='padding:6px 10px;text-align:center;';rmTd.appendChild(rmBtn);
+    tr.appendChild(rmTd);
     tbody.appendChild(tr);
   });
-  // Totais
   var tf=0,tc=0,tt=0,n=0,na=0;
-  td.sellers.forEach(function(s){
-    if(s.ativo!==false){tf+=s.metaFat||0;tc+=s.metaConv||0;tt+=s.metaTkt||0;if(s.metaTkt>0)n++;na++;}
-  });
+  td.sellers.forEach(function(s){if(s.ativo!==false){tf+=s.metaFat||0;tc+=s.metaConv||0;tt+=s.metaTkt||0;if(s.metaTkt>0)n++;na++;}});
   setTxt('mt_f',tf>0?fmtR(tf):'—');
   setTxt('mt_c',na>0&&tc>0?(tc/na).toFixed(1)+'%':'—');
   setTxt('mt_t',n>0?fmtR(tt/n):'—');
@@ -662,3 +671,6 @@ function renderMetas(tid,t){
 }
 
 
+</script>
+</body>
+</html>
