@@ -3,57 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script>window._gsiLoaded=false;
-function toggleAtivo(tid, i) {
-  var ms = getTD(tid).sellers[i];
-  ms.ativo = (ms.ativo === false) ? true : false;
-  renderMetas(tid, TEAMS[tid]);
-  markUnsaved();
-}
 
-function addVendedor() {
-  var tid = ui.team; var t = TEAMS[tid];
-  var nome = prompt('Nome do novo vendedor:');
-  if (!nome || !nome.trim()) return;
-  var sigla = nome.trim().toUpperCase().replace(/[^A-Z]/g,'').slice(0,2) || nome.trim().slice(0,2).toUpperCase();
-  var avCols = ['av0','av1','av2','av3','av4','av5','av6','av7','av8','avy'];
-  t.sellers.push({ n: nome.trim(), av: sigla, c: avCols[t.sellers.length % avCols.length] });
-  // Add to all months
-  MONTHS.forEach(function(mc) {
-    if (state.months[mc.key] && state.months[mc.key].teams && state.months[mc.key].teams[tid])
-      state.months[mc.key].teams[tid].sellers.push({ metaFat:0, metaConv:0, metaTkt:0, diasAtivos:0, ativo:true });
-  });
-  renderAll(); // Atualiza tudo incluindo Head
-  markUnsaved();
-  showToast(nome.trim() + ' adicionado ao time ' + t.label + '!');
-}
-
-function removeVendedor(tid, i) {
-  var t = TEAMS[tid]; var nome = t.sellers[i].n;
-  if (!confirm('Remover ' + nome + ' do time ' + t.label + '?\n\nOs dados no histórico serão preservados.')) return;
-
-  // Save to removed sellers for history
-  if (!state.removedSellers) state.removedSellers = {};
-  if (!state.removedSellers[tid]) state.removedSellers[tid] = [];
-  var sellerData = { n: nome, av: t.sellers[i].av, c: t.sellers[i].c, idx: i, removedAt: new Date().toISOString() };
-  state.removedSellers[tid].push(sellerData);
-
-  // Remove from team config
-  t.sellers.splice(i, 1);
-
-  // Remove from all months data (but keep a snapshot for history)
-  MONTHS.forEach(function(mc) {
-    if (state.months[mc.key] && state.months[mc.key].teams && state.months[mc.key].teams[tid]) {
-      state.months[mc.key].teams[tid].sellers.splice(i, 1);
-    }
-  });
-
-  renderAll(); // Atualiza tudo incluindo Head
-  markUnsaved();
-  showToast(nome + ' removido. Dados históricos preservados.');
-}
-
-</script>
 <title>Konsi Comercial</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -805,6 +755,58 @@ function renderMetas(tid, t) {
   setTxt('mt_t', n > 0 ? fmtR(tt / n) : '—');
   setTxt('mt_d', tf > 0 ? fmtR(tf / getMC().dias) + '/dia' : '—');
 }
+
+window._gsiLoaded=false;
+function toggleAtivo(tid, i) {
+  var ms = getTD(tid).sellers[i];
+  ms.ativo = (ms.ativo === false) ? true : false;
+  renderMetas(tid, TEAMS[tid]);
+  markUnsaved();
+}
+
+function addVendedor() {
+  var tid = ui.team; var t = TEAMS[tid];
+  var nome = prompt('Nome do novo vendedor:');
+  if (!nome || !nome.trim()) return;
+  var sigla = nome.trim().toUpperCase().replace(/[^A-Z]/g,'').slice(0,2) || nome.trim().slice(0,2).toUpperCase();
+  var avCols = ['av0','av1','av2','av3','av4','av5','av6','av7','av8','avy'];
+  t.sellers.push({ n: nome.trim(), av: sigla, c: avCols[t.sellers.length % avCols.length] });
+  // Add to all months
+  MONTHS.forEach(function(mc) {
+    if (state.months[mc.key] && state.months[mc.key].teams && state.months[mc.key].teams[tid])
+      state.months[mc.key].teams[tid].sellers.push({ metaFat:0, metaConv:0, metaTkt:0, diasAtivos:0, ativo:true });
+  });
+  renderAll(); // Atualiza tudo incluindo Head
+  markUnsaved();
+  showToast(nome.trim() + ' adicionado ao time ' + t.label + '!');
+}
+
+function removeVendedor(tid, i) {
+  var t = TEAMS[tid]; var nome = t.sellers[i].n;
+  if (!confirm('Remover ' + nome + ' do time ' + t.label + '?\n\nOs dados no histórico serão preservados.')) return;
+
+  // Save to removed sellers for history
+  if (!state.removedSellers) state.removedSellers = {};
+  if (!state.removedSellers[tid]) state.removedSellers[tid] = [];
+  var sellerData = { n: nome, av: t.sellers[i].av, c: t.sellers[i].c, idx: i, removedAt: new Date().toISOString() };
+  state.removedSellers[tid].push(sellerData);
+
+  // Remove from team config
+  t.sellers.splice(i, 1);
+
+  // Remove from all months data (but keep a snapshot for history)
+  MONTHS.forEach(function(mc) {
+    if (state.months[mc.key] && state.months[mc.key].teams && state.months[mc.key].teams[tid]) {
+      state.months[mc.key].teams[tid].sellers.splice(i, 1);
+    }
+  });
+
+  renderAll(); // Atualiza tudo incluindo Head
+  markUnsaved();
+  showToast(nome + ' removido. Dados históricos preservados.');
+}
+
+
 </script>
 </body>
 </html>
