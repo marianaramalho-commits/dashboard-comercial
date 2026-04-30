@@ -146,7 +146,7 @@ table.dt tr:hover td{background:var(--s3);}
 <div class="topbar">
   <div class="tb-main">
     <div class="logo">Konsi<span>.</span>Comercial</div>
-    <div class="mbadge" id="monthBadge">MAIO 2026</div>
+    <div id="monthBtnsTopbar" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center"></div>
     <div class="team-tabs" id="teamTabsWrap"></div>
     <div class="tright">
       <div style="display:flex;align-items:center;gap:5px;"><div class="sdot pend" id="sdot"></div><span class="slbl" id="slbl">não conectado</span></div>
@@ -207,9 +207,12 @@ table.dt tr:hover td{background:var(--s3);}
       <div class="kpi" style="position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),transparent);"></div><div class="kl">% Meta</div><div class="kv" id="hpct">—%</div><div class="ks" id="hpcts">projeção —</div></div>
     </div>
     <div class="hgrid">
-      <div class="hgc" style="background:var(--cartd);border-color:var(--cartb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--cart);margin-bottom:8px;">🟦 Carteira</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hcc_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hcc_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hcc_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hcc_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hcc_b" style="width:0%;background:var(--cart)"></div></div></div>
-      <div class="hgc" style="background:var(--atvd);border-color:var(--atvb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--atv);margin-bottom:8px;">🔴 Ativação</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hca_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hca_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hca_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hca_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hca_b" style="width:0%;background:var(--atv)"></div></div></div>
-      <div class="hgc" style="background:var(--novd);border-color:var(--novb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--nov);margin-bottom:8px;">🟡 Novos Usuários</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hcn_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hcn_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hcn_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hcn_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hcn_b" style="width:0%;background:var(--nov)"></div></div></div>
+      <div class="hgc" style="background:var(--cartd);border-color:var(--cartb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--cart);margin-bottom:8px;">🟦 Carteira</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hcc_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hcc_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hcc_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hcc_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hcc_b" style="width:0%;background:var(--cart)"></div></div>
+        <div id="hcc_vends" style="margin-top:8px;font-family:monospace;font-size:9px;color:var(--t3);line-height:1.6"></div></div>
+      <div class="hgc" style="background:var(--atvd);border-color:var(--atvb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--atv);margin-bottom:8px;">🔴 Ativação</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hca_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hca_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hca_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hca_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hca_b" style="width:0%;background:var(--atv)"></div></div>
+        <div id="hca_vends" style="margin-top:8px;font-family:monospace;font-size:9px;color:var(--t3);line-height:1.6"></div></div>
+      <div class="hgc" style="background:var(--novd);border-color:var(--novb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--nov);margin-bottom:8px;">🟡 Novos Usuários</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hcn_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hcn_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hcn_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hcn_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hcn_b" style="width:0%;background:var(--nov)"></div></div>
+        <div id="hcn_vends" style="margin-top:8px;font-family:monospace;font-size:9px;color:var(--t3);line-height:1.6"></div></div>
     </div>
     <div class="card"><div class="ch"><div class="ct">🏆 Ranking Geral <span class="chip chip-h">TODOS OS TIMES</span></div></div>
     <div class="tw"><table class="dt"><thead><tr><th class="L">#</th><th class="L">Vendedor</th><th>Time</th><th>Fat.</th><th>Pagos</th><th>Leads</th><th>Conv.%</th><th>Tkt</th><th>% Meta</th><th>Status</th></tr></thead><tbody id="rankBody"></tbody></table></div></div>
@@ -308,8 +311,14 @@ table.dt tr:hover td{background:var(--s3);}
     <div id="sp-insights" class="subpanel">
       <div class="card">
         <div class="ch">
-          <div class="ct">💡 Insights Automáticos <span class="chip chip-g">ACUMULADO DO MÊS</span></div>
-          <button onclick="gerarInsights()" style="background:var(--cartd);color:var(--cart);border:1px solid var(--cartb);border-radius:5px;padding:4px 12px;font-family:var(--fm);font-size:9px;cursor:pointer;font-weight:700;">🔄 Atualizar</button>
+          <div class="ct">💡 Insights Automáticos <span class="chip chip-g">acumulado em tempo real</span></div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-family:monospace;font-size:9px;color:var(--t3)">Período:</span>
+            <input type="date" id="insIni" style="background:var(--s1);border:1px solid var(--bd);border-radius:5px;padding:3px 8px;font-family:monospace;font-size:9px;color:var(--t1);outline:none" onchange="gerarInsights()">
+            <span style="font-family:monospace;font-size:9px;color:var(--t3)">até</span>
+            <input type="date" id="insFim" style="background:var(--s1);border:1px solid var(--bd);border-radius:5px;padding:3px 8px;font-family:monospace;font-size:9px;color:var(--t1);outline:none" onchange="gerarInsights()">
+            <button onclick="gerarInsights()" style="background:var(--cartd);color:var(--cart);border:1px solid var(--cartb);border-radius:5px;padding:4px 12px;font-family:monospace;font-size:9px;cursor:pointer;font-weight:700">🔄 Atualizar</button>
+          </div>
         </div>
         <div id="insightsContent" style="padding:14px;min-height:80px;">
           <div style="text-align:center;padding:24px;font-family:var(--fm);font-size:10px;color:var(--t3);">Clique em Atualizar para gerar insights do mês.</div>
@@ -395,23 +404,24 @@ var currentProfile = null;
 function getMC() { return MONTHS.find(function(m){return m.key===currentMonthKey;})||MONTHS[0]; }
 
 function buildMonthBar() {
-  var bar = document.getElementById('monthBtns'); if(!bar) return;
-  bar.innerHTML = '';
-  MONTHS.forEach(function(mc) {
-    var closed = state.months[mc.key] && state.months[mc.key].closed;
-    var active = mc.key === currentMonthKey;
-    var btn = document.createElement('div');
-    btn.style.cssText = 'padding:3px 10px;border-radius:4px;font-family:monospace;font-size:9px;cursor:pointer;border:1px solid;transition:all .15s;' +
-      (active ? 'background:var(--cartd);border-color:var(--cartb);color:var(--cart);' :
-       closed ? 'background:var(--gd);border-color:rgba(30,201,122,.25);color:var(--green);' :
-                'background:transparent;border-color:var(--bd);color:var(--t3);');
-    btn.textContent = mc.label + (closed ? ' ✓' : '');
-    btn.onclick = (function(key){ return function(){ currentMonthKey = key; initT(); buildMonthBar(); checkCloseBanner(); renderAll(); }; })(mc.key);
-    bar.appendChild(btn);
+  // Update BOTH bars: topbar inline + dedicated monthbar
+  ['monthBtns','monthBtnsTopbar'].forEach(function(barId){
+    var bar=document.getElementById(barId); if(!bar)return;
+    bar.innerHTML='';
+    MONTHS.forEach(function(mc){
+      var closed=state.months[mc.key]&&state.months[mc.key].closed;
+      var active=mc.key===curMk;
+      var btn=document.createElement('div');
+      btn.style.cssText='padding:3px 10px;border-radius:4px;font-family:monospace;font-size:9px;cursor:pointer;border:1px solid;transition:all .15s;white-space:nowrap;user-select:none;'
+        +(active?'background:var(--cartd);border-color:var(--cartb);color:var(--cart);font-weight:700;'
+         :closed?'background:var(--gd);border-color:rgba(5,150,105,.25);color:var(--green);'
+                :'background:var(--s2);border-color:var(--bd);color:var(--t3);');
+      btn.textContent=mc.label.replace(' 2026','')+(closed?' ✓':'');
+      btn.onclick=(function(k){return function(){curMk=k;initT();buildMonthBar();checkCloseBanner();renderAll();};})(mc.key);
+      bar.appendChild(btn);
+    });
   });
-  setTxt('monthBadge', getMC().label.toUpperCase());
 }
-
 function checkCloseBanner() {
   var mc = getMC();
   var md = state.months[mc.key] || {};
@@ -832,10 +842,14 @@ function gerarInsights(){
   var wrap=document.getElementById('insightsContent');if(!wrap)return;
   // Only count days UP TO TODAY (cumulative real-time)
   var today=new Date();
+  var insIni=document.getElementById('insIni');
+  var insFim2=document.getElementById('insFim');
+  var dIni=insIni&&insIni.value?new Date(insIni.value):null;
+  var dFim=insFim2&&insFim2.value?new Date(insFim2.value):today;
   var diasAteHoje=mc.du.filter(function(d){
     var parts=d.d.split('/');var year=mc.key.split('-')[0];
     var dt=new Date(year+'-'+parts[1]+'-'+parts[0]);
-    return dt<=today;
+    return dt<=dFim&&(!dIni||dt>=dIni);
   });
   var diasComDados=diasAteHoje.filter(function(d){
     var dd=td.daily[d.d];return dd&&dd.sellers&&dd.sellers.some(function(s){return(s.fat||0)>0;});
@@ -1284,86 +1298,126 @@ function renderOrigContent(tid,t){
   el.innerHTML='';el.appendChild(wrap);
   setTimeout(applyAccess,50);
 }
-function renderHistorico(tid,t){
-  var wrap=document.getElementById('histContent');wrap.innerHTML='';
-  // Meses fechados do histórico
-  var history=state.history||[];
-  // Mês atual aberto
-  var mc=getMC();var md=getMD();
+function renderHistorico(){
+  var tid=ui.team; if(tid==='head')return;
+  var t=TEAMS[tid];
+  var iniEl=document.getElementById('histIni');
+  var fimEl=document.getElementById('histFim');
+  var iniVal=iniEl?iniEl.value:'';
+  var fimVal=fimEl?fimEl.value:'';
+  var info=document.getElementById('histInfo');
+  var summary=document.getElementById('histSummary');
+  var tbody=document.getElementById('histBody');
+  if(!tbody)return;
 
-  if(history.length===0&&!md.closed){
-    wrap.innerHTML='<div style="font-family:var(--fm);font-size:10px;color:var(--t3);text-align:center;padding:30px;">Nenhum mês fechado ainda. O histórico aparece aqui conforme os meses são fechados.</div>';
+  if(!iniVal&&!fimVal){
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:24px;font-family:monospace;font-size:10px;color:var(--t3)">Selecione um período acima.</td></tr>';
+    if(summary)summary.style.display='none';
+    if(info)info.textContent='';
+    ['ht_f','ht_p','ht_l','ht_c','ht_t'].forEach(function(id){setTxt(id,'—');});
+    return;
   }
 
-  // Meses fechados
-  history.forEach(function(h){
-    var mc2=MONTHS.find(function(m){return m.key===h.month;})||{label:h.label,dias:20};
-    var teamSnap=h.snapshot[tid];
-    if(!teamSnap)return;
-    var fat=0,pag=0,leads=0,meta=0;
-    var diasL=1;
-    mc2.diasUteis&&mc2.diasUteis.forEach(function(d){
-      var dd=teamSnap.daily&&teamSnap.daily[d.d];
-      if(dd&&dd.sellers&&dd.sellers.some(function(s){return(s.fat||0)>0;}))diasL++;
-      if(dd)dd.sellers.forEach(function(s){fat+=s.fat||0;pag+=s.pagos||0;leads+=s.leads||0;});
+  var dIni=iniVal?new Date(iniVal):null;
+  var dFim=fimVal?new Date(fimVal):null;
+
+  // Busca em TODOS os meses - independente do mês ativo
+  var allDays=[];
+  MONTHS.forEach(function(mc){
+    var year=mc.key.split('-')[0];
+    mc.du.forEach(function(d){
+      var parts=d.d.split('/');
+      var dt=new Date(year+'-'+parts[1]+'-'+parts[0]);
+      if((!dIni||dt>=dIni)&&(!dFim||dt<=dFim))
+        allDays.push({d:d.d,month:mc.key});
     });
-    (teamSnap.sellers||[]).forEach(function(s){meta+=s.metaFat||0;});
-    var pct=meta>0?Math.round(fat/meta*100):null;
-    var div=document.createElement('div');div.className='hist-month';
-    div.innerHTML='<div class="hist-m-header">'
-      +'<div class="hist-m-name">'+h.label+' <span class="hist-m-badge">FECHADO em '+new Date(h.closedAt).toLocaleDateString('pt-BR')+'</span></div>'
-      +'<div style="display:flex;gap:16px;">'
-      +'<span style="font-family:var(--fm);font-size:10px;color:var(--t2);">Fat: <strong style="color:var(--cart);">'+fmtR(fat)+'</strong></span>'
-      +'<span style="font-family:var(--fm);font-size:10px;color:var(--t2);">Pagos: <strong style="color:var(--t1);">'+pag+'</strong></span>'
-      +'<span style="font-family:var(--fm);font-size:10px;color:var(--t2);">Conv: <strong class="'+convCls(leads,pag)+'">'+aConv(leads,pag)+'</strong></span>'
-      +'<span style="font-family:var(--fm);font-size:10px;color:var(--t2);">Tkt: <strong style="color:var(--t1);">'+aTkt(fat,pag)+'</strong></span>'
-      +'<span style="font-family:var(--fm);font-size:10px;color:var(--t2);">Meta: <strong class="'+(pct===null?'':pct>=100?'ok':pct>=70?'warn':'bad')+'">'+(pct!==null?pct+'%':'—')+'</strong></span>'
-      +'</div></div>';
-    // Mini tabela de vendedores
-    var miniHtml='<div class="tw"><table class="dt" style="font-size:10px;"><thead><tr><th class="L">Vendedor</th><th>Fat.</th><th>Pagos</th><th>Conv.%</th><th>Tkt</th><th>Meta</th><th>% Meta</th></tr></thead><tbody>';
-    t.sellers.forEach(function(s,i){
-      var sf=0,sp=0,sl=0;
-      mc2.diasUteis&&mc2.diasUteis.forEach(function(d){var dd=teamSnap.daily&&teamSnap.daily[d.d];if(dd&&dd.sellers&&dd.sellers[i]){sf+=dd.sellers[i].fat||0;sp+=dd.sellers[i].pagos||0;sl+=dd.sellers[i].leads||0;}});
-      var sm=(teamSnap.sellers&&teamSnap.sellers[i]?teamSnap.sellers[i].metaFat:0)||0;
-      var spct=sm>0?Math.round(sf/sm*100):null;
-      miniHtml+='<tr><td class="L"><div class="sc"><span class="av '+s.c+'" style="width:18px;height:18px;font-size:7px;">'+s.av+'</span>'+s.n+'</div></td>'
-        +'<td>'+(sf>0?fmtR(sf):'—')+'</td><td>'+sp+'</td>'
-        +'<td><span class="auto '+convCls(sl,sp)+'">'+aConv(sl,sp)+'</span></td>'
-        +'<td class="auto">'+aTkt(sf,sp)+'</td>'
-        +'<td>'+fmtR(sm)+'</td>'
-        +'<td><span class="auto '+pctCls(sf,sm)+'">'+(spct!==null?spct+'%':'—')+'</span></td>'
-        +'</tr>';
-    });
-    miniHtml+='</tbody></table></div>';
-    div.innerHTML+=miniHtml;
-    wrap.appendChild(div);
   });
 
-  // Mês atual
-  var curDiv=document.createElement('div');curDiv.className='hist-month';
-  var fat2=0,pag2=0,leads2=0,meta2=0;
-  var td=getTD(tid);
-  mc.diasUteis.forEach(function(d){var dd=td.daily[d.d];if(!dd)return;dd.sellers.forEach(function(s){fat2+=s.fat||0;pag2+=s.pagos||0;leads2+=s.leads||0;});});
-  td.sellers.forEach(function(s){meta2+=s.metaFat||0;});
-  var pct2=meta2>0?Math.round(fat2/meta2*100):null;
-  curDiv.innerHTML='<div class="hist-m-header">'
-    +'<div class="hist-m-name">'+mc.label+' <span class="hist-m-badge open">EM ABERTO</span></div>'
-    +'<div style="display:flex;gap:16px;">'
-    +'<span style="font-family:var(--fm);font-size:10px;color:var(--t2);">Fat: <strong style="color:var(--cart);">'+fmtR(fat2)+'</strong></span>'
-    +'<span style="font-family:var(--fm);font-size:10px;color:var(--t2);">Pagos: <strong style="color:var(--t1);">'+pag2+'</strong></span>'
-    +'<span style="font-family:var(--fm);font-size:10px;color:var(--t2);">Conv: <strong class="'+convCls(leads2,pag2)+'">'+aConv(leads2,pag2)+'</strong></span>'
-    +'<span style="font-family:var(--fm);font-size:10px;color:var(--t2);">Tkt: <strong style="color:var(--t1);">'+aTkt(fat2,pag2)+'</strong></span>'
-    +'<span style="font-family:var(--fm);font-size:10px;color:var(--t2);">% Meta: <strong class="'+(pct2===null?'':pct2>=100?'ok':pct2>=70?'warn':'bad')+'">'+(pct2!==null?pct2+'%':'—')+'</strong></span>'
-    +'</div></div>'
-    +'<div style="font-family:var(--fm);font-size:10px;color:var(--t3);margin-top:8px;">Continue lançando os dias. O histórico detalhado aparecerá após o fechamento do mês.</div>';
-  wrap.appendChild(curDiv);
+  if(info)info.textContent=allDays.length+' dias úteis no período';
 
-  // Tabela evolução por vendedor (meses fechados)
-  renderHistVend(tid,t,history);
+  // Vendedores ativos
+  var totF=0,totP=0,totL=0;
+  var rows=t.sellers.map(function(s,i){
+    var fat=0,pag=0,leads=0;
+    allDays.forEach(function(di){
+      var mState=state.months[di.month];
+      if(!mState||!mState.teams||!mState.teams[tid])return;
+      var dd=(mState.teams[tid].daily||{})[di.d];
+      if(dd&&dd.sellers&&dd.sellers[i]){
+        fat+=dd.sellers[i].fat||0;
+        pag+=dd.sellers[i].pagos||0;
+        leads+=dd.sellers[i].leads||0;
+      }
+    });
+    totF+=fat;totP+=pag;totL+=leads;
+    return{n:s.n,av:s.av,c:s.c,fat:fat,pag:pag,leads:leads,archived:false};
+  });
+
+  // Vendedores removidos - dados preservados no histórico
+  var seenArchived={};
+  MONTHS.forEach(function(mc){
+    var mState=state.months[mc.key];
+    if(!mState||!mState.teams||!mState.teams[tid])return;
+    (mState.teams[tid].archivedSellers||[]).forEach(function(as){
+      if(!seenArchived[as.n])seenArchived[as.n]={n:as.n,av:as.av,c:as.c,fat:0,pag:0,leads:0,archived:true};
+      allDays.forEach(function(di){
+        if(di.month!==mc.key)return;
+        var ad=as.daily&&as.daily[di.d];
+        if(ad){
+          seenArchived[as.n].fat+=ad.fat||0;
+          seenArchived[as.n].pag+=ad.pagos||0;
+          seenArchived[as.n].leads+=ad.leads||0;
+        }
+      });
+    });
+  });
+  Object.keys(seenArchived).forEach(function(k){
+    var as=seenArchived[k];
+    totF+=as.fat;totP+=as.pag;totL+=as.leads;
+    rows.push(as);
+  });
+
+  rows.sort(function(a,b){return b.fat-a.fat;});
+
+  // Summary bar
+  if(summary){
+    summary.style.display='flex';
+    summary.innerHTML=
+      '<span style="font-family:monospace;font-size:10px">Fat: <strong style="color:var(--cart)">'+fmtR(totF)+'</strong></span>'
+      +'<span style="font-family:monospace;font-size:10px">Pagos: <strong>'+totP+'</strong></span>'
+      +'<span style="font-family:monospace;font-size:10px">Leads: <strong>'+totL+'</strong></span>'
+      +'<span style="font-family:monospace;font-size:10px">Conv: <span class="auto '+convCls(totL,totP)+'">'+aConv(totL,totP)+'</span></span>'
+      +'<span style="font-family:monospace;font-size:10px">Tkt: <span class="auto">'+aTkt(totF,totP)+'</span></span>';
+  }
+
+  // Table rows
+  tbody.innerHTML='';
+  rows.forEach(function(s){
+    if(s.fat===0&&s.pag===0&&s.leads===0)return; // skip empty
+    var tr=document.createElement('tr');
+    if(s.archived)tr.style.opacity='0.65';
+    tr.innerHTML='<td class="L" style="padding:7px 12px"><div class="sc">'
+      +'<span class="av '+s.c+'"'+(s.archived?' style="opacity:.6"':'')+'>'+s.av+'</span>'
+      +s.n+(s.archived?' <span style="font-family:monospace;font-size:8px;color:var(--t3)">(removido)</span>':'')
+      +'</div></td>'
+      +'<td style="padding:7px 12px;text-align:right">'+(s.fat>0?fmtR(s.fat):'—')+'</td>'
+      +'<td style="padding:7px 12px;text-align:right">'+s.pag+'</td>'
+      +'<td style="padding:7px 12px;text-align:right">'+s.leads+'</td>'
+      +'<td style="padding:7px 12px;text-align:right"><span class="auto '+convCls(s.leads,s.pag)+'">'+aConv(s.leads,s.pag)+'</span></td>'
+      +'<td style="padding:7px 12px;text-align:right"><span class="auto">'+aTkt(s.fat,s.pag)+'</span></td>';
+    tbody.appendChild(tr);
+  });
+
+  if(tbody.children.length===0){
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;font-family:monospace;font-size:10px;color:var(--t3)">Nenhum dado encontrado no período.</td></tr>';
+  }
+
+  setTxt('ht_f',totF>0?fmtR(totF):'—');
+  setTxt('ht_p',totP||'—');
+  setTxt('ht_l',totL||'—');
+  setEl('ht_c','<span class="auto '+convCls(totL,totP)+'">'+aConv(totL,totP)+'</span>','');
+  setEl('ht_t','<span class="auto">'+aTkt(totF,totP)+'</span>','');
 }
-
-
-
 function clearHist(){
   var ini=document.getElementById('histIni'); var fim=document.getElementById('histFim');
   if(ini)ini.value=''; if(fim)fim.value='';
