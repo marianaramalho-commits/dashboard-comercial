@@ -18,6 +18,7 @@
   --red:#FF3D5C;--rd:rgba(255,61,92,.09);
   --yellow:#F0BC30;--yd:rgba(240,188,48,.09);
   --t1:#111827;--t2:#374151;--t3:#6B7280;
+  --fm:'Space Mono',monospace;--fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
 }
 html,body{background:var(--bg);color:var(--t1);font-family:'DM Sans',sans-serif;min-height:100vh;font-size:12px;}
 .topbar{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);}
@@ -174,15 +175,6 @@ table.dt tr:hover td{background:var(--s3);}
   </div>
   <div id="closeCountdown" style="display:none;font-family:monospace;font-size:10px;color:var(--yellow);margin-left:auto;"></div>
 </div>
-<div id="monthBar" style="background:var(--s2);border-bottom:1px solid var(--bd);padding:6px 16px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
-  <span style="font-family:var(--fm);font-size:9px;color:var(--t3);white-space:nowrap;font-weight:600;">Mês:</span>
-  <div id="monthBtns" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
-  <div id="closeBanner" style="display:none;align-items:center;gap:8px;margin-left:auto;">
-    <span id="closeTxt" style="font-family:var(--fm);font-size:10px;color:var(--green);"></span>
-    <button onclick="closeMonth()" style="background:var(--green);color:#fff;border:none;border-radius:5px;padding:3px 10px;font-family:var(--fm);font-size:9px;cursor:pointer;font-weight:700;">Fechar mês →</button>
-  </div>
-  <span id="closeCountdown" style="font-family:var(--fm);font-size:9px;color:var(--yellow);margin-left:auto;display:none;"></span>
-</div>
 <div class="subtabs" id="subTabsBar" style="display:none;">
   <div class="stab on" id="st-metas" onclick="swSub('metas')">⚙ Metas</div>
   <div class="stab" id="st-dia" onclick="swSub('dia')">📅 Diário</div>
@@ -232,7 +224,7 @@ table.dt tr:hover td{background:var(--s3);}
   <button id="btnAddSeller" onclick="addVendedor()" style="background:var(--cartd);color:var(--cart);border:1px solid var(--cartb);border-radius:5px;padding:4px 12px;font-family:monospace;font-size:9px;cursor:pointer;font-weight:700;">+ Vendedor</button>
 </div>
 <!-- ADD SELLER MODAL -->
-<div id="addSellerModal" style="display:none;background:var(--s3);border-bottom:1px solid var(--bd);padding:12px 14px;display:none;align-items:center;gap:8px;flex-wrap:wrap;">
+<div id="addSellerModal" style="display:none;background:var(--s3);border-bottom:1px solid var(--bd);padding:12px 14px;align-items:center;gap:8px;flex-wrap:wrap;">
   <span style="font-family:monospace;font-size:9px;color:var(--t3);">Nome:</span>
   <input id="newSellerName" placeholder="Ex: João Silva" style="background:var(--s2);border:1px solid var(--bd);border-radius:4px;padding:4px 8px;font-family:monospace;font-size:10px;color:var(--t1);width:160px;outline:none;" onkeydown="if(event.key===\'Enter\')addSeller()">
   <span style="font-family:monospace;font-size:9px;color:var(--t3);">Iniciais:</span>
@@ -288,7 +280,7 @@ table.dt tr:hover td{background:var(--s3);}
       <tbody id="origConBody"></tbody>
       <tfoot><tr class="TR"><td class="L">TOTAL</td><td id="oc_l">—</td><td id="oc_p">—</td><td id="oc_f">—</td><td><span class="auto" id="oc_c">—</span></td><td id="oc_tr">—</td><td class="auto" id="oc_tv">—</td></tr></tfoot>
       </table></div></div>
-
+    </div>
     <!-- HISTÓRICO -->
     <div id="sp-hist" class="subpanel">
       <div class="card">
@@ -308,6 +300,7 @@ table.dt tr:hover td{background:var(--s3);}
           <tfoot><tr class="TR"><td class="L">TIME</td><td id="ht_f">—</td><td id="ht_p">—</td><td id="ht_l">—</td><td id="ht_c">—</td><td id="ht_t">—</td></tr></tfoot>
         </table></div>
       </div>
+    </div>
     <div id="sp-insights" class="subpanel">
       <div class="card">
         <div class="ch">
@@ -324,8 +317,6 @@ table.dt tr:hover td{background:var(--s3);}
           <div style="text-align:center;padding:24px;font-family:var(--fm);font-size:10px;color:var(--t3);">Clique em Atualizar para gerar insights do mês.</div>
         </div>
       </div>
-    </div>
-    </div>
     </div>
   </div>
 </div>
@@ -411,14 +402,14 @@ function buildMonthBar() {
     bar.innerHTML='';
     MONTHS.forEach(function(mc){
       var closed=state.months[mc.key]&&state.months[mc.key].closed;
-      var active=mc.key===curMk;
+      var active=mc.key===currentMonthKey;
       var btn=document.createElement('div');
       btn.style.cssText='padding:3px 10px;border-radius:4px;font-family:monospace;font-size:9px;cursor:pointer;border:1px solid;transition:all .15s;white-space:nowrap;user-select:none;'
         +(active?'background:var(--cartd);border-color:var(--cartb);color:var(--cart);font-weight:700;'
          :closed?'background:var(--gd);border-color:rgba(5,150,105,.25);color:var(--green);'
                 :'background:var(--s2);border-color:var(--bd);color:var(--t3);');
       btn.textContent=mc.label.replace(' 2026','')+(closed?' ✓':'');
-      btn.onclick=(function(k){return function(){curMk=k;initT();buildMonthBar();checkCloseBanner();renderAll();};})(mc.key);
+      btn.onclick=(function(k){return function(){currentMonthKey=k;initT();buildMonthBar();checkCloseBanner();renderAll();};})(mc.key);
       bar.appendChild(btn);
     });
   });
@@ -589,7 +580,7 @@ function pctCls(f,m) { if(!m||m===0) return ''; var p=f/m*100; return p>=100?'go
 function stBadge(pct) { if(pct===null) return '—'; if(pct>=100) return '<span class="stb stb-ok">✅ Meta</span>'; if(pct>=70) return '<span class="stb stb-warn">⚠️ Risco</span>'; return '<span class="stb stb-bad">🔴 Abaixo</span>'; }
 function oKey(o) { return o.replace(/\s*\/\s*/g,'_').replace(/\s+/g,'_').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 function setTxt(id,v) { var e=document.getElementById(id); if(e) e.textContent=v; }
-function setEl(id,v,cls) { var e=document.getElementById(id); if(e){e.textContent=v;if(cls)e.className=cls;} }
+function setEl(id,v,cls) { var e=document.getElementById(id); if(e){if(typeof v==='string'&&v.indexOf('<')>=0)e.innerHTML=v;else e.textContent=v;if(cls)e.className=cls;} }
 function canEdit() { return currentProfile && PROFILES[currentProfile] && PROFILES[currentProfile].role==='gestor' && PROFILES[currentProfile].team===ui.team; }
 function kpiHtml(lbl,val,sub,color,pct) {
   var bw=pct!==null?Math.min(pct,100):0;
@@ -673,7 +664,7 @@ function applyAccess(){
   var p=PROFILES[currentProfile];
   var edit=(p.role==='gestor')&&(p.team===ui.team);
   // Enable/disable all number inputs in team panel
-  document.querySelectorAll('#p-team input[type="number"]').forEach(function(inp){
+  document.querySelectorAll('#panel-team input[type="number"]').forEach(function(inp){
     inp.disabled=!edit;
     inp.style.opacity=edit?'1':'0.4';
     inp.style.cursor=edit?'text':'not-allowed';
@@ -794,6 +785,67 @@ function renderMetas(tid, t) {
 }
 
 window._gsiLoaded=false;
+
+// Atualiza meta do vendedor: f pode ser 'fat', 'conv', 'tkt', 'diasAtivos'
+function updM(tid, i, f, v) {
+  var td = getTD(tid);
+  if(!td.sellers[i]) td.sellers[i] = {metaFat:0, metaConv:0, metaTkt:0, diasAtivos:0, ativo:true};
+  var num = parseFloat(v) || 0;
+  if(f==='fat') td.sellers[i].metaFat = num;
+  else if(f==='conv') td.sellers[i].metaConv = num;
+  else if(f==='tkt') td.sellers[i].metaTkt = num;
+  else if(f==='diasAtivos') td.sellers[i].diasAtivos = num;
+  // Recalcula totais e leads/dia (sem refazer o input atual)
+  var t = TEAMS[tid]; var mc = getMC();
+  var tf=0, tc=0, tt=0, n=0, na=0;
+  td.sellers.forEach(function(s){
+    if(s.ativo!==false){ tf+=s.metaFat||0; tc+=s.metaConv||0; tt+=s.metaTkt||0; if(s.metaTkt>0)n++; na++; }
+  });
+  setTxt('mt_f', tf>0?fmtR(tf):'—');
+  setTxt('mt_c', na>0&&tc>0?(tc/na).toFixed(1)+'%':'—');
+  setTxt('mt_t', n>0?fmtR(tt/n):'—');
+  setTxt('mt_d', tf>0?fmtR(tf/mc.dias)+'/dia':'—');
+  var totalLeads=0;
+  td.sellers.forEach(function(ms){
+    if(ms.ativo!==false && ms.metaFat>0 && ms.metaTkt>0 && ms.metaConv>0){
+      var da = ms.diasAtivos>0?ms.diasAtivos:mc.dias;
+      totalLeads += Math.ceil((ms.metaFat/ms.metaTkt)/(ms.metaConv/100)/da);
+    }
+  });
+  setTxt('mt_l', totalLeads>0?'~'+totalLeads+'/dia':'—');
+  // Atualiza linha (Meta/Dia + Leads/Dia) sem perder foco do input
+  // Re-render é caro; atualizamos só se necessário ao trocar 'fat' (afeta cards)
+  markUnsaved();
+}
+
+function showAddSeller(){ var m=document.getElementById('addSellerModal'); if(m) m.style.display='flex'; }
+function hideAddSeller(){ var m=document.getElementById('addSellerModal'); if(m) m.style.display='none'; }
+function addSeller(){
+  if(ui.team==='head'){ showToast('Selecione um time.'); return; }
+  var nameEl=document.getElementById('newSellerName'); var avEl=document.getElementById('newSellerAv');
+  var nome=(nameEl&&nameEl.value||'').trim(); if(!nome) return;
+  var sigla=(avEl&&avEl.value||'').trim().toUpperCase().slice(0,2)||nome.toUpperCase().replace(/[^A-ZÀ-Ú]/g,'').slice(0,2);
+  var t=TEAMS[ui.team];
+  if(t.sellers.some(function(s){return s.n.toLowerCase()===nome.toLowerCase();})){ showToast('Já existe.'); return; }
+  var avCols=['av0','av1','av2','av3','av4','av5','av6','av7','av8','avy'];
+  var newSeller={n:nome, av:sigla, c:avCols[t.sellers.length%avCols.length]};
+  t.sellers.push(newSeller);
+  if(!state.customSellers) state.customSellers={};
+  if(!state.customSellers[ui.team]) state.customSellers[ui.team]=[];
+  state.customSellers[ui.team].push(newSeller);
+  MONTHS.forEach(function(mc){
+    if(!state.months[mc.key]) state.months[mc.key]={closed:false, teams:{}};
+    if(!state.months[mc.key].teams) state.months[mc.key].teams={};
+    if(!state.months[mc.key].teams[ui.team]) state.months[mc.key].teams[ui.team]={sellers:[],daily:{},origins:{}};
+    state.months[mc.key].teams[ui.team].sellers.push({metaFat:0,metaConv:0,metaTkt:0,diasAtivos:0,ativo:true});
+  });
+  if(nameEl) nameEl.value=''; if(avEl) avEl.value='';
+  hideAddSeller();
+  renderAll();
+  markUnsaved();
+  showToast(nome+' adicionado!');
+}
+
 function toggleAtivo(tid, i) {
   var ms = getTD(tid).sellers[i];
   ms.ativo = (ms.ativo === false) ? true : false;
@@ -802,43 +854,72 @@ function toggleAtivo(tid, i) {
 }
 
 function addVendedor() {
+  if(ui.team==='head'){ showToast('Selecione um time antes de adicionar vendedor.'); return; }
   var tid = ui.team; var t = TEAMS[tid];
   var nome = prompt('Nome do novo vendedor:');
   if (!nome || !nome.trim()) return;
-  var sigla = nome.trim().toUpperCase().replace(/[^A-Z]/g,'').slice(0,2) || nome.trim().slice(0,2).toUpperCase();
+  nome = nome.trim();
+  // Não duplicar
+  if(t.sellers.some(function(s){return s.n.toLowerCase()===nome.toLowerCase();})){
+    showToast('Já existe um vendedor com esse nome.');
+    return;
+  }
+  var sigla = nome.toUpperCase().replace(/[^A-ZÀ-Ú]/g,'').slice(0,2) || nome.slice(0,2).toUpperCase();
   var avCols = ['av0','av1','av2','av3','av4','av5','av6','av7','av8','avy'];
-  t.sellers.push({ n: nome.trim(), av: sigla, c: avCols[t.sellers.length % avCols.length] });
-  // Add to all months
+  var newSeller = { n: nome, av: sigla, c: avCols[t.sellers.length % avCols.length] };
+  t.sellers.push(newSeller);
+  // Persistir no state para reaparecer após reload
+  if(!state.customSellers) state.customSellers = {};
+  if(!state.customSellers[tid]) state.customSellers[tid] = [];
+  state.customSellers[tid].push(newSeller);
+  // Replicar em TODOS os meses (não apenas os já criados)
   MONTHS.forEach(function(mc) {
-    if (state.months[mc.key] && state.months[mc.key].teams && state.months[mc.key].teams[tid])
-      state.months[mc.key].teams[tid].sellers.push({ metaFat:0, metaConv:0, metaTkt:0, diasAtivos:0, ativo:true });
+    if (!state.months[mc.key]) state.months[mc.key] = { closed:false, teams:{} };
+    if (!state.months[mc.key].teams) state.months[mc.key].teams = {};
+    if (!state.months[mc.key].teams[tid]) state.months[mc.key].teams[tid] = { sellers:[], daily:{}, origins:{} };
+    state.months[mc.key].teams[tid].sellers.push({ metaFat:0, metaConv:0, metaTkt:0, diasAtivos:0, ativo:true });
   });
-  renderAll(); // Atualiza tudo incluindo Head
+  renderAll(); // Atualiza tudo incluindo Head, Diário, Origens
   markUnsaved();
-  showToast(nome.trim() + ' adicionado ao time ' + t.label + '!');
+  showToast(nome + ' adicionado ao time ' + t.label + '!');
 }
 
 function removeVendedor(tid, i) {
-  var t = TEAMS[tid]; var nome = t.sellers[i].n;
+  var t = TEAMS[tid]; var seller = t.sellers[i]; var nome = seller.n;
   if (!confirm('Remover ' + nome + ' do time ' + t.label + '?\n\nOs dados no histórico serão preservados.')) return;
 
-  // Save to removed sellers for history
-  if (!state.removedSellers) state.removedSellers = {};
-  if (!state.removedSellers[tid]) state.removedSellers[tid] = [];
-  var sellerData = { n: nome, av: t.sellers[i].av, c: t.sellers[i].c, idx: i, removedAt: new Date().toISOString() };
-  state.removedSellers[tid].push(sellerData);
-
-  // Remove from team config
-  t.sellers.splice(i, 1);
-
-  // Remove from all months data (but keep a snapshot for history)
+  // Para CADA mês, mover o snapshot do vendedor para archivedSellers (mantém histórico)
   MONTHS.forEach(function(mc) {
-    if (state.months[mc.key] && state.months[mc.key].teams && state.months[mc.key].teams[tid]) {
-      state.months[mc.key].teams[tid].sellers.splice(i, 1);
-    }
+    if (!state.months[mc.key] || !state.months[mc.key].teams || !state.months[mc.key].teams[tid]) return;
+    var mt = state.months[mc.key].teams[tid];
+    if (!mt.archivedSellers) mt.archivedSellers = [];
+    var dailySnap = {};
+    Object.keys(mt.daily||{}).forEach(function(d){
+      var dd = mt.daily[d];
+      if(dd && dd.sellers && dd.sellers[i]) dailySnap[d] = dd.sellers[i];
+    });
+    mt.archivedSellers.push({
+      n: nome, av: seller.av, c: seller.c,
+      meta: mt.sellers[i] || {},
+      daily: dailySnap,
+      removedAt: new Date().toISOString(),
+      monthKey: mc.key
+    });
+    // Remove do array de sellers e dos daily entries
+    if(mt.sellers && mt.sellers[i]) mt.sellers.splice(i, 1);
+    Object.keys(mt.daily||{}).forEach(function(d){
+      if(mt.daily[d] && mt.daily[d].sellers) mt.daily[d].sellers.splice(i, 1);
+    });
   });
 
-  renderAll(); // Atualiza tudo incluindo Head
+  // Remove da config do time
+  t.sellers.splice(i, 1);
+  // Remove do customSellers se foi adicionado dinamicamente
+  if(state.customSellers && state.customSellers[tid]){
+    state.customSellers[tid] = state.customSellers[tid].filter(function(s){return s.n!==nome;});
+  }
+
+  renderAll();
   markUnsaved();
   showToast(nome + ' removido. Dados históricos preservados.');
 }
@@ -1224,13 +1305,12 @@ function renderAcum(tid,t,mc){
 function loadDay(tid,d,t,mc){
   ui.day[tid]=d;
   var td=getTD(tid);
-  if(!td.daily[d])td.daily[d]={sellers:t.sellers.map(function(){return{fat:0,pagos:0,leads:0};})};
-  while(td.daily[d].sellers.length<t.sellers.length)td.daily[d].sellers.push({fat:0,pagos:0,leads:0});
+  if(!td.daily[d])td.daily[d]={sellers:t.sellers.map(function(){return{fat:0,pagos:0,leads:0,tkt_rec:0};})};
+  while(td.daily[d].sellers.length<t.sellers.length)td.daily[d].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
   var dayObj=mc.du.find(function(x){return x.d===d;});
-  setTxt('dayLbl',dayObj?dayObj.lbl:d);
-  buildCal(tid,t,mc);
-  renderDayTable(tid,t);
-  buildKpisDia(tid,t,mc);
+  setTxt('dayLbl',dayObj?('D'+dayObj.n+' · '+d):d);
+  // Re-render full Diário (cal + KPIs + tables)
+  renderDia(tid,t);
 }
 
 
@@ -1279,9 +1359,9 @@ function updOrig(tid,wk,si,ok,f,v){
   var tvEl=document.getElementById('ov_'+tid+'_'+wk+'_'+si+'_'+ok+'_tv');
   if(cEl){cEl.textContent=aConv(od.leads,od.pagos);cEl.className='auto '+convCls(od.leads,od.pagos);}
   if(tvEl)tvEl.textContent=aTkt(od.fat,od.pagos);
-  calcOrigConsolidado(tid,TEAMS[tid]);
+  calcOrigCon(tid,TEAMS[tid]);
+  renderOrigenWoW(tid,TEAMS[tid]);
   markUnsaved();
-  renderOrigContent(tid,TEAMS[tid]);
 }
 
 
@@ -1549,6 +1629,63 @@ function setHeadView(v){
   if(ds)ds.style.display=v==='dia'?'':'none';
   renderHead();
 }
+
+// =====================================================
+// SYNC: garante que TEAMS.sellers reflete o que está em state
+// =====================================================
+function syncSellersFromState(){
+  // Se o state já tem mais vendedores que TEAMS para algum time/mes, atualiza TEAMS
+  // (Caso o usuário tenha adicionado vendedores em uma sessão anterior)
+  if(!state.customSellers) return;
+  Object.keys(state.customSellers).forEach(function(tid){
+    if(!TEAMS[tid]) return;
+    var existing = TEAMS[tid].sellers.map(function(s){return s.n;});
+    state.customSellers[tid].forEach(function(s){
+      if(existing.indexOf(s.n)===-1){
+        TEAMS[tid].sellers.push(s);
+      }
+    });
+  });
+}
+
+// =====================================================
+// INICIALIZAÇÃO
+// =====================================================
+function init(){
+  // Restaurar perfil salvo
+  try {
+    var savedProf = localStorage.getItem('kc_prof_v6');
+    if(savedProf && PROFILES[savedProf]) currentProfile = savedProf;
+  } catch(e){}
+
+  // Carregar dados locais primeiro (rápido)
+  loadLocal();
+  syncSellersFromState();
+  initT();
+
+  // Definir time inicial baseado no perfil
+  if(currentProfile && PROFILES[currentProfile]){
+    var p = PROFILES[currentProfile];
+    if(p.role==='gestor') ui.team = p.team;
+    else ui.team = 'head';
+  }
+
+  buildUI();
+  buildMonthBar();
+  checkCloseBanner();
+  renderAll();
+  setAuthUI(false);
+
+  // Tentar carregar GSI em background (sem forçar login)
+  var s = document.createElement('script');
+  s.src = 'https://accounts.google.com/gsi/client';
+  s.onload = function(){ window._gsiLoaded = true; initGSI(); };
+  s.onerror = function(){ /* offline ou bloqueado */ };
+  document.head.appendChild(s);
+}
+
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
+else init();
 </script>
 </body>
 </html>
