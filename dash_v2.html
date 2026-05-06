@@ -764,12 +764,41 @@ function parseBR(s) {
 function aConv(l,p) { if(!l||l===0) return '—'; return (p/l*100).toFixed(1)+'%'; }
 function aTkt(f,p) { if(!p||p===0) return '—'; return fmtR(f/p); }
 function aPct(f,m) { if(!m||m===0) return '—'; return Math.round(f/m*100)+'%'; }
-function convCls(l,p) { if(!l||l===0) return ''; var c=p/l*100; return c>=20?'good':c>=10?'warn':'bad'; }
+function convCls(l,p,metaConv) {
+  if(!l||l===0) return '';
+  var c=p/l*100;
+  if(metaConv && metaConv>0){
+    if(c>=metaConv) return 'good';
+    if(c>=metaConv*0.7) return 'warn';
+    return 'bad';
+  }
+  // Fallback: thresholds fixos quando vendedor não tem meta de conversão
+  return c>=20?'good':c>=10?'warn':'bad';
+}
+function tktCls(fat,pag,metaTkt){
+  if(!pag||pag===0) return '';
+  var t=fat/pag;
+  if(metaTkt && metaTkt>0){
+    if(t>=metaTkt) return 'good';
+    if(t>=metaTkt*0.7) return 'warn';
+    return 'bad';
+  }
+  return '';
+}
 function pctCls(f,m) { if(!m||m===0) return ''; var p=f/m*100; return p>=100?'good':p>=70?'warn':'bad'; }
 function stBadge(pct) { if(pct===null) return '—'; if(pct>=100) return '<span class="stb stb-ok">✅ Meta</span>'; if(pct>=70) return '<span class="stb stb-warn">⚠️ Risco</span>'; return '<span class="stb stb-bad">🔴 Abaixo</span>'; }
+// Calcula pct proporcional ao tempo decorrido no mês (para Status)
+function pctProp(fat,meta,mc){
+  if(!meta||meta===0) return null;
+  var elapsed=getWorkdaysElapsed(mc);
+  if(!elapsed) return null;
+  var metaProp=meta*(elapsed/mc.dias);
+  return metaProp>0?Math.round(fat/metaProp*100):null;
+}
 function oKey(o) { return o.replace(/\s*\/\s*/g,'_').replace(/\s+/g,'_').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 function setTxt(id,v) { var e=document.getElementById(id); if(e) e.textContent=v; }
-// Dias úteis decorridos no mês até hoje (calendário). Usado para meta proporcional.
+// Dias úteis JÁ ENCERRADOS no mês (até D-1). Hoje não conta porque ainda está acontecendo.
+// Usado para meta proporcional, gap e status.
 function getWorkdaysElapsed(mc){
   var today=new Date();
   var dd=('0'+today.getDate()).slice(-2);
@@ -781,9 +810,9 @@ function getWorkdaysElapsed(mc){
   var todayStr=dd+'/'+mm;
   var elapsed=0;
   for(var i=0;i<mc.du.length;i++){
-    if(mc.du[i].d<=todayStr) elapsed++;
+    if(mc.du[i].d<todayStr) elapsed++; // STRITAMENTE menor: hoje não conta
   }
-  return elapsed||1; // mínimo 1 para não dar divisão por zero em comparações
+  return elapsed; // pode ser 0 se hoje é o primeiro dia útil do mês
 }
 function setEl(id,v,cls) { var e=document.getElementById(id); if(e){if(typeof v==='string'&&v.indexOf('<')>=0)e.innerHTML=v;else e.textContent=v;if(cls)e.className=cls;} }
 function canEdit() { return currentProfile && PROFILES[currentProfile] && PROFILES[currentProfile].role==='gestor' && PROFILES[currentProfile].team===ui.team; }
@@ -1376,7 +1405,9 @@ function renderSemanal(tid,t){
     if(td.sellers[i]&&td.sellers[i].ativo===false)return;
     var fat=0,pag=0,leads=0,ttrSum=0,nTtr=0;
     dias.forEach(function(d){var dd=td.daily[d];if(dd&&dd.sellers&&dd.sellers[i]){fat+=dd.sellers[i].fat||0;pag+=dd.sellers[i].pagos||0;leads+=dd.sellers[i].leads||0;if((dd.sellers[i].tkt_rec||0)>0){ttrSum+=dd.sellers[i].tkt_rec;nTtr++;}}});
-    var msv=(td.sellers[i]&&td.sellers[i].metaFat||0)/4;var pct=msv>0?Math.round(fat/msv*100):null;
+    var ms2=td.sellers[i]||{};
+    var msv=(ms2.metaFat||0)/4;var pct=msv>0?Math.round(fat/msv*100):null;
+    var metaConv=ms2.metaConv||0; var metaTkt=ms2.metaTkt||0;
     var wow='—';var wowCls='';
     if(prevDias){var pf=0;prevDias.forEach(function(d){var dd=td.daily[d];if(dd&&dd.sellers&&dd.sellers[i])pf+=dd.sellers[i].fat||0;});if(pf>0){var wp=Math.round((fat-pf)/pf*100);wow=(wp>=0?'+':'')+wp+'%';wowCls=wp>=0?'good':'bad';}}
     totF+=fat;totP+=pag;totL+=leads;totM+=msv;if(nTtr>0){totTkr+=ttrSum/nTtr;nTkr++;}
@@ -1385,9 +1416,9 @@ function renderSemanal(tid,t){
     tr.innerHTML='<td class="L" style="padding:7px 12px"><div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+(isOwnRow(i)?' <span style="font-family:monospace;font-size:8px;color:var(--cart);">(você)</span>':'')+'</div></td>'
       +'<td style="padding:7px 12px;text-align:right">'+(fat>0?fmtR(fat):'—')+'</td>'
       +'<td style="padding:7px 12px;text-align:right">'+pag+'</td><td style="padding:7px 12px;text-align:right">'+leads+'</td>'
-      +'<td style="padding:7px 12px;text-align:right"><span class="auto '+convCls(leads,pag)+'">'+aConv(leads,pag)+'</span></td>'
+      +'<td style="padding:7px 12px;text-align:right"><span class="auto '+convCls(leads,pag,metaConv)+'" title="'+(metaConv>0?'Meta: '+metaConv+'%':'')+'">'+aConv(leads,pag)+'</span></td>'
       +'<td style="padding:7px 12px;text-align:right;font-family:monospace;color:var(--yellow)">'+(nTtr>0?fmtR(ttrSum/nTtr):'—')+'</td>'
-      +'<td style="padding:7px 12px;text-align:right"><span class="auto">'+aTkt(fat,pag)+'</span></td>'
+      +'<td style="padding:7px 12px;text-align:right"><span class="auto '+tktCls(fat,pag,metaTkt)+'" title="'+(metaTkt>0?'Meta tkt: '+fmtR(metaTkt):'')+'">'+aTkt(fat,pag)+'</span></td>'
       +'<td style="padding:7px 12px;text-align:right">'+fmtR(msv)+'</td>'
       +'<td style="padding:7px 12px;text-align:right"><span class="auto '+pctCls(fat,msv)+'">'+(pct!==null?pct+'%':'—')+'</span></td>'
       +'<td style="padding:7px 12px;text-align:right"><span class="auto '+wowCls+'">'+wow+'</span></td>'
@@ -1506,8 +1537,11 @@ function renderHead(){
       } else {
         mc.du.forEach(function(d){var dd=td.daily[d.d];if(dd&&dd.sellers&&dd.sellers[i]){fat+=dd.sellers[i].fat||0;pag+=dd.sellers[i].pagos||0;leads+=dd.sellers[i].leads||0;}});
       }
-      var meta=(td.sellers[i]||{}).metaFat||0;
-      all.push({n:s.n,av:s.av,c:s.c,team:t.label,tc:t.color,fat:fat,pag:pag,leads:leads,meta:meta,pct:meta>0?Math.round(fat/meta*100):null});
+      var ms=td.sellers[i]||{};
+      var meta=ms.metaFat||0;
+      var metaConv=ms.metaConv||0;
+      var metaTkt=ms.metaTkt||0;
+      all.push({n:s.n,av:s.av,c:s.c,team:t.label,tc:t.color,fat:fat,pag:pag,leads:leads,meta:meta,metaConv:metaConv,metaTkt:metaTkt,pct:meta>0?Math.round(fat/meta*100):null,pctP:pctProp(fat,meta,mc)});
     });
   });
   all.sort(function(a,b){return b.fat-a.fat;});
@@ -1520,11 +1554,11 @@ function renderHead(){
       +'<td style="padding:7px 12px;text-align:right">'+(s.fat>0?fmtR(s.fat):'—')+'</td>'
       +'<td style="padding:7px 12px;text-align:right">'+s.pag+'</td>'
       +'<td style="padding:7px 12px;text-align:right">'+s.leads+'</td>'
-      +'<td style="padding:7px 12px;text-align:right"><span class="auto '+convCls(s.leads,s.pag)+'">'+aConv(s.leads,s.pag)+'</span></td>'
-      +'<td style="padding:7px 12px;text-align:right"><span class="auto">'+aTkt(s.fat,s.pag)+'</span></td>'
+      +'<td style="padding:7px 12px;text-align:right"><span class="auto '+convCls(s.leads,s.pag,s.metaConv)+'">'+aConv(s.leads,s.pag)+(s.metaConv>0?' <span style="color:var(--t3);font-size:8px">/'+s.metaConv+'%</span>':'')+'</span></td>'
+      +'<td style="padding:7px 12px;text-align:right"><span class="auto '+tktCls(s.fat,s.pag,s.metaTkt)+'">'+aTkt(s.fat,s.pag)+'</span></td>'
       +'<td style="padding:7px 12px;text-align:right">'+fmtR(s.meta)+'</td>'
       +'<td style="padding:7px 12px;text-align:right"><span class="auto '+pctCls(s.fat,s.meta)+'">'+(s.pct!==null?s.pct+'%':'—')+'</span></td>'
-      +'<td style="padding:7px 12px;text-align:right">'+stBadge(s.pct)+'</td>';
+      +'<td style="padding:7px 12px;text-align:right">'+stBadge(s.pctP)+'</td>';
     rb.appendChild(tr);
   });
   renderHeadOrigConv();
@@ -1554,9 +1588,9 @@ function renderDayTable(tid,t,mc){
     tr.appendChild(mkCurInp(sd.fat,'','fat'));
     tr.appendChild(mkInp(sd.pagos,'65px','pagos'));
     tr.appendChild(mkInp(sd.leads,'65px','leads'));
-    tr.appendChild(mkTd('padding:7px 12px;text-align:right','<span id="dr_'+i+'_conv" class="auto '+convCls(sd.leads,sd.pagos)+'">'+aConv(sd.leads,sd.pagos)+'</span>'));
+    tr.appendChild(mkTd('padding:7px 12px;text-align:right','<span id="dr_'+i+'_conv" class="auto '+convCls(sd.leads,sd.pagos,ms.metaConv)+'" title="'+((ms.metaConv||0)>0?'Meta: '+ms.metaConv+'%':'')+'">'+aConv(sd.leads,sd.pagos)+'</span>'));
     tr.appendChild(mkCurInp(sd.tkt_rec,'80px','tkt_rec'));
-    tr.appendChild(mkTd('padding:7px 12px;text-align:right','<span id="dr_'+i+'_tktreal" class="auto">'+aTkt(sd.fat,sd.pagos)+'</span>'));
+    tr.appendChild(mkTd('padding:7px 12px;text-align:right','<span id="dr_'+i+'_tktreal" class="auto '+tktCls(sd.fat,sd.pagos,ms.metaTkt)+'" title="'+((ms.metaTkt||0)>0?'Meta tkt: '+fmtR(ms.metaTkt):'')+'">'+aTkt(sd.fat,sd.pagos)+'</span>'));
     tr.appendChild(mkTd('padding:7px 12px;text-align:right;font-family:monospace;color:var(--t3)',fmtR(metaDia)));
     tr.appendChild(mkTd('padding:7px 12px;text-align:right;font-family:monospace;color:var(--yellow)',metaL>0?metaL:'—'));
     tr.appendChild(mkTd('padding:7px 12px;text-align:right','<span id="dr_'+i+'_pct" class="auto '+pctCls(sd.fat,metaDia)+'">'+aPct(sd.fat,metaDia)+'</span>'));
@@ -1597,7 +1631,10 @@ function renderAcum(tid,t,mc){
         if((dd.sellers[i].tkt_rec||0)>0){ ttrSum+=dd.sellers[i].tkt_rec; ttrN++; }
       }
     });
-    var meta=(td.sellers[i]||{}).metaFat||0;
+    var ms=td.sellers[i]||{};
+    var meta=ms.metaFat||0;
+    var metaConv=ms.metaConv||0;
+    var metaTkt=ms.metaTkt||0;
     var tktReal = pag>0 ? fat/pag : 0;
     var tktRec = ttrN>0 ? ttrSum/ttrN : 0;
     var proj = (fat/diasL)*mc.dias;
@@ -1605,6 +1642,7 @@ function renderAcum(tid,t,mc){
     // Gap PROPORCIONAL: meta × (dias decorridos ÷ total dias) - fat
     var metaProp = meta>0 ? meta*(diasElapsed/mc.dias) : 0;
     var gap = (meta>0 && diasElapsed>0) ? fat - metaProp : null;
+    var pctP = pctProp(fat,meta,mc); // pct proporcional para Status
 
     totF+=fat;totP+=pag;totL+=leads;totM+=meta;
     if(ttrN>0){ totTtrSum+=ttrSum/ttrN; totTtrN++; }
@@ -1616,14 +1654,14 @@ function renderAcum(tid,t,mc){
       +'<td>'+(fat>0?fmtR(fat):'—')+'</td>'
       +'<td>'+pag+'</td>'
       +'<td>'+leads+'</td>'
-      +'<td><span class="auto '+convCls(leads,pag)+'">'+aConv(leads,pag)+'</span></td>'
+      +'<td><span class="auto '+convCls(leads,pag,metaConv)+'" title="'+(metaConv>0?'Meta: '+metaConv+'%':'')+'">'+aConv(leads,pag)+'</span></td>'
       +'<td>'+(tktRec>0?fmtR(tktRec):'—')+'</td>'
-      +'<td><span class="auto">'+(tktReal>0?fmtR(tktReal):'—')+'</span></td>'
+      +'<td><span class="auto '+tktCls(fat,pag,metaTkt)+'" title="'+(metaTkt>0?'Meta tkt: '+fmtR(metaTkt):'')+'">'+(tktReal>0?fmtR(tktReal):'—')+'</span></td>'
       +'<td>'+(meta>0?fmtR(meta):'—')+'</td>'
       +'<td><span class="auto '+pctCls(fat,meta)+'">'+(pct!==null?pct+'%':'—')+'</span></td>'
       +'<td><span class="auto">'+(proj>0?fmtR(proj):'—')+'</span></td>'
       +'<td title="'+gapTitle+'"><span class="auto '+(gap===null?'':gap>=0?'good':'bad')+'">'+(gap!==null?(gap>=0?'+':'')+fmtR(gap):'—')+'</span></td>'
-      +'<td>'+stBadge(pct)+'</td>';
+      +'<td>'+stBadge(pctP)+'</td>';
     tbody.appendChild(tr);
   });
   var totTktReal = totP>0 ? totF/totP : 0;
@@ -1670,8 +1708,8 @@ function updDay(tid,d,i,f,v){
   var ms=td.sellers[i]||{};
   var da=ms.diasAtivos>0?ms.diasAtivos:mc.dias;
   var metaDia=ms.metaFat>0?ms.metaFat/da:0;
-  setEl('dr_'+i+'_conv','<span class="auto '+convCls(sd.leads,sd.pagos)+'">'+aConv(sd.leads,sd.pagos)+'</span>','');
-  setEl('dr_'+i+'_tktreal','<span class="auto">'+aTkt(sd.fat,sd.pagos)+'</span>','');
+  setEl('dr_'+i+'_conv','<span class="auto '+convCls(sd.leads,sd.pagos,ms.metaConv)+'" title="'+((ms.metaConv||0)>0?'Meta: '+ms.metaConv+'%':'')+'">'+aConv(sd.leads,sd.pagos)+'</span>','');
+  setEl('dr_'+i+'_tktreal','<span class="auto '+tktCls(sd.fat,sd.pagos,ms.metaTkt)+'" title="'+((ms.metaTkt||0)>0?'Meta tkt: '+fmtR(ms.metaTkt):'')+'">'+aTkt(sd.fat,sd.pagos)+'</span>','');
   setEl('dr_'+i+'_pct','<span class="auto '+pctCls(sd.fat,metaDia)+'">'+aPct(sd.fat,metaDia)+'</span>','');
 
   // Atualiza totais do dia
