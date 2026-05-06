@@ -149,9 +149,44 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 .hgrv{font-family:monospace;font-size:10px;font-weight:700;}
 .toast{position:fixed;bottom:16px;right:16px;background:var(--s2);border:1px solid var(--bd2);border-radius:7px;padding:8px 14px;font-family:monospace;font-size:10px;color:var(--t1);display:none;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.4);}
 .toast.show{display:flex;align-items:center;gap:7px;}
+/* Login Screen */
+.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#fff,#F5F6FA);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.login-card{background:var(--s1);border:1px solid var(--bd);border-radius:16px;padding:48px 40px;max-width:440px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.08);}
+.login-logo{font-family:'Syne',sans-serif;font-size:24px;font-weight:900;color:var(--t1);letter-spacing:-.02em;margin-bottom:8px;}
+.login-logo span{color:var(--cart);}
+.login-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--t1);margin:24px 0 8px;letter-spacing:-.01em;}
+.login-sub{font-family:'DM Sans',sans-serif;font-size:13px;color:var(--t3);margin-bottom:32px;line-height:1.5;}
+.login-btn{display:inline-flex;align-items:center;gap:12px;background:#fff;border:1.5px solid var(--bd2);border-radius:10px;padding:12px 24px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--t1);cursor:pointer;transition:all .15s;width:100%;justify-content:center;}
+.login-btn:hover{border-color:var(--cart);background:var(--cartd);}
+.login-btn:disabled{opacity:0.5;cursor:wait;}
+.login-btn svg{width:20px;height:20px;flex-shrink:0;}
+.login-err{margin-top:18px;padding:10px 14px;background:rgba(255,61,92,.08);border:1px solid rgba(255,61,92,.2);border-radius:8px;color:var(--red);font-family:monospace;font-size:11px;display:none;}
+.login-err.show{display:block;}
+.login-foot{margin-top:24px;font-family:monospace;font-size:9px;color:var(--t3);}
+/* User chip in topbar */
+.user-chip{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:16px;background:var(--s2);border:1px solid var(--bd);font-family:'DM Sans',sans-serif;font-size:11px;color:var(--t2);}
+.user-chip .uc-av{width:20px;height:20px;border-radius:50%;background:var(--cart);color:#07090F;display:flex;align-items:center;justify-content:center;font-family:monospace;font-size:9px;font-weight:700;}
+.user-chip .uc-out{font-family:monospace;font-size:9px;color:var(--red);background:transparent;border:none;cursor:pointer;padding:0 2px 0 4px;border-left:1px solid var(--bd);margin-left:4px;}
+.user-chip .uc-out:hover{text-decoration:underline;}
 </style>
 </head>
 <body>
+<!-- Login Screen (Google Sign-In) -->
+<div id="loginScreen" class="login-overlay">
+  <div class="login-card">
+    <div class="login-logo">Konsi<span>.</span>Comercial</div>
+    <div style="font-family:monospace;font-size:9px;color:var(--cart);background:var(--cartd);border:1px solid var(--cartb);border-radius:4px;padding:2px 8px;display:inline-block;">DASHBOARD COMERCIAL 2026</div>
+    <div class="login-title">Bem-vindo(a)! 👋</div>
+    <div class="login-sub">Faça login com sua conta Konsi para acessar o dashboard.<br>Apenas emails autorizados podem entrar.</div>
+    <button id="loginBtn" class="login-btn" onclick="loginWithGoogle()" disabled>
+      <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+      <span id="loginBtnTxt">Carregando...</span>
+    </button>
+    <div id="loginErr" class="login-err"></div>
+    <div class="login-foot">Acesso restrito · @konsi.com.br</div>
+  </div>
+</div>
+
 <div class="topbar">
   <div class="tb-main">
     <div class="logo">Konsi<span>.</span>Comercial</div>
@@ -159,18 +194,28 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
     <div class="team-tabs" id="teamTabsWrap"></div>
     <div class="tright">
       <div style="display:flex;align-items:center;gap:5px;"><div class="sdot pend" id="sdot"></div><span class="slbl" id="slbl">não conectado</span></div>
-      <button class="btn-sv" onclick="saveAll()">Salvar</button>
+      <button class="btn-sv" id="saveBtn" onclick="saveAll()">Salvar</button>
+      <div class="user-chip" id="userChip" style="display:none;">
+        <span class="uc-av" id="ucAv">--</span>
+        <span id="ucName">—</span>
+        <button class="uc-out" onclick="logout()" title="Sair">Sair ↗</button>
+      </div>
     </div>
   </div>
-  <div class="auth-bar">
-    <span class="auth-lbl off" id="authLbl">⚠️ Não conectado ao Google Sheets — clique para conectar e compartilhar dados com todos os gestores</span>
-    <button class="btn-goo con" id="authBtn" onclick="connectGoogle()">Conectar com Google ↗</button>
-  </div>
 </div>
-<div class="profbar">
+<!-- Barras antigas de auth e profile removidas: agora o login obrigatório define o perfil automaticamente.
+     Os elementos abaixo ficam invisíveis mas existem para evitar erros de JS que ainda referenciam IDs. -->
+<div class="auth-bar" style="display:none;">
+  <span class="auth-lbl off" id="authLbl">—</span>
+  <button class="btn-goo con" id="authBtn">—</button>
+</div>
+<div class="profbar" style="display:none;">
   <span class="plbl">Quem está acessando:</span>
   <div id="profileBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
-  <span class="proflbl" id="proflbl">Selecione seu perfil</span>
+  <span class="proflbl" id="proflbl">—</span>
+</div>
+<div class="profbar" id="sellerProfBar" style="display:none;">
+  <div id="sellerBtns" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;"></div>
 </div>
 
 <!-- MONTH SELECTOR + CLOSE BANNER -->
@@ -348,6 +393,53 @@ var TEAMS = {
     origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada','Onboarding'],
     sellers:[{n:'Camile',av:'CA',c:'av1'},{n:'Madson',av:'MD',c:'av8'},{n:'Gabriel',av:'GB',c:'av3'}]}
 };
+
+// Mapping email HubSpot → vendedor → time
+// Usado pelo workflow n8n para identificar deals e pelo dashboard para marcar campos automáticos
+var SELLER_EMAILS = {
+  // Carteira
+  'ingridfigueiredo@konsi.com.br':   {team:'cart', name:'Ingrid'},
+  'isabelledeazevedo@konsi.com.br':  {team:'cart', name:'Isabelle'},
+  'manasses@konsi.com.br':           {team:'cart', name:'Manasses'},
+  'paulovitor@konsi.com.br':         {team:'cart', name:'Paulo'},
+  'alicerosa@konsi.com.br':          {team:'cart', name:'Alice'},
+  'vagnermoura@konsi.com.br':        {team:'cart', name:'Vagner'},
+  // Ativação
+  'silasaragao@konsi.com.br':        {team:'atv',  name:'Silas'},
+  'luanaoliveira@konsi.com.br':      {team:'atv',  name:'Luana'},
+  'anacarolina@konsi.com.br':        {team:'atv',  name:'Ana Carolina'},
+  'lucasrangel@konsi.com.br':        {team:'atv',  name:'Lucas'},
+  'titocanario@konsi.com.br':        {team:'atv',  name:'Tito'},
+  'larissamirella@konsi.com.br':     {team:'atv',  name:'Larissa'},
+  // Novos Usuários
+  'camilequeiroz@konsi.com.br':      {team:'nov',  name:'Camile'},
+  'madsonbrito@konsi.com.br':        {team:'nov',  name:'Madson'},
+  'gabrieloliveira@konsi.com.br':    {team:'nov',  name:'Gabriel'}
+};
+
+// Auto-gera perfis de vendedor (read-only) a partir de SELLER_EMAILS
+// Cada vendedor pode logar e ver apenas as abas Metas/Diário/Semanal do próprio time
+function buildSellerProfiles(){
+  Object.keys(SELLER_EMAILS).forEach(function(email){
+    var info = SELLER_EMAILS[email];
+    var team = info.team;
+    if(!TEAMS[team]) return;
+    var idx = TEAMS[team].sellers.findIndex(function(s){return s.n===info.name;});
+    if(idx===-1) return;
+    var pid = 'v_'+email.split('@')[0];
+    PROFILES[pid] = {
+      name: info.name,
+      role: 'vendedor',
+      team: team,
+      sellerIdx: idx,
+      email: email,
+      on: 'on-'+team,
+      color: 'var(--'+team+')',
+      bg: 'var(--'+team+'d)',
+      bd: 'var(--'+team+'b)'
+    };
+  });
+}
 var PROFILES = {
   giovanna:{ name:'Giovanna', role:'head', team:null, on:'on-head', color:'var(--head)', bg:'var(--headd)', bd:'var(--headb)' },
   mariana:{ name:'Mariana', role:'gestor', team:'cart', on:'on-cart', color:'var(--cart)', bg:'var(--cartd)', bd:'var(--cartb)' },
@@ -480,9 +572,25 @@ function getTD(tid) { initT(); return state.months[currentMonthKey].teams[tid]; 
 
 
 
-// GOOGLE AUTH
+// =====================================================
+// GOOGLE AUTH + LOGIN OBRIGATÓRIO
+// =====================================================
 
 var _tokenClient = null;
+
+// Mapping unificado: email Konsi → profile id
+var GESTOR_EMAILS = {
+  'giovannaclara@konsi.com.br':  'giovanna',
+  'marianaramalho@konsi.com.br': 'mariana',
+  'flaviomendonca@konsi.com.br': 'flavio',
+  'icarosantos@konsi.com.br':    'icaro'
+};
+function getProfileFromEmail(email){
+  email = (email||'').toLowerCase().trim();
+  if(GESTOR_EMAILS[email]) return GESTOR_EMAILS[email];
+  if(SELLER_EMAILS[email]) return 'v_'+email.split('@')[0];
+  return null;
+}
 
 function initGSI() {
   if (!window.google || !window.google.accounts) {
@@ -491,51 +599,100 @@ function initGSI() {
   }
   _tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/spreadsheets',
-    callback: function(resp) {
-      if (resp.error) { showToast('Erro Google: ' + resp.error); return; }
-      gToken = resp.access_token;
-      setAuthUI(true);
-      loadFromSheets();
+    scope: 'openid email profile https://www.googleapis.com/auth/spreadsheets',
+    callback: handleAuthCallback
+  });
+  // Habilita botão de login
+  var btn = document.getElementById('loginBtn');
+  var btnTxt = document.getElementById('loginBtnTxt');
+  if (btn) btn.disabled = false;
+  if (btnTxt) btnTxt.textContent = 'Login com Google';
+}
+
+function loginWithGoogle() {
+  if (!_tokenClient) {
+    showLoginError('Aguarde, carregando autenticação...');
+    return;
+  }
+  hideLoginError();
+  _tokenClient.requestAccessToken({ prompt: 'select_account' });
+}
+
+function handleAuthCallback(resp){
+  if (resp.error) { showLoginError('Erro Google: ' + resp.error); return; }
+  gToken = resp.access_token;
+  // Buscar email do usuário autenticado
+  fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    headers: { Authorization: 'Bearer ' + gToken }
+  }).then(function(r){return r.json();}).then(function(user){
+    if (!user || !user.email) { showLoginError('Não foi possível obter seu email do Google.'); gToken=null; return; }
+    var pid = getProfileFromEmail(user.email);
+    if (!pid) {
+      showLoginError('❌ Email "'+user.email+'" não está autorizado a acessar este dashboard. Contate Mariana se precisar de acesso.');
+      gToken = null;
+      return;
     }
+    // Login OK!
+    sessionStorage.setItem('kc_email', user.email);
+    sessionStorage.setItem('kc_pid', pid);
+    sessionStorage.setItem('kc_token', gToken);
+    sessionStorage.setItem('kc_token_exp', String(Date.now() + 3500*1000)); // ~58 min
+    sessionStorage.setItem('kc_name', user.name || user.email.split('@')[0]);
+    hideLogin();
+    showUserChip(pid, user.name);
+    setProfile(pid);
+    document.getElementById('sdot').className='sdot ok';
+    setTxt('slbl','conectado');
+    loadFromSheets();
+  }).catch(function(e){
+    showLoginError('Erro ao buscar perfil: ' + e.message);
+    gToken = null;
   });
 }
 
-function connectGoogle() {
-  if (_tokenClient) {
-    _tokenClient.requestAccessToken({ prompt: 'consent' });
-    return;
-  }
-  // Carrega GSI na hora do clique se ainda não carregou
-  var s = document.createElement('script');
-  s.src = 'https://accounts.google.com/gsi/client';
-  s.onload = function() {
-    initGSI();
-    setTimeout(function() {
-      if (_tokenClient) _tokenClient.requestAccessToken({ prompt: 'consent' });
-    }, 500);
-  };
-  document.head.appendChild(s);
+function showLogin(){
+  var s=document.getElementById('loginScreen'); if(s) s.style.display='flex';
+  document.body.style.overflow='hidden';
 }
-function setAuthUI(on) {
-  var lbl = document.getElementById('authLbl');
-  var btn = document.getElementById('authBtn');
-  if (on) {
-    lbl.textContent = '✅ Conectado ao Google Sheets · dados compartilhados com todos os gestores';
-    lbl.className = 'auth-lbl on';
-    btn.textContent = 'Desconectar'; btn.className = 'btn-goo dis';
-    btn.onclick = function() { if(gToken) google.accounts.oauth2.revoke(gToken); gToken=null; setAuthUI(false); };
-    document.getElementById('sdot').className = 'sdot ok';
-    setTxt('slbl','conectado');
-  } else {
-    lbl.textContent = '⚠️ Não conectado ao Google Sheets — clique para conectar';
-    lbl.className = 'auth-lbl off';
-    btn.textContent = 'Conectar com Google ↗'; btn.className = 'btn-goo con';
-    btn.onclick = connectGoogle;
-    document.getElementById('sdot').className = 'sdot pend';
-    setTxt('slbl','local');
-  }
+function hideLogin(){
+  var s=document.getElementById('loginScreen'); if(s) s.style.display='none';
+  document.body.style.overflow='';
 }
+function showLoginError(msg){
+  var el=document.getElementById('loginErr'); if(!el) return;
+  el.textContent=msg; el.classList.add('show');
+}
+function hideLoginError(){
+  var el=document.getElementById('loginErr'); if(el) el.classList.remove('show');
+}
+function showUserChip(pid, name){
+  var p=PROFILES[pid]; if(!p) return;
+  var chip=document.getElementById('userChip'); if(chip) chip.style.display='flex';
+  var av=document.getElementById('ucAv');
+  var nm=document.getElementById('ucName');
+  if(av) av.textContent=(name||p.name).split(' ').map(function(w){return w.slice(0,1);}).slice(0,2).join('').toUpperCase();
+  if(nm) nm.textContent=(name||p.name)+' · '+(p.role==='head'?'Head':p.role==='gestor'?'Gestor':'Vendedor');
+}
+
+function logout(){
+  if (gToken) { try { google.accounts.oauth2.revoke(gToken, function(){}); } catch(e){} }
+  gToken = null;
+  currentProfile = null;
+  sessionStorage.removeItem('kc_email');
+  sessionStorage.removeItem('kc_pid');
+  sessionStorage.removeItem('kc_token');
+  sessionStorage.removeItem('kc_token_exp');
+  sessionStorage.removeItem('kc_name');
+  // Reload simples para limpar tudo
+  location.reload();
+}
+
+// Stub mantido para evitar erros (auth bar antiga foi removida visualmente)
+function setAuthUI(on){
+  var dot=document.getElementById('sdot'); if(dot) dot.className=on?'sdot ok':'sdot pend';
+  setTxt('slbl', on?'conectado':'local');
+}
+function connectGoogle(){ loginWithGoogle(); }
 function loadFromSheets() {
   if (!gToken) { loadLocal(); return; }
   fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+'/values/'+SHEET_TAB+'!A1',{headers:{Authorization:'Bearer '+gToken}})
@@ -614,6 +771,15 @@ function oKey(o) { return o.replace(/\s*\/\s*/g,'_').replace(/\s+/g,'_').toLower
 function setTxt(id,v) { var e=document.getElementById(id); if(e) e.textContent=v; }
 function setEl(id,v,cls) { var e=document.getElementById(id); if(e){if(typeof v==='string'&&v.indexOf('<')>=0)e.innerHTML=v;else e.textContent=v;if(cls)e.className=cls;} }
 function canEdit() { return currentProfile && PROFILES[currentProfile] && PROFILES[currentProfile].role==='gestor' && PROFILES[currentProfile].team===ui.team; }
+// Verifica se o índice i é o vendedor logado (para destaque de linha)
+function isOwnRow(i){
+  if(!currentProfile) return false;
+  var p=PROFILES[currentProfile];
+  return p.role==='vendedor' && p.team===ui.team && p.sellerIdx===i;
+}
+function ownRowStyle(i){
+  return isOwnRow(i)?'background:linear-gradient(90deg,rgba(0,207,168,.13),rgba(0,207,168,.04));border-left:3px solid var(--cart);font-weight:700;':'';
+}
 function kpiHtml(lbl,val,sub,color,pct) {
   var bw=pct!==null?Math.min(pct,100):0;
   var bc=pct===null?color:pct>=100?'var(--green)':pct>=70?'var(--yellow)':'var(--red)';
@@ -633,31 +799,70 @@ function buildUI() {
     d.onclick=(function(id){return function(){swTeam(id);};})(tab.id);
     wrap.appendChild(d);
   });
-  // Profile btns
+  // Profile btns - apenas Head + Gestores
   var pb=document.getElementById('profileBtns'); pb.innerHTML='';
   var inits={giovanna:'GC',mariana:'MR',flavio:'FM',icaro:'IS'};
   var lbs={giovanna:'Head',mariana:'Carteira',flavio:'Ativação',icaro:'Novos Usuários'};
   Object.keys(PROFILES).forEach(function(pid){
-    var p=PROFILES[pid]; var on=currentProfile===pid;
+    var p=PROFILES[pid];
+    if(p.role==='vendedor') return; // Vendedores vão na barra separada
+    var on=currentProfile===pid;
     var btn=document.createElement('button');
     btn.className='pbtn'+(on?' '+p.on:'');
-    btn.innerHTML='<span class="pav" style="background:'+(on?p.bg:'var(--s3)')+';color:'+(on?p.color:'var(--t3)')+';border:1px solid '+(on?p.bd:'var(--bd)')+';">'+inits[pid]+'</span>'+p.name+' · '+lbs[pid];
+    btn.innerHTML='<span class="pav" style="background:'+(on?p.bg:'var(--s3)')+';color:'+(on?p.color:'var(--t3)')+';border:1px solid '+(on?p.bd:'var(--bd)')+';">'+(inits[pid]||p.name.slice(0,2).toUpperCase())+'</span>'+p.name+' · '+(lbs[pid]||'Gestor');
     btn.onclick=(function(id){return function(){setProfile(id);};})(pid);
     pb.appendChild(btn);
   });
+
+  // Seller btns - agrupados por time, em barra separada
+  var sb=document.getElementById('sellerBtns'); if(sb){
+    sb.innerHTML='';
+    var teams=[{id:'cart',label:'Carteira',color:'var(--cart)'},{id:'atv',label:'Ativação',color:'var(--atv)'},{id:'nov',label:'Novos',color:'var(--nov)'}];
+    teams.forEach(function(t,ti){
+      if(ti>0){var sep=document.createElement('span');sep.style.cssText='color:var(--bd2);font-size:10px;margin:0 4px;';sep.textContent='|';sb.appendChild(sep);}
+      var lb=document.createElement('span');lb.style.cssText='font-family:monospace;font-size:9px;color:'+t.color+';font-weight:700;margin-right:3px;';lb.textContent=t.label+':';sb.appendChild(lb);
+      Object.keys(PROFILES).forEach(function(pid){
+        var p=PROFILES[pid];
+        if(p.role!=='vendedor'||p.team!==t.id) return;
+        var on=currentProfile===pid;
+        var btn=document.createElement('button');
+        btn.className='pbtn'+(on?' '+p.on:'');
+        btn.style.padding='3px 9px';
+        btn.style.fontSize='10px';
+        btn.innerHTML='<span class="pav" style="background:'+(on?p.bg:'var(--s3)')+';color:'+(on?p.color:'var(--t3)')+';border:1px solid '+(on?p.bd:'var(--bd)')+';width:14px;height:14px;font-size:6px;">'+p.name.slice(0,2).toUpperCase()+'</span>'+p.name;
+        btn.onclick=(function(id){return function(){setProfile(id);};})(pid);
+        sb.appendChild(btn);
+      });
+    });
+  }
 }
 function setProfile(pid) {
   currentProfile=pid; var p=PROFILES[pid];
   localStorage.setItem('kc_prof_v6',pid);
-  buildUI();
   var lbl=document.getElementById('proflbl');
-  if(lbl) lbl.textContent=p.role==='head'?'👑 Leitura completa':'✏️ Editando: '+TEAMS[p.team].label;
+  if(lbl){
+    if(p.role==='head') lbl.textContent='👑 Leitura completa';
+    else if(p.role==='gestor') lbl.textContent='✏️ Editando: '+TEAMS[p.team].label;
+    else if(p.role==='vendedor') lbl.textContent='👤 '+p.name+' · '+TEAMS[p.team].label+' (somente leitura)';
+  }
   if(p.role==='gestor'){ui.team=p.team;ui.sub='metas';}
+  else if(p.role==='vendedor'){ui.team=p.team;ui.sub='metas';}
   else ui.team='head';
+  buildUI();
   renderAll();
 }
-function swTeam(tid) { ui.team=tid; if(tid!=='head') ui.sub='metas'; buildUI(); renderAll(); }
+function swTeam(tid) {
+  // Vendedor não pode trocar de time
+  if(currentProfile && PROFILES[currentProfile] && PROFILES[currentProfile].role==='vendedor'){
+    return;
+  }
+  ui.team=tid; if(tid!=='head') ui.sub='metas'; buildUI(); renderAll();
+}
 function swSub(sub) {
+  // Vendedor só pode ver metas/dia/semanal
+  if(currentProfile && PROFILES[currentProfile] && PROFILES[currentProfile].role==='vendedor'){
+    if(['origem','hist','insights'].indexOf(sub)>=0) return;
+  }
   ui.sub=sub;
   document.querySelectorAll('.stab').forEach(function(t){t.classList.remove('on');}); var el=document.getElementById('st-'+sub); if(el) el.classList.add('on');
   document.querySelectorAll('.subpanel').forEach(function(p){p.classList.remove('on');}); var sp=document.getElementById('sp-'+sub); if(sp) sp.classList.add('on');
@@ -694,22 +899,66 @@ function renderCurrentSub() {
 function applyAccess(){
   if(!currentProfile)return;
   var p=PROFILES[currentProfile];
+  var isVend=p.role==='vendedor';
   var edit=(p.role==='gestor')&&(p.team===ui.team);
-  // Enable/disable all number inputs in team panel
-  document.querySelectorAll('#panel-team input[type="number"]').forEach(function(inp){
+
+  // Inputs (numbers + cur inputs)
+  document.querySelectorAll('#panel-team input').forEach(function(inp){
     inp.disabled=!edit;
     inp.style.opacity=edit?'1':'0.4';
     inp.style.cursor=edit?'text':'not-allowed';
   });
-  // Enable/disable buttons
+  // Botões de toggle/remove/add nas tabelas
   document.querySelectorAll('.tgl-btn,.rm-btn,.add-btn').forEach(function(b){
     b.disabled=!edit;
     b.style.opacity=edit?'1':'0.4';
     b.style.cursor=edit?'pointer':'not-allowed';
   });
-  // Show/hide add vendor button
+  // Botões de input wrap-currency
+  document.querySelectorAll('.ni-cur').forEach(function(w){
+    w.style.opacity=edit?'1':'0.45';
+  });
+  // + Vendedor button
   var addBtn=document.querySelector('[onclick="addVendedor()"]');
   if(addBtn){addBtn.style.display=edit?'':'none';}
+  // ✕ Remove buttons individuais (rmBtn em cada linha de Metas)
+  document.querySelectorAll('button[title="Remover vendedor"]').forEach(function(b){b.style.display=edit?'':'none';});
+  // Toggle Ativo/Férias
+  document.querySelectorAll('button').forEach(function(b){
+    if(/Ativo|Férias/.test(b.textContent||'') && !isVend){
+      // Gestor pode mexer; head e vendedor não
+      if(p.role!=='gestor'||p.team!==ui.team){b.disabled=true;b.style.opacity='0.4';b.style.cursor='not-allowed';}
+    }
+  });
+
+  // VENDEDOR: esconde Head + outros times, abas proibidas, save, auth
+  if(isVend){
+    // Tab tops: só mostra o time dele
+    document.querySelectorAll('.ttab').forEach(function(t){
+      t.style.display = (t.classList.contains('on-'+p.team) || t.textContent.toLowerCase().indexOf(TEAMS[p.team].label.toLowerCase())>=0) ? '' : 'none';
+    });
+    // Sub-tabs: só metas, dia, semanal
+    ['st-origem','st-hist','st-insights'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.style.display='none';
+    });
+    ['st-metas','st-dia','st-semanal'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.style.display='';
+    });
+    // Esconde botão Salvar e a barra de auth Google
+    var saveBtn=document.querySelector('.btn-sv'); if(saveBtn) saveBtn.style.display='none';
+    var authBar=document.querySelector('.auth-bar'); if(authBar) authBar.style.display='none';
+    // Garante que está no time dele e não numa sub-tab proibida
+    if(ui.team!==p.team){ ui.team=p.team; }
+    if(['origem','hist','insights'].indexOf(ui.sub)>=0){ ui.sub='metas'; }
+  } else {
+    // Restaura visibilidade normal
+    document.querySelectorAll('.ttab').forEach(function(t){t.style.display='';});
+    ['st-origem','st-hist','st-insights','st-metas','st-dia','st-semanal'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.style.display='';
+    });
+    var saveBtn=document.querySelector('.btn-sv'); if(saveBtn) saveBtn.style.display='';
+    var authBar=document.querySelector('.auth-bar'); if(authBar) authBar.style.display='';
+  }
 }
 function renderMetas(tid, t) {
   var td = getTD(tid); var mc = getMC();
@@ -728,11 +977,12 @@ function renderMetas(tid, t) {
 
     var tr = document.createElement('tr');
     tr.style.opacity = ativo ? '1' : '0.5';
+    if(isOwnRow(i)) tr.style.cssText = (tr.style.cssText||'') + ';' + ownRowStyle(i);
 
     // Nome
     var tdNome = document.createElement('td'); tdNome.className = 'L';
     tdNome.style.padding = '7px 10px';
-    tdNome.innerHTML = '<div class="sc"><span class="av ' + s.c + '">' + s.av + '</span>' + s.n + '</div>';
+    tdNome.innerHTML = '<div class="sc"><span class="av ' + s.c + '">' + s.av + '</span>' + s.n + (isOwnRow(i)?' <span style="font-family:monospace;font-size:8px;color:var(--cart);">(você)</span>':'') + '</div>';
     tr.appendChild(tdNome);
 
     // Toggle Ativo/Férias
@@ -1115,7 +1365,8 @@ function renderSemanal(tid,t){
     if(prevDias){var pf=0;prevDias.forEach(function(d){var dd=td.daily[d];if(dd&&dd.sellers&&dd.sellers[i])pf+=dd.sellers[i].fat||0;});if(pf>0){var wp=Math.round((fat-pf)/pf*100);wow=(wp>=0?'+':'')+wp+'%';wowCls=wp>=0?'good':'bad';}}
     totF+=fat;totP+=pag;totL+=leads;totM+=msv;if(nTtr>0){totTkr+=ttrSum/nTtr;nTkr++;}
     var tr=document.createElement('tr');
-    tr.innerHTML='<td class="L" style="padding:7px 12px"><div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+'</div></td>'
+    if(isOwnRow(i)) tr.style.cssText = ownRowStyle(i);
+    tr.innerHTML='<td class="L" style="padding:7px 12px"><div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+(isOwnRow(i)?' <span style="font-family:monospace;font-size:8px;color:var(--cart);">(você)</span>':'')+'</div></td>'
       +'<td style="padding:7px 12px;text-align:right">'+(fat>0?fmtR(fat):'—')+'</td>'
       +'<td style="padding:7px 12px;text-align:right">'+pag+'</td><td style="padding:7px 12px;text-align:right">'+leads+'</td>'
       +'<td style="padding:7px 12px;text-align:right"><span class="auto '+convCls(leads,pag)+'">'+aConv(leads,pag)+'</span></td>'
@@ -1138,7 +1389,9 @@ function renderSemanal(tid,t){
   var wbody=document.getElementById('wowBody');if(!wbody)return;wbody.innerHTML='';var wTots=[0,0,0,0];
   t.sellers.forEach(function(s,i){
     if(td.sellers[i]&&td.sellers[i].ativo===false)return;
-    var tr=document.createElement('tr');var cells='<td class="L" style="padding:7px 12px"><div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+'</div></td>';var tot=0;
+    var tr=document.createElement('tr');
+    if(isOwnRow(i)) tr.style.cssText = ownRowStyle(i);
+    var cells='<td class="L" style="padding:7px 12px"><div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+(isOwnRow(i)?' <span style="font-family:monospace;font-size:8px;color:var(--cart);">(você)</span>':'')+'</div></td>';var tot=0;
     [1,2,3,4].forEach(function(w){
       var wf=0;(mc.wDias[w]||[]).forEach(function(d){var dd=td.daily[d];if(dd&&dd.sellers&&dd.sellers[i])wf+=dd.sellers[i].fat||0;});
       var msv2=(td.sellers[i]&&td.sellers[i].metaFat||0)/4;var p=msv2>0?Math.round(wf/msv2*100):null;
@@ -1277,10 +1530,11 @@ function renderDayTable(tid,t,mc){
     if((sd.tkt_rec||0)>0){totTkr+=sd.tkt_rec;nTkr++;}
     totM+=metaDia;totML+=metaL;
     var tr=document.createElement('tr');
+    if(isOwnRow(i)) tr.style.cssText = ownRowStyle(i);
     function mkTd(s2,h){var td2=document.createElement('td');if(s2)td2.style.cssText=s2;td2.innerHTML=h;return td2;}
     function mkInp(val,w,fn2){var inp=document.createElement('input');inp.type='number';inp.className='ni';if(w)inp.style.width=w;inp.value=val||'';inp.placeholder='0';inp.oninput=(function(f2){return function(){updDay(tid,d,i,f2,this.value);};})(fn2);var td2=document.createElement('td');td2.style.cssText='padding:7px 12px;text-align:right';td2.appendChild(inp);return td2;}
     function mkCurInp(val,w,fn2){var wrap=document.createElement('span');wrap.className='ni-cur';var pre=document.createElement('span');pre.textContent='R$';var inp=document.createElement('input');inp.type='text';inp.inputMode='decimal';if(w)inp.style.width=w;inp.value=val?fmtN(val):'';inp.placeholder='0';inp.oninput=(function(f2){return function(){var n=parseBR(this.value);updDay(tid,d,i,f2,n);};})(fn2);inp.onfocus=function(){this.select();};inp.onblur=function(){var n=parseBR(this.value);this.value=n?fmtN(n):'';};wrap.appendChild(pre);wrap.appendChild(inp);var td2=document.createElement('td');td2.style.cssText='padding:7px 12px;text-align:right';td2.appendChild(wrap);return td2;}
-    tr.appendChild(mkTd('padding:7px 12px','<div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+'</div>'));
+    tr.appendChild(mkTd('padding:7px 12px','<div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+(isOwnRow(i)?' <span style="font-family:monospace;font-size:8px;color:var(--cart);">(você)</span>':'')+'</div>'));
     tr.appendChild(mkCurInp(sd.fat,'','fat'));
     tr.appendChild(mkInp(sd.pagos,'65px','pagos'));
     tr.appendChild(mkInp(sd.leads,'65px','leads'));
@@ -1320,7 +1574,8 @@ function renderAcum(tid,t,mc){
     var proj=fat/diasL*mc.dias;var pct=meta>0?Math.round(fat/meta*100):null;var gap=meta>0?fat-meta:null;
     totF+=fat;totP+=pag;totL+=leads;totM+=meta;
     var tr=document.createElement('tr');
-    tr.innerHTML='<td class="L"><div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+'</div></td>'
+    if(isOwnRow(i)) tr.style.cssText = ownRowStyle(i);
+    tr.innerHTML='<td class="L"><div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+(isOwnRow(i)?' <span style="font-family:monospace;font-size:8px;color:var(--cart);">(você)</span>':'')+'</div></td>'
       +'<td>'+(fat>0?fmtR(fat):'—')+'</td><td>'+pag+'</td><td>'+leads+'</td>'
       +'<td><span class="auto '+convCls(leads,pag)+'">'+aConv(leads,pag)+'</span></td>'
       +'<td class="auto">'+aTkt(fat,pag)+'</td>'
@@ -1739,36 +1994,52 @@ function syncSellersFromState(){
 // INICIALIZAÇÃO
 // =====================================================
 function init(){
-  // Restaurar perfil salvo
-  try {
-    var savedProf = localStorage.getItem('kc_prof_v6');
-    if(savedProf && PROFILES[savedProf]) currentProfile = savedProf;
-  } catch(e){}
-
-  // Carregar dados locais primeiro (rápido)
+  // Carrega dados base sempre (estrutura, sellers, etc.)
   loadLocal();
   syncSellersFromState();
+  buildSellerProfiles();
   initT();
 
-  // Definir time inicial baseado no perfil
-  if(currentProfile && PROFILES[currentProfile]){
-    var p = PROFILES[currentProfile];
-    if(p.role==='gestor') ui.team = p.team;
+  // Verifica se já está logado nesta sessão (sessionStorage = limpo ao fechar tab)
+  var savedToken = sessionStorage.getItem('kc_token');
+  var savedExp = parseInt(sessionStorage.getItem('kc_token_exp')||'0');
+  var savedPid = sessionStorage.getItem('kc_pid');
+  var savedName = sessionStorage.getItem('kc_name');
+  var alreadyLogged = savedToken && savedExp > Date.now() && savedPid && PROFILES[savedPid];
+
+  if (alreadyLogged) {
+    gToken = savedToken;
+    currentProfile = savedPid;
+    var p = PROFILES[savedPid];
+    if(p.role==='gestor'||p.role==='vendedor') ui.team = p.team;
     else ui.team = 'head';
+    hideLogin();
+    showUserChip(savedPid, savedName);
+    buildUI();
+    buildMonthBar();
+    checkCloseBanner();
+    renderAll();
+    setAuthUI(true);
+    loadFromSheets();
+  } else {
+    // Não logado: mostra apenas a tela de login
+    showLogin();
+    // Construir UI por trás (será exibida só após login)
+    buildUI();
+    buildMonthBar();
+    checkCloseBanner();
   }
 
-  buildUI();
-  buildMonthBar();
-  checkCloseBanner();
-  renderAll();
-  setAuthUI(false);
-
-  // Tentar carregar GSI em background (sem forçar login)
-  var s = document.createElement('script');
-  s.src = 'https://accounts.google.com/gsi/client';
-  s.onload = function(){ window._gsiLoaded = true; initGSI(); };
-  s.onerror = function(){ /* offline ou bloqueado */ };
-  document.head.appendChild(s);
+  // Carrega GIS para o botão de login funcionar
+  if (!window._gsiLoaded) {
+    var s = document.createElement('script');
+    s.src = 'https://accounts.google.com/gsi/client';
+    s.onload = function(){ window._gsiLoaded = true; initGSI(); };
+    s.onerror = function(){ showLoginError('Não foi possível carregar o login do Google. Verifique sua conexão.'); };
+    document.head.appendChild(s);
+  } else {
+    initGSI();
+  }
 }
 
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
