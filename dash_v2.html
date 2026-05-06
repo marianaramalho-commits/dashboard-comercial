@@ -302,7 +302,7 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
       <div class="card"><div class="ch"><div class="ct">📈 Acumulado <span class="chip chip-c">AUTO</span></div></div>
       <div class="tw"><table class="dt"><thead><tr><th class="L">Vendedor</th><th>Fat.</th><th>Pagos</th><th>Leads</th><th>Conv.%</th><th>Tkt rec.</th><th>Tkt real.</th><th>Meta</th><th>% Meta</th><th>Projeção</th><th>Gap</th><th>Status</th></tr></thead>
       <tbody id="acumBody"></tbody>
-      <tfoot><tr class="TR"><td class="L">TIME</td><td id="ac_f">—</td><td id="ac_p">—</td><td id="ac_l">—</td><td><span class="auto" id="ac_c">—</span></td><td><span class="auto" id="ac_t">—</span></td><td id="ac_m">—</td><td><span class="auto" id="ac_pct">—</span></td><td><span class="auto" id="ac_proj">—</span></td><td><span class="auto" id="ac_gap">—</span></td><td>—</td></tr></tfoot>
+      <tfoot><tr class="TR"><td class="L">TIME</td><td id="ac_f">—</td><td id="ac_p">—</td><td id="ac_l">—</td><td id="ac_c">—</td><td id="ac_tkr">—</td><td id="ac_t">—</td><td id="ac_m">—</td><td id="ac_pct">—</td><td id="ac_proj">—</td><td id="ac_gap">—</td><td>—</td></tr></tfoot>
       </table></div></div>
     </div>
     <div id="sp-semanal" class="subpanel">
@@ -769,6 +769,22 @@ function pctCls(f,m) { if(!m||m===0) return ''; var p=f/m*100; return p>=100?'go
 function stBadge(pct) { if(pct===null) return '—'; if(pct>=100) return '<span class="stb stb-ok">✅ Meta</span>'; if(pct>=70) return '<span class="stb stb-warn">⚠️ Risco</span>'; return '<span class="stb stb-bad">🔴 Abaixo</span>'; }
 function oKey(o) { return o.replace(/\s*\/\s*/g,'_').replace(/\s+/g,'_').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 function setTxt(id,v) { var e=document.getElementById(id); if(e) e.textContent=v; }
+// Dias úteis decorridos no mês até hoje (calendário). Usado para meta proporcional.
+function getWorkdaysElapsed(mc){
+  var today=new Date();
+  var dd=('0'+today.getDate()).slice(-2);
+  var mm=('0'+(today.getMonth()+1)).slice(-2);
+  var yyyy=today.getFullYear();
+  var todayKey=yyyy+'-'+mm;
+  if(todayKey<mc.key) return 0;        // mês futuro: nada decorrido
+  if(todayKey>mc.key) return mc.dias;  // mês passado: tudo decorrido
+  var todayStr=dd+'/'+mm;
+  var elapsed=0;
+  for(var i=0;i<mc.du.length;i++){
+    if(mc.du[i].d<=todayStr) elapsed++;
+  }
+  return elapsed||1; // mínimo 1 para não dar divisão por zero em comparações
+}
 function setEl(id,v,cls) { var e=document.getElementById(id); if(e){if(typeof v==='string'&&v.indexOf('<')>=0)e.innerHTML=v;else e.textContent=v;if(cls)e.className=cls;} }
 function canEdit() { return currentProfile && PROFILES[currentProfile] && PROFILES[currentProfile].role==='gestor' && PROFILES[currentProfile].team===ui.team; }
 // Verifica se o índice i é o vendedor logado (para destaque de linha)
@@ -1565,35 +1581,65 @@ function renderDayTable(tid,t,mc){
 
 function renderAcum(tid,t,mc){
   var td=getTD(tid);var tbody=document.getElementById('acumBody');tbody.innerHTML='';
+  // diasL = dias úteis com algum dado (>0) — usado para projeção
   var diasL=mc.du.filter(function(d){var dd=td.daily[d.d];return dd&&dd.sellers&&dd.sellers.some(function(s){return(s.fat||0)>0;});}).length||1;
-  var totF=0,totP=0,totL=0,totM=0;
+  // diasElapsed = dias úteis decorridos no calendário até hoje — usado para meta proporcional e gap
+  var diasElapsed=getWorkdaysElapsed(mc);
+  var totF=0,totP=0,totL=0,totM=0,totTtrSum=0,totTtrN=0;
   t.sellers.forEach(function(s,i){
-    var fat=0,pag=0,leads=0;
-    mc.du.forEach(function(d){var dd=td.daily[d.d];if(dd&&dd.sellers&&dd.sellers[i]){fat+=dd.sellers[i].fat||0;pag+=dd.sellers[i].pagos||0;leads+=dd.sellers[i].leads||0;}});
+    var fat=0,pag=0,leads=0,ttrSum=0,ttrN=0;
+    mc.du.forEach(function(d){
+      var dd=td.daily[d.d];
+      if(dd&&dd.sellers&&dd.sellers[i]){
+        fat+=dd.sellers[i].fat||0;
+        pag+=dd.sellers[i].pagos||0;
+        leads+=dd.sellers[i].leads||0;
+        if((dd.sellers[i].tkt_rec||0)>0){ ttrSum+=dd.sellers[i].tkt_rec; ttrN++; }
+      }
+    });
     var meta=(td.sellers[i]||{}).metaFat||0;
-    var proj=fat/diasL*mc.dias;var pct=meta>0?Math.round(fat/meta*100):null;var gap=meta>0?fat-meta:null;
+    var tktReal = pag>0 ? fat/pag : 0;
+    var tktRec = ttrN>0 ? ttrSum/ttrN : 0;
+    var proj = (fat/diasL)*mc.dias;
+    var pct = meta>0 ? Math.round(fat/meta*100) : null;
+    // Gap PROPORCIONAL: meta × (dias decorridos ÷ total dias) - fat
+    var metaProp = meta>0 ? meta*(diasElapsed/mc.dias) : 0;
+    var gap = (meta>0 && diasElapsed>0) ? fat - metaProp : null;
+
     totF+=fat;totP+=pag;totL+=leads;totM+=meta;
+    if(ttrN>0){ totTtrSum+=ttrSum/ttrN; totTtrN++; }
+
     var tr=document.createElement('tr');
     if(isOwnRow(i)) tr.style.cssText = ownRowStyle(i);
+    var gapTitle = metaProp>0 ? 'Meta proporcional até hoje (dia '+diasElapsed+'/'+mc.dias+'): '+fmtR(metaProp) : '';
     tr.innerHTML='<td class="L"><div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+(isOwnRow(i)?' <span style="font-family:monospace;font-size:8px;color:var(--cart);">(você)</span>':'')+'</div></td>'
-      +'<td>'+(fat>0?fmtR(fat):'—')+'</td><td>'+pag+'</td><td>'+leads+'</td>'
+      +'<td>'+(fat>0?fmtR(fat):'—')+'</td>'
+      +'<td>'+pag+'</td>'
+      +'<td>'+leads+'</td>'
       +'<td><span class="auto '+convCls(leads,pag)+'">'+aConv(leads,pag)+'</span></td>'
-      +'<td class="auto">'+aTkt(fat,pag)+'</td>'
-      +'<td>'+fmtR(meta)+'</td>'
+      +'<td>'+(tktRec>0?fmtR(tktRec):'—')+'</td>'
+      +'<td><span class="auto">'+(tktReal>0?fmtR(tktReal):'—')+'</span></td>'
+      +'<td>'+(meta>0?fmtR(meta):'—')+'</td>'
       +'<td><span class="auto '+pctCls(fat,meta)+'">'+(pct!==null?pct+'%':'—')+'</span></td>'
-      +'<td class="auto">'+(proj>0?fmtR(proj):'—')+'</td>'
-      +'<td><span class="auto '+(gap===null?'':gap>=0?'good':'bad')+'">'+(gap!==null?(gap>=0?'+':'')+fmtR(gap):'—')+'</span></td>'
+      +'<td><span class="auto">'+(proj>0?fmtR(proj):'—')+'</span></td>'
+      +'<td title="'+gapTitle+'"><span class="auto '+(gap===null?'':gap>=0?'good':'bad')+'">'+(gap!==null?(gap>=0?'+':'')+fmtR(gap):'—')+'</span></td>'
       +'<td>'+stBadge(pct)+'</td>';
     tbody.appendChild(tr);
   });
-  var totProj=totF/diasL*mc.dias;var totPct=totM>0?Math.round(totF/totM*100):null;var totGap=totM>0?totF-totM:null;
+  var totTktReal = totP>0 ? totF/totP : 0;
+  var totTktRec = totTtrN>0 ? totTtrSum/totTtrN : 0;
+  var totProj = (totF/diasL)*mc.dias;
+  var totPct = totM>0 ? Math.round(totF/totM*100) : null;
+  var totMetaProp = totM>0 ? totM*(diasElapsed/mc.dias) : 0;
+  var totGap = (totM>0 && diasElapsed>0) ? totF - totMetaProp : null;
   setTxt('ac_f',fmtR(totF));setTxt('ac_p',totP);setTxt('ac_l',totL);
-  setEl('ac_c',aConv(totL,totP),'auto '+convCls(totL,totP));
-  setEl('ac_t',aTkt(totF,totP),'auto');
+  setEl('ac_c','<span class="auto '+convCls(totL,totP)+'">'+aConv(totL,totP)+'</span>','');
+  setTxt('ac_tkr', totTktRec>0?fmtR(totTktRec):'—');
+  setEl('ac_t','<span class="auto">'+(totTktReal>0?fmtR(totTktReal):'—')+'</span>','');
   setTxt('ac_m',fmtR(totM));
-  setEl('ac_pct',totPct!==null?totPct+'%':'—','auto '+pctCls(totF,totM));
-  setEl('ac_proj',totProj>0?fmtR(totProj):'—','auto');
-  setEl('ac_gap',totGap!==null?(totGap>=0?'+':'')+fmtR(totGap):'—','auto '+(totGap===null?'':totGap>=0?'good':'bad'));
+  setEl('ac_pct','<span class="auto '+pctCls(totF,totM)+'">'+(totPct!==null?totPct+'%':'—')+'</span>','');
+  setEl('ac_proj','<span class="auto">'+(totProj>0?fmtR(totProj):'—')+'</span>','');
+  setEl('ac_gap','<span class="auto '+(totGap===null?'':totGap>=0?'good':'bad')+'">'+(totGap!==null?(totGap>=0?'+':'')+fmtR(totGap):'—')+'</span>','');
 }
 
 // =====================================================
