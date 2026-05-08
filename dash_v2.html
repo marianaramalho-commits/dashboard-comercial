@@ -171,8 +171,8 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 </style>
 </head>
 <body>
-<!-- Login Screen (Google Sign-In + Modo Provisório) -->
-<div id="loginScreen" class="login-overlay">
+<!-- Login Screen (DESATIVADO temporariamente — usar barra de perfil) -->
+<div id="loginScreen" class="login-overlay" style="display:none;">
   <div class="login-card">
     <div class="login-logo">Konsi<span>.</span>Comercial</div>
     <div style="font-family:monospace;font-size:9px;color:var(--cart);background:var(--cartd);border:1px solid var(--cartb);border-radius:4px;padding:2px 8px;display:inline-block;">DASHBOARD COMERCIAL 2026</div>
@@ -218,16 +218,17 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 </div>
 <!-- Barras antigas de auth e profile removidas: agora o login obrigatório define o perfil automaticamente.
      Os elementos abaixo ficam invisíveis mas existem para evitar erros de JS que ainda referenciam IDs. -->
-<div class="auth-bar" style="display:none;">
-  <span class="auth-lbl off" id="authLbl">—</span>
-  <button class="btn-goo con" id="authBtn">—</button>
+<div class="auth-bar">
+  <span class="auth-lbl off" id="authLbl">⚠️ Não conectado ao Google Sheets — clique para conectar e compartilhar dados</span>
+  <button class="btn-goo con" id="authBtn" onclick="connectGoogle()">Conectar com Google ↗</button>
 </div>
-<div class="profbar" style="display:none;">
+<div class="profbar">
   <span class="plbl">Quem está acessando:</span>
   <div id="profileBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
-  <span class="proflbl" id="proflbl">—</span>
+  <span class="proflbl" id="proflbl">Selecione seu perfil</span>
 </div>
-<div class="profbar" id="sellerProfBar" style="display:none;">
+<div class="profbar" id="sellerProfBar" style="background:var(--s2);">
+  <span class="plbl">Sou vendedor:</span>
   <div id="sellerBtns" style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;"></div>
 </div>
 
@@ -414,22 +415,24 @@ var TEAMS = {
 
 // Mapping email HubSpot → vendedor → time
 // Usado pelo workflow n8n para identificar deals e pelo dashboard para marcar campos automáticos
+// SELLER_EMAILS = lista de quem PODE LOGAR como vendedor.
+// Vendedores que estão no TEAMS mas NÃO estão aqui ficam visíveis no dashboard
+// porém não conseguem fazer login (acesso desativado).
 var SELLER_EMAILS = {
   // Carteira
   'ingridfigueiredo@konsi.com.br':   {team:'cart', name:'Ingrid'},
   'isabelledeazevedo@konsi.com.br':  {team:'cart', name:'Isabelle'},
   'manasses@konsi.com.br':           {team:'cart', name:'Manasses'},
-  'paulovitor@konsi.com.br':         {team:'cart', name:'Paulo'},
+  // 'paulovitor@konsi.com.br':      ACESSO DESATIVADO (continua visível no dash)
   'alicerosa@konsi.com.br':          {team:'cart', name:'Alice'},
   'vagnermoura@konsi.com.br':        {team:'cart', name:'Vagner'},
-  // Ativação
+  // Ativação + Novos Usuários
   'silasaragao@konsi.com.br':        {team:'atv',  name:'Silas'},
   'luanaoliveira@konsi.com.br':      {team:'atv',  name:'Luana'},
   'anacarolina@konsi.com.br':        {team:'atv',  name:'Ana Carolina'},
   'lucasrangel@konsi.com.br':        {team:'atv',  name:'Lucas'},
-  'titocanario@konsi.com.br':        {team:'atv',  name:'Tito'},
+  // 'titocanario@konsi.com.br':     ACESSO DESATIVADO (continua visível no dash)
   'larissamirella@konsi.com.br':     {team:'atv',  name:'Larissa'},
-  // Novos Usuários (fundidos em Ativação)
   'camilequeiroz@konsi.com.br':      {team:'atv',  name:'Camile'},
   'madsonbrito@konsi.com.br':        {team:'atv',  name:'Madson'},
   'gabrieloliveira@konsi.com.br':    {team:'atv',  name:'Gabriel'}
@@ -2251,51 +2254,38 @@ function syncSellersFromState(){
 // INICIALIZAÇÃO
 // =====================================================
 function init(){
-  // Carrega dados base sempre (estrutura, sellers, etc.)
+  // Restaurar perfil salvo (sistema antigo, sem login obrigatório)
+  try {
+    var savedProf = localStorage.getItem('kc_prof_v6');
+    if(savedProf && PROFILES[savedProf]) currentProfile = savedProf;
+  } catch(e){}
+
+  // Carrega dados base sempre
   loadLocal();
-  migrateNovToAtv(); // Unifica time Novos em Ativação (uma única vez)
+  migrateNovToAtv();           // Unifica time Novos em Ativação
   syncSellersFromState();
   buildSellerProfiles();
   initT();
 
-  // Verifica se já está logado nesta sessão (sessionStorage = limpo ao fechar tab)
-  var savedToken = sessionStorage.getItem('kc_token');
-  var savedExp = parseInt(sessionStorage.getItem('kc_token_exp')||'0');
-  var savedPid = sessionStorage.getItem('kc_pid');
-  var savedName = sessionStorage.getItem('kc_name');
-  var savedProv = sessionStorage.getItem('kc_prov')==='1';
-  var alreadyLoggedGoogle = savedToken && savedExp > Date.now() && savedPid && PROFILES[savedPid];
-  var alreadyLoggedProv = savedProv && savedPid && PROFILES[savedPid];
-
-  if (alreadyLoggedGoogle || alreadyLoggedProv) {
-    if(alreadyLoggedGoogle) gToken = savedToken;
-    currentProfile = savedPid;
-    var p = PROFILES[savedPid];
+  // Time inicial baseado no perfil
+  if(currentProfile && PROFILES[currentProfile]){
+    var p = PROFILES[currentProfile];
     if(p.role==='gestor'||p.role==='vendedor') ui.team = p.team;
     else ui.team = 'head';
-    hideLogin();
-    showUserChip(savedPid, savedName);
-    buildUI();
-    buildMonthBar();
-    checkCloseBanner();
-    renderAll();
-    if(alreadyLoggedGoogle){ setAuthUI(true); loadFromSheets(); }
-    else { setTxt('slbl','provisório (sem Sheets)'); }
-  } else {
-    // Não logado: mostra apenas a tela de login
-    showLogin();
-    // Construir UI por trás (será exibida só após login)
-    buildUI();
-    buildMonthBar();
-    checkCloseBanner();
   }
 
-  // Carrega GIS para o botão de login funcionar
+  buildUI();
+  buildMonthBar();
+  checkCloseBanner();
+  renderAll();
+  setAuthUI(false);
+
+  // Carrega GIS em background pra o botão "Conectar com Google" funcionar (opcional)
   if (!window._gsiLoaded) {
     var s = document.createElement('script');
     s.src = 'https://accounts.google.com/gsi/client';
     s.onload = function(){ window._gsiLoaded = true; initGSI(); };
-    s.onerror = function(){ showLoginError('Não foi possível carregar o login do Google. Verifique sua conexão.'); };
+    s.onerror = function(){ /* offline ou bloqueado */ };
     document.head.appendChild(s);
   } else {
     initGSI();
