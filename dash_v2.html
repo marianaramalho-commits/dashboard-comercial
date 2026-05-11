@@ -12,7 +12,7 @@
   --bg:#FFFFFF;--s1:#FFFFFF;--s2:#F5F6FA;--s3:#ECEEF5;--bd:#E0E4EF;--bd2:#CBD1E1;
   --head:#8B7FF5;--headd:rgba(139,127,245,.1);--headb:rgba(139,127,245,.2);
   --cart:#00CFA8;--cartd:rgba(0,207,168,.09);--cartb:rgba(0,207,168,.2);
-  --atv:#FFAA30;--atvd:rgba(255,170,48,.09);--atvb:rgba(255,170,48,.2);
+  --atv:#FF6060;--atvd:rgba(255,96,96,.09);--atvb:rgba(255,96,96,.2);
   --nov:#FFAA30;--novd:rgba(255,170,48,.09);--novb:rgba(255,170,48,.2);
   --green:#1EC97A;--gd:rgba(30,201,122,.09);
   --red:#FF3D5C;--rd:rgba(255,61,92,.09);
@@ -142,7 +142,7 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 .stabs2{display:flex;gap:4px;padding:8px 12px;border-bottom:1px solid var(--bd);flex-wrap:wrap;}
 .stabtn{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:16px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--bd);color:var(--t3);transition:all .15s;background:transparent;}
 .stabtn.on{background:var(--cartd);border-color:var(--cartb);color:var(--cart);}
-.hgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+.hgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
 .hgc{border-radius:8px;padding:13px;border:1px solid;}
 .hgr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
 .hgrk{font-family:monospace;font-size:8px;color:var(--t3);}
@@ -268,14 +268,16 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
     <div class="hgrid">
       <div class="hgc" style="background:var(--cartd);border-color:var(--cartb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--cart);margin-bottom:8px;">🟦 Carteira</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hcc_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hcc_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hcc_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hcc_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hcc_b" style="width:0%;background:var(--cart)"></div></div>
         <div id="hcc_vends" style="margin-top:8px;font-family:monospace;font-size:9px;color:var(--t3);line-height:1.6"></div></div>
-      <div class="hgc" style="background:var(--atvd);border-color:var(--atvb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--atv);margin-bottom:8px;">🟡 Ativação + Novos Usuários</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hca_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hca_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hca_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hca_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hca_b" style="width:0%;background:var(--atv)"></div></div>
+      <div class="hgc" style="background:var(--atvd);border-color:var(--atvb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--atv);margin-bottom:8px;">🔴 Ativação</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hca_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hca_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hca_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hca_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hca_b" style="width:0%;background:var(--atv)"></div></div>
         <div id="hca_vends" style="margin-top:8px;font-family:monospace;font-size:9px;color:var(--t3);line-height:1.6"></div></div>
+      <div class="hgc" style="background:var(--novd);border-color:var(--novb);"><div style="font-family:'Syne',sans-serif;font-size:10px;font-weight:800;color:var(--nov);margin-bottom:8px;">🟡 Novos Usuários</div><div class="hgr"><span class="hgrk">Fat.</span><span class="hgrv" id="hcn_f">—</span></div><div class="hgr"><span class="hgrk">Pagos</span><span class="hgrv" id="hcn_p">—</span></div><div class="hgr"><span class="hgrk">Conv.</span><span class="hgrv" id="hcn_c">—</span></div><div class="hgr"><span class="hgrk">% Meta</span><span class="hgrv" id="hcn_pct">—</span></div><div class="kb" style="margin-top:6px;"><div class="kbf" id="hcn_b" style="width:0%;background:var(--nov)"></div></div>
+        <div id="hcn_vends" style="margin-top:8px;font-family:monospace;font-size:9px;color:var(--t3);line-height:1.6"></div></div>
     </div>
     <div class="card"><div class="ch"><div class="ct">🏆 Ranking Geral <span class="chip chip-h">TODOS OS TIMES</span></div></div>
     <div class="tw"><table class="dt"><thead><tr><th class="L">#</th><th class="L">Vendedor</th><th>Time</th><th>Fat.</th><th>Pagos</th><th>Leads</th><th>Conv.%</th><th>Tkt</th><th>% Meta</th><th>Status</th></tr></thead><tbody id="rankBody"></tbody></table></div></div>
     <div class="card"><div class="ch"><div class="ct">🔀 Conversão por Origem <span class="chip chip-h">POR TIME · MÊS</span></div></div>
       <div class="tw"><table class="dt">
-        <thead><tr><th class="L">Origem</th><th>Cart. Leads</th><th>Cart. Conv.%</th><th>Cart. Fat.</th><th>Atv. Leads</th><th>Atv. Conv.%</th><th>Atv. Fat.</th></tr></thead>
+        <thead><tr><th class="L">Origem</th><th>Cart. Leads</th><th>Cart. Conv.%</th><th>Cart. Fat.</th><th>Atv. Leads</th><th>Atv. Conv.%</th><th>Atv. Fat.</th><th>Nov. Leads</th><th>Nov. Conv.%</th><th>Nov. Fat.</th></tr></thead>
         <tbody id="headOrigBody"></tbody>
       </table></div></div>
   </div>
@@ -301,6 +303,13 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
         <thead><tr><th class="L">Vendedor</th><th>Status</th><th>Dias ativos</th><th>Meta Fat.</th><th>Meta Conv.%</th><th>Meta Ticket</th><th>Meta/Dia</th><th>Leads/dia</th><th></th></tr></thead>
         <tbody id="metaBody"></tbody>
         <tfoot><tr class="TR"><td class="L">TIME</td><td></td><td></td><td id="mt_f">—</td><td id="mt_c">—</td><td id="mt_t">—</td><td id="mt_d">—</td><td id="mt_l">—</td><td></td></tr></tfoot>
+      </table></div></div>
+
+      <!-- ACUMULADO DO MÊS (espelho do que aparece no Diário, para visão rápida na aba Metas) -->
+      <div class="card"><div class="ch"><div class="ct">📈 Acumulado do Mês <span class="chip chip-c" id="metaAcumChip">AUTO</span></div></div>
+      <div class="tw"><table class="dt"><thead><tr><th class="L">Vendedor</th><th>Fat.</th><th>Pagos</th><th>Leads</th><th>Conv.%</th><th>Tkt rec.</th><th>Tkt real.</th><th>% Meta</th><th>Projeção</th><th>Gap</th><th>Status</th></tr></thead>
+      <tbody id="metaAcumBody"></tbody>
+      <tfoot><tr class="TR"><td class="L">TIME</td><td id="mac_f">—</td><td id="mac_p">—</td><td id="mac_l">—</td><td id="mac_c">—</td><td id="mac_tkr">—</td><td id="mac_t">—</td><td id="mac_pct">—</td><td id="mac_proj">—</td><td id="mac_gap">—</td><td>—</td></tr></tfoot>
       </table></div></div>
     </div>
     <div id="sp-dia" class="subpanel">
@@ -398,19 +407,12 @@ var TEAMS = {
   cart:{ id:'cart', label:'Carteira', color:'var(--cart)', cls:'c', chip:'chip-c', strip:'ts-cart', icon:'🟦', tabOn:'on-cart',
     origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada'],
     sellers:[{n:'Ingrid',av:'IN',c:'av0'},{n:'Isabelle',av:'IS',c:'av1'},{n:'Manasses',av:'MA',c:'av2'},{n:'Paulo',av:'PA',c:'av3'},{n:'Alice',av:'AL',c:'av4'},{n:'Vagner',av:'VA',c:'av5'}]},
-  atv:{ id:'atv', label:'Ativação + Novos Usuários', color:'var(--atv)', cls:'a', chip:'chip-a', strip:'ts-atv', icon:'🟡', tabOn:'on-atv',
+  atv:{ id:'atv', label:'Ativação', color:'var(--atv)', cls:'a', chip:'chip-a', strip:'ts-atv', icon:'🔴', tabOn:'on-atv',
+    origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada'],
+    sellers:[{n:'Silas',av:'SI',c:'av2'},{n:'Luana',av:'LU',c:'av4'},{n:'Ana Carolina',av:'AC',c:'av6'},{n:'Lucas',av:'LC',c:'av5'},{n:'Tito',av:'TI',c:'av7'},{n:'Larissa',av:'LA',c:'avy'}]},
+  nov:{ id:'nov', label:'Novos Usuários', color:'var(--nov)', cls:'n', chip:'chip-n', strip:'ts-nov', icon:'🟡', tabOn:'on-nov',
     origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada','Onboarding'],
-    sellers:[
-      {n:'Silas',av:'SI',c:'av2'},
-      {n:'Luana',av:'LU',c:'av4'},
-      {n:'Ana Carolina',av:'AC',c:'av6'},
-      {n:'Lucas',av:'LC',c:'av5'},
-      {n:'Tito',av:'TI',c:'av7'},
-      {n:'Larissa',av:'LA',c:'avy'},
-      {n:'Camile',av:'CA',c:'av1'},
-      {n:'Madson',av:'MD',c:'av8'},
-      {n:'Gabriel',av:'GB',c:'av3'}
-    ]}
+    sellers:[{n:'Camile',av:'CA',c:'av1'},{n:'Madson',av:'MD',c:'av8'},{n:'Gabriel',av:'GB',c:'av3'}]}
 };
 
 // Mapping email HubSpot → vendedor → time
@@ -426,16 +428,17 @@ var SELLER_EMAILS = {
   // 'paulovitor@konsi.com.br':      ACESSO DESATIVADO (continua visível no dash)
   'alicerosa@konsi.com.br':          {team:'cart', name:'Alice'},
   'vagnermoura@konsi.com.br':        {team:'cart', name:'Vagner'},
-  // Ativação + Novos Usuários
+  // Ativação
   'silasaragao@konsi.com.br':        {team:'atv',  name:'Silas'},
   'luanaoliveira@konsi.com.br':      {team:'atv',  name:'Luana'},
   'anacarolina@konsi.com.br':        {team:'atv',  name:'Ana Carolina'},
   'lucasrangel@konsi.com.br':        {team:'atv',  name:'Lucas'},
   // 'titocanario@konsi.com.br':     ACESSO DESATIVADO (continua visível no dash)
   'larissamirella@konsi.com.br':     {team:'atv',  name:'Larissa'},
-  'camilequeiroz@konsi.com.br':      {team:'atv',  name:'Camile'},
-  'madsonbrito@konsi.com.br':        {team:'atv',  name:'Madson'},
-  'gabrieloliveira@konsi.com.br':    {team:'atv',  name:'Gabriel'}
+  // Novos Usuários
+  'camilequeiroz@konsi.com.br':      {team:'nov',  name:'Camile'},
+  'madsonbrito@konsi.com.br':        {team:'nov',  name:'Madson'},
+  'gabrieloliveira@konsi.com.br':    {team:'nov',  name:'Gabriel'}
 };
 
 // Auto-gera perfis de vendedor (read-only) a partir de SELLER_EMAILS
@@ -463,8 +466,8 @@ function buildSellerProfiles(){
 }
 var PROFILES = {
   giovanna:{ name:'Giovanna', role:'head', team:null, on:'on-head', color:'var(--head)', bg:'var(--headd)', bd:'var(--headb)' },
-  mariana:{ name:'Mariana', role:'gestor', team:'cart', on:'on-cart', color:'var(--cart)', bg:'var(--cartd)', bd:'var(--cartb)' },
-  icaro:{ name:'Ícaro', role:'gestor', team:'atv', on:'on-atv', color:'var(--atv)', bg:'var(--atvd)', bd:'var(--atvb)' }
+  mariana:{ name:'Mariana', role:'gestor', team:'cart', editTeams:['cart'], on:'on-cart', color:'var(--cart)', bg:'var(--cartd)', bd:'var(--cartb)' },
+  icaro:{ name:'Ícaro', role:'gestor', team:'atv', editTeams:['atv','nov'], on:'on-atv', color:'var(--atv)', bg:'var(--atvd)', bd:'var(--atvb)' }
 };
 
 var MONTHS = null; // set below
@@ -769,12 +772,12 @@ function loadFromSheets() {
     if (d.values && d.values[0] && d.values[0][0]) {
       try {
         var loaded = JSON.parse(d.values[0][0]);
-        // Reset flag de migração se o state vindo do Sheets ainda tem dados antigos
-        if(loaded.months && Object.values(loaded.months).some(function(m){return m.teams && m.teams.nov;})){
-          loaded.migration_atv_nov_done = false;
+        // Se o state vindo do Sheets tem atv com 9+ sellers (fundido), separa
+        if(loaded.months && Object.values(loaded.months).some(function(m){return m.teams && m.teams.atv && m.teams.atv.sellers && m.teams.atv.sellers.length>6;})){
+          loaded.unmerge_atv_nov_done = false;
         }
         Object.assign(state, loaded);
-        migrateNovToAtv(); // Migra novamente se vier dado antigo do Sheets
+        unmergeAtvNov(); // Separa de volta se vier fundido do Sheets
         syncSellersFromState();
         buildSellerProfiles();
         initT();
@@ -895,7 +898,13 @@ function getWorkdaysElapsed(mc){
   return elapsed; // pode ser 0 se hoje é o primeiro dia útil do mês
 }
 function setEl(id,v,cls) { var e=document.getElementById(id); if(e){if(typeof v==='string'&&v.indexOf('<')>=0)e.innerHTML=v;else e.textContent=v;if(cls)e.className=cls;} }
-function canEdit() { return currentProfile && PROFILES[currentProfile] && PROFILES[currentProfile].role==='gestor' && PROFILES[currentProfile].team===ui.team; }
+function canEdit() {
+  if(!currentProfile) return false;
+  var p = PROFILES[currentProfile];
+  if(!p || p.role!=='gestor') return false;
+  var teams = p.editTeams || (p.team ? [p.team] : []);
+  return teams.indexOf(ui.team) >= 0;
+}
 // Verifica se o índice i é o vendedor logado (para destaque de linha)
 function isOwnRow(i){
   if(!currentProfile) return false;
@@ -918,7 +927,7 @@ function kpiHtml(lbl,val,sub,color,pct) {
 function buildUI() {
   // Team tabs
   var wrap=document.getElementById('teamTabsWrap'); wrap.innerHTML='';
-  [{id:'head',label:'Head',c:'var(--head)',on:'on-head'},{id:'cart',label:'Carteira',c:'var(--cart)',on:'on-cart'},{id:'atv',label:'Ativação + Novos Usuários',c:'var(--atv)',on:'on-atv'}].forEach(function(tab){
+  [{id:'head',label:'Head',c:'var(--head)',on:'on-head'},{id:'cart',label:'Carteira',c:'var(--cart)',on:'on-cart'},{id:'atv',label:'Ativação',c:'var(--atv)',on:'on-atv'},{id:'nov',label:'Novos Usuários',c:'var(--nov)',on:'on-nov'}].forEach(function(tab){
     var d=document.createElement('div'); d.className='ttab'+(ui.team===tab.id?' '+tab.on:'');
     d.innerHTML='<div class="dot" style="background:'+tab.c+';"></div>'+tab.label;
     d.onclick=(function(id){return function(){swTeam(id);};})(tab.id);
@@ -927,7 +936,7 @@ function buildUI() {
   // Profile btns - apenas Head + Gestores
   var pb=document.getElementById('profileBtns'); pb.innerHTML='';
   var inits={giovanna:'GC',mariana:'MR',icaro:'IS'};
-  var lbs={giovanna:'Head',mariana:'Carteira',icaro:'Ativação + Novos Usuários'};
+  var lbs={giovanna:'Head',mariana:'Carteira',icaro:'Ativação & Novos Usuários'};
   Object.keys(PROFILES).forEach(function(pid){
     var p=PROFILES[pid];
     if(p.role==='vendedor') return; // Vendedores vão na barra separada
@@ -942,7 +951,7 @@ function buildUI() {
   // Seller btns - agrupados por time, em barra separada
   var sb=document.getElementById('sellerBtns'); if(sb){
     sb.innerHTML='';
-    var teams=[{id:'cart',label:'Carteira',color:'var(--cart)'},{id:'atv',label:'Ativação + Novos',color:'var(--atv)'}];
+    var teams=[{id:'cart',label:'Carteira',color:'var(--cart)'},{id:'atv',label:'Ativação',color:'var(--atv)'},{id:'nov',label:'Novos',color:'var(--nov)'}];
     teams.forEach(function(t,ti){
       if(ti>0){var sep=document.createElement('span');sep.style.cssText='color:var(--bd2);font-size:10px;margin:0 4px;';sep.textContent='|';sb.appendChild(sep);}
       var lb=document.createElement('span');lb.style.cssText='font-family:monospace;font-size:9px;color:'+t.color+';font-weight:700;margin-right:3px;';lb.textContent=t.label+':';sb.appendChild(lb);
@@ -967,7 +976,14 @@ function setProfile(pid) {
   var lbl=document.getElementById('proflbl');
   if(lbl){
     if(p.role==='head') lbl.textContent='👑 Leitura completa';
-    else if(p.role==='gestor') lbl.textContent='✏️ Editando: '+TEAMS[p.team].label;
+    else if(p.role==='gestor'){
+      var teams = p.editTeams||[p.team];
+      if(teams.length>1){
+        lbl.textContent='✏️ Editando: '+teams.map(function(t){return TEAMS[t].label;}).join(' & ');
+      } else {
+        lbl.textContent='✏️ Editando: '+TEAMS[p.team].label;
+      }
+    }
     else if(p.role==='vendedor') lbl.textContent='👤 '+p.name+' · '+TEAMS[p.team].label+' (somente leitura)';
   }
   if(p.role==='gestor'){ui.team=p.team;ui.sub='metas';}
@@ -1025,7 +1041,8 @@ function applyAccess(){
   if(!currentProfile)return;
   var p=PROFILES[currentProfile];
   var isVend=p.role==='vendedor';
-  var edit=(p.role==='gestor')&&(p.team===ui.team);
+  var editTeamsArr=p.editTeams||(p.team?[p.team]:[]);
+  var edit=(p.role==='gestor')&&(editTeamsArr.indexOf(ui.team)>=0);
 
   // Inputs (numbers + cur inputs)
   document.querySelectorAll('#panel-team input').forEach(function(inp){
@@ -1052,7 +1069,7 @@ function applyAccess(){
   document.querySelectorAll('button').forEach(function(b){
     if(/Ativo|Férias/.test(b.textContent||'') && !isVend){
       // Gestor pode mexer; head e vendedor não
-      if(p.role!=='gestor'||p.team!==ui.team){b.disabled=true;b.style.opacity='0.4';b.style.cursor='not-allowed';}
+      if(!edit){b.disabled=true;b.style.opacity='0.4';b.style.cursor='not-allowed';}
     }
   });
 
@@ -1199,6 +1216,74 @@ function renderMetas(tid, t) {
     }
   });
   setTxt('mt_l', totalLeads > 0 ? '~' + totalLeads + '/dia' : '—');
+  // Renderiza também o Acumulado do Mês logo abaixo
+  renderMetasAcum(tid, t);
+}
+
+// Acumulado do Mês exibido na aba Metas (espelho do que aparece no Diário)
+function renderMetasAcum(tid, t){
+  var mc = getMC(); var td = getTD(tid);
+  var tbody = document.getElementById('metaAcumBody');
+  if(!tbody) return;
+  tbody.innerHTML = '';
+  var chip = document.getElementById('metaAcumChip');
+  if(chip) chip.textContent = mc.label.toUpperCase();
+  var diasL = mc.du.filter(function(d){var dd=td.daily[d.d];return dd&&dd.sellers&&dd.sellers.some(function(s){return(s.fat||0)>0;});}).length||1;
+  var diasElapsed = getWorkdaysElapsed(mc);
+  var totF=0,totP=0,totL=0,totM=0,totTtrSum=0,totTtrN=0;
+  t.sellers.forEach(function(s,i){
+    var fat=0,pag=0,leads=0,ttrSum=0,ttrN=0;
+    mc.du.forEach(function(d){
+      var dd=td.daily[d.d];
+      if(dd&&dd.sellers&&dd.sellers[i]){
+        fat+=dd.sellers[i].fat||0;
+        pag+=dd.sellers[i].pagos||0;
+        leads+=dd.sellers[i].leads||0;
+        if((dd.sellers[i].tkt_rec||0)>0){ ttrSum+=dd.sellers[i].tkt_rec; ttrN++; }
+      }
+    });
+    var ms=td.sellers[i]||{};
+    var meta=ms.metaFat||0;
+    var metaConv=ms.metaConv||0;
+    var metaTkt=ms.metaTkt||0;
+    var tktReal = pag>0 ? fat/pag : 0;
+    var tktRec = ttrN>0 ? ttrSum/ttrN : 0;
+    var proj = (fat/diasL)*mc.dias;
+    var pct = meta>0 ? Math.round(fat/meta*100) : null;
+    var metaProp = meta>0 ? meta*(diasElapsed/mc.dias) : 0;
+    var gap = (meta>0 && diasElapsed>0) ? fat - metaProp : null;
+    var pctP = pctProp(fat,meta,mc);
+    totF+=fat;totP+=pag;totL+=leads;totM+=meta;
+    if(ttrN>0){ totTtrSum+=ttrSum/ttrN; totTtrN++; }
+    var tr=document.createElement('tr');
+    if(isOwnRow(i)) tr.style.cssText = ownRowStyle(i);
+    var gapTitle = metaProp>0 ? 'Meta proporcional até hoje (dia '+diasElapsed+'/'+mc.dias+'): '+fmtR(metaProp) : '';
+    tr.innerHTML='<td class="L"><div class="sc"><span class="av '+s.c+'">'+s.av+'</span>'+s.n+(isOwnRow(i)?' <span style="font-family:monospace;font-size:8px;color:var(--cart);">(você)</span>':'')+'</div></td>'
+      +'<td>'+(fat>0?fmtR(fat):'—')+'</td>'
+      +'<td>'+pag+'</td>'
+      +'<td>'+leads+'</td>'
+      +'<td><span class="auto '+convCls(leads,pag,metaConv)+'" title="'+(metaConv>0?'Meta: '+metaConv+'%':'')+'">'+aConv(leads,pag)+'</span></td>'
+      +'<td>'+(tktRec>0?fmtR(tktRec):'—')+'</td>'
+      +'<td><span class="auto '+tktCls(fat,pag,metaTkt)+'" title="'+(metaTkt>0?'Meta tkt: '+fmtR(metaTkt):'')+'">'+(tktReal>0?fmtR(tktReal):'—')+'</span></td>'
+      +'<td><span class="auto '+pctCls(fat,meta)+'">'+(pct!==null?pct+'%':'—')+'</span></td>'
+      +'<td><span class="auto">'+(proj>0?fmtR(proj):'—')+'</span></td>'
+      +'<td title="'+gapTitle+'"><span class="auto '+(gap===null?'':gap>=0?'good':'bad')+'">'+(gap!==null?(gap>=0?'+':'')+fmtR(gap):'—')+'</span></td>'
+      +'<td>'+stBadge(pctP)+'</td>';
+    tbody.appendChild(tr);
+  });
+  var totTktReal = totP>0 ? totF/totP : 0;
+  var totTktRec = totTtrN>0 ? totTtrSum/totTtrN : 0;
+  var totProj = (totF/diasL)*mc.dias;
+  var totPct = totM>0 ? Math.round(totF/totM*100) : null;
+  var totMetaProp = totM>0 ? totM*(diasElapsed/mc.dias) : 0;
+  var totGap = (totM>0 && diasElapsed>0) ? totF - totMetaProp : null;
+  setTxt('mac_f',fmtR(totF));setTxt('mac_p',totP);setTxt('mac_l',totL);
+  setEl('mac_c','<span class="auto '+convCls(totL,totP)+'">'+aConv(totL,totP)+'</span>','');
+  setTxt('mac_tkr', totTktRec>0?fmtR(totTktRec):'—');
+  setEl('mac_t','<span class="auto">'+(totTktReal>0?fmtR(totTktReal):'—')+'</span>','');
+  setEl('mac_pct','<span class="auto '+pctCls(totF,totM)+'">'+(totPct!==null?totPct+'%':'—')+'</span>','');
+  setEl('mac_proj','<span class="auto">'+(totProj>0?fmtR(totProj):'—')+'</span>','');
+  setEl('mac_gap','<span class="auto '+(totGap===null?'':totGap>=0?'good':'bad')+'">'+(totGap!==null?(totGap>=0?'+':'')+fmtR(totGap):'—')+'</span>','');
 }
 
 window._gsiLoaded=false;
@@ -1570,7 +1655,7 @@ function renderOrigem(tid,t){
   calcOrigCon(tid,t);
 }
 function renderHead(){
-  var mc=getMC(); var tids=['cart','atv'];
+  var mc=getMC(); var tids=['cart','atv','nov'];
   var totF=0,totP=0,totL=0,totM=0; var tdata={};
   // Dia selecionado (se modo por dia)
   var selDayVal=document.getElementById('headDiaSel')?document.getElementById('headDiaSel').value:'';
@@ -1606,7 +1691,7 @@ function renderHead(){
   if(hfb&&totPct!==null){hfb.style.width=Math.min(totPct,100)+'%';hfb.style.background=totPct>=100?'var(--green)':totPct>=70?'var(--yellow)':'var(--red)';}
 
   // Team cards
-  var hmap={cart:'hcc',atv:'hca'};
+  var hmap={cart:'hcc',atv:'hca',nov:'hcn'};
   tids.forEach(function(tid){
     var d=tdata[tid]; var p=hmap[tid];
     setTxt(p+'_f',d.fat>0?fmtR(d.fat):'—');
@@ -2096,7 +2181,7 @@ function renderOrigenWoW(tid, t) {
 
 function renderHeadOrigConv() {
   var tbody=document.getElementById('headOrigBody'); if(!tbody)return;
-  var tids=['cart','atv']; tbody.innerHTML='';
+  var tids=['cart','atv','nov']; tbody.innerHTML='';
   var allOrigens=['Abandono','Navegação','Esteira','Base / Disparo','Retomada','Onboarding'];
   allOrigens.forEach(function(o){
     var ok=oKey(o); var tr=document.createElement('tr');
@@ -2233,6 +2318,73 @@ function migrateNovToAtv(){
 }
 
 // =====================================================
+// MIGRAÇÃO REVERSA: separar 'atv' (Ativação+Novos fundidos) de volta em 'atv' e 'nov'
+// Detecta se atv tem mais de 6 sellers (sinal que houve fusão antes) e move os últimos pra nov.
+// =====================================================
+function unmergeAtvNov(){
+  if(state.unmerge_atv_nov_done) return;
+  if(!state.months){ state.unmerge_atv_nov_done = true; return; }
+  var ATV_BASE_LEN = 6; // Ativação tinha 6 sellers originalmente
+  var didSomething = false;
+  Object.keys(state.months).forEach(function(mk){
+    var m = state.months[mk];
+    if(!m.teams || !m.teams.atv) return;
+    var atv = m.teams.atv;
+    // Se atv tem 9 sellers (foi fundido), splita
+    if(!atv.sellers || atv.sellers.length <= ATV_BASE_LEN) return;
+    didSomething = true;
+    // Cria nov se não existir
+    if(!m.teams.nov) m.teams.nov = {sellers:[],daily:{},origins:{}};
+    var nov = m.teams.nov;
+    // Move sellers do índice 6+ pra nov
+    var movedSellers = atv.sellers.splice(ATV_BASE_LEN);
+    nov.sellers = (nov.sellers||[]).concat(movedSellers);
+    // Move daily: para cada data, splice os índices 6+ de atv e adiciona em nov
+    if(!atv.daily) atv.daily = {};
+    if(!nov.daily) nov.daily = {};
+    Object.keys(atv.daily).forEach(function(d){
+      var dd = atv.daily[d];
+      if(!dd || !dd.sellers || dd.sellers.length <= ATV_BASE_LEN) return;
+      var movedDaily = dd.sellers.splice(ATV_BASE_LEN);
+      if(!nov.daily[d]) nov.daily[d] = {sellers:[]};
+      nov.daily[d].sellers = (nov.daily[d].sellers||[]).concat(movedDaily);
+    });
+    // Move origens: índices >= 6 vão pra nov com índice ajustado
+    if(atv.origins){
+      Object.keys(atv.origins).forEach(function(wk){
+        var sellersWk = atv.origins[wk];
+        Object.keys(sellersWk).forEach(function(siKey){
+          var oldIdx = parseInt(siKey.replace('s',''));
+          if(isNaN(oldIdx) || oldIdx < ATV_BASE_LEN) return;
+          var newIdx = oldIdx - ATV_BASE_LEN;
+          if(!nov.origins) nov.origins = {};
+          if(!nov.origins[wk]) nov.origins[wk] = {};
+          nov.origins[wk]['s'+newIdx] = sellersWk[siKey];
+          delete sellersWk[siKey];
+        });
+      });
+    }
+  });
+  // customSellers: separar
+  if(state.customSellers && state.customSellers.atv){
+    // Detecta se há sellers de Novos misturados em customSellers.atv (Camile, Madson, Gabriel)
+    var novNames = ['Camile','Madson','Gabriel'];
+    var atvCustom = [], novCustom = [];
+    state.customSellers.atv.forEach(function(s){
+      if(novNames.indexOf(s.n)>=0) novCustom.push(s);
+      else atvCustom.push(s);
+    });
+    if(novCustom.length){
+      state.customSellers.nov = (state.customSellers.nov||[]).concat(novCustom);
+      state.customSellers.atv = atvCustom;
+    }
+  }
+  state.migration_atv_nov_done = false; // permite que migração futura possa rodar de novo (se quiser fundir de novo)
+  state.unmerge_atv_nov_done = true;
+  if(didSomething) console.log('✅ Times separados: atv ↔ nov');
+}
+
+// =====================================================
 // SYNC: garante que TEAMS.sellers reflete o que está em state
 // =====================================================
 function syncSellersFromState(){
@@ -2262,7 +2414,7 @@ function init(){
 
   // Carrega dados base sempre
   loadLocal();
-  migrateNovToAtv();           // Unifica time Novos em Ativação
+  unmergeAtvNov();             // Reverte fusão antiga (separa atv e nov de volta)
   syncSellersFromState();
   buildSellerProfiles();
   initT();
