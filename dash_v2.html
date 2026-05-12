@@ -33,6 +33,7 @@ html,body{background:var(--bg);color:var(--t1);font-family:'DM Sans',sans-serif;
 .ttab.on-cart{background:var(--cartd);border-color:var(--cartb);color:var(--cart);}
 .ttab.on-atv{background:var(--atvd);border-color:var(--atvb);color:var(--atv);}
 .ttab.on-nov{background:var(--novd);border-color:var(--novb);color:var(--nov);}
+.ttab.on-rt{background:var(--headd);border-color:var(--headb);color:var(--head);}
 .tright{display:flex;align-items:center;gap:8px;margin-left:auto;}
 .sdot{width:6px;height:6px;border-radius:50%;background:var(--t3);}
 .sdot.ok{background:var(--green);box-shadow:0 0 5px var(--green);}
@@ -259,42 +260,7 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
       <span style="font-family:var(--fm);font-size:9px;color:var(--t3);font-weight:600;">Visualizar:</span>
       <button id="hbtnMes" onclick="setHeadView('mes')" style="padding:4px 12px;border-radius:16px;border:1px solid var(--cartb);background:var(--cartd);color:var(--cart);font-family:var(--fm);font-size:9px;cursor:pointer;font-weight:700;">Acumulado mês</button>
       <button id="hbtnDia" onclick="setHeadView('dia')" style="padding:4px 12px;border-radius:16px;border:1px solid var(--bd);background:var(--s2);color:var(--t3);font-family:var(--fm);font-size:9px;cursor:pointer;">Por dia</button>
-      <button id="hbtnRT" onclick="setHeadView('realtime')" style="padding:4px 12px;border-radius:16px;border:1px solid var(--bd);background:var(--s2);color:var(--t3);font-family:var(--fm);font-size:9px;cursor:pointer;">📊 Tempo Real</button>
       <input type="date" id="headDiaSel" style="display:none;background:var(--s1);border:1px solid var(--bd);border-radius:5px;padding:3px 8px;font-family:var(--fm);font-size:9px;color:var(--t1);outline:none;" onchange="renderHead()">
-    </div>
-    <!-- VISTA TEMPO REAL (Metabase) — só visível quando headView==='realtime' -->
-    <div id="headRTView" style="display:none;">
-      <div class="card" style="background:linear-gradient(135deg,var(--headd),var(--s1));border-color:var(--headb);">
-        <div style="padding:32px;text-align:center;">
-          <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:900;color:var(--head);letter-spacing:-.02em;margin-bottom:8px;">📊 Acompanhamento em Tempo Real</div>
-          <div style="font-family:'DM Sans',sans-serif;font-size:13px;color:var(--t2);max-width:560px;margin:0 auto 24px;line-height:1.5;">
-            Abra a janela do Metabase ao lado pra acompanhar comissão, pagos e ticket médio do dia atualizados em tempo real.<br>
-            <span style="font-family:monospace;font-size:10px;color:var(--t3);">Vendedores filtrados: time todo · atualização automática Metabase</span>
-          </div>
-          <button onclick="openMetabasePopup()" style="background:var(--head);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:10px;box-shadow:0 4px 14px rgba(139,127,245,.3);transition:all .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(139,127,245,.4)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 14px rgba(139,127,245,.3)';">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            Abrir Painel Tempo Real
-          </button>
-          <div style="margin-top:14px;font-family:monospace;font-size:9px;color:var(--t3);">
-            Será aberta uma janela popup do Metabase. Mantenha-a ao lado do dashboard pro acompanhamento.
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="ch"><div class="ct">🧭 Como usar</div></div>
-        <div style="padding:16px 20px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--t2);line-height:1.7;">
-          <ol style="margin:0;padding-left:18px;">
-            <li>Clique em <strong>"Abrir Painel Tempo Real"</strong> acima</li>
-            <li>Uma janela do Metabase abrirá com os dados em tempo real (já filtrados)</li>
-            <li>Posicione a janela do Metabase ao lado do dashboard pro acompanhamento contínuo</li>
-            <li>O Metabase atualiza automaticamente conforme as vendas vão acontecendo</li>
-          </ol>
-          <div style="margin-top:14px;padding:10px 12px;background:var(--cartd);border-left:3px solid var(--cart);border-radius:4px;font-size:12px;">
-            💡 <strong>Dica:</strong> Se a janela popup for bloqueada pelo navegador, autorize popups pro dashboard. O ícone aparece na barra de endereço.
-          </div>
-        </div>
-      </div>
     </div>
     <div class="krow kr4">
       <div class="kpi" style="position:relative;overflow:hidden;"><div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--head),transparent);"></div><div class="kl">Fat. Total</div><div class="kv" id="hf">R$0</div><div class="ks" id="hfs">meta —</div><div class="kb"><div class="kbf" id="hfb" style="width:0%"></div></div></div>
@@ -460,6 +426,54 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
     </div>
   </div>
 </div>
+<!-- PAINEL TEMPO REAL — visível pra todos (Head, Gestores e Vendedores) -->
+<div id="panel-realtime" class="panel">
+  <div class="main">
+    <div class="tstrip" style="background:linear-gradient(135deg,rgba(139,127,245,.09),transparent);border-color:var(--headb);">
+      <div class="tsl">
+        <div class="tsi" style="background:var(--headd);font-size:16px;">📊</div>
+        <div>
+          <div class="tsname" style="color:var(--head);">Tempo Real</div>
+          <div class="tssub">Acompanhamento ao vivo via Metabase · todos os times</div>
+        </div>
+      </div>
+      <span class="chip chip-h">METABASE</span>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,var(--headd),var(--s1));border-color:var(--headb);">
+      <div style="padding:32px;text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:900;color:var(--head);letter-spacing:-.02em;margin-bottom:8px;">📊 Acompanhamento em Tempo Real</div>
+        <div style="font-family:'DM Sans',sans-serif;font-size:13px;color:var(--t2);max-width:560px;margin:0 auto 24px;line-height:1.5;">
+          Abra a janela do Metabase ao lado pra acompanhar comissão, pagos e ticket médio do dia atualizados em tempo real.<br>
+          <span style="font-family:monospace;font-size:10px;color:var(--t3);">Operações: Saque Cartão Consignado, Crédito Novo, Saque Cartão Benefício, Troco Máximo</span>
+        </div>
+        <button onclick="openMetabasePopup()" style="background:var(--head);color:#fff;border:none;border-radius:10px;padding:14px 32px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:10px;box-shadow:0 4px 14px rgba(139,127,245,.3);transition:all .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(139,127,245,.4)';" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 14px rgba(139,127,245,.3)';">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Abrir Painel Tempo Real
+        </button>
+        <div style="margin-top:14px;font-family:monospace;font-size:9px;color:var(--t3);">
+          Será aberta uma janela popup do Metabase. Mantenha-a ao lado do dashboard pro acompanhamento.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">🧭 Como usar</div></div>
+      <div style="padding:16px 20px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--t2);line-height:1.7;">
+        <ol style="margin:0;padding-left:18px;">
+          <li>Clique em <strong>"Abrir Painel Tempo Real"</strong> acima</li>
+          <li>Uma janela do Metabase abrirá com os dados em tempo real (já filtrados)</li>
+          <li>Posicione a janela do Metabase ao lado do dashboard pro acompanhamento contínuo</li>
+          <li>O Metabase atualiza automaticamente conforme as vendas vão acontecendo</li>
+        </ol>
+        <div style="margin-top:14px;padding:10px 12px;background:var(--cartd);border-left:3px solid var(--cart);border-radius:4px;font-size:12px;">
+          💡 <strong>Dica:</strong> Se a janela popup for bloqueada pelo navegador, autorize popups pro dashboard. O ícone aparece na barra de endereço.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"><div style="width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0;"></div><span id="toastMsg"></span></div>
 <script>
 // PRÉ-CONFIGURADO
@@ -468,8 +482,8 @@ var SHEET_ID  = '1Y_19Y7dtENvM49gwed1wG7FuZ75CDN5VUlmddNYNxjM';
 var SHEET_TAB = 'Dados';
 var gToken    = null;
 
-// METABASE — Link do dashboard que será aberto em popup
-var METABASE_DASHBOARD_URL = 'https://konsiencia.metabaseapp.com/dashboard/2410-finalizados-konsigleads-clickhouse?banco=&convenio=&followupid=&opera%25C3%25A7%25C3%25A3o=&plataforma_origem=&vendedor=vagner&vendedor=paulovitor&vendedor=manassescosta&vendedor=alicerosa&vendedor=ingridfigueiredo&vendedor=isabelleazevedo&vendedor=silasaragao&vendedor=luanaoliveira&vendedor=anacarolina&vendedor=lucasrangel&vendedor=titocanario&vendedor=larissamirella&vendedor=camilequeiroz&vendedor=madsonbrito&vendedor=gabrieloliveira';
+// METABASE — Link do dashboard com filtros: operações comerciais + todos os vendedores Konsi
+var METABASE_DASHBOARD_URL = 'https://konsiencia.metabaseapp.com/dashboard/2410-finalizados-konsigleads-clickhouse?banco=&convenio=&followupid=&opera%25C3%25A7%25C3%25A3o=Saque+Cart%C3%A3o+Consignado&opera%25C3%25A7%25C3%25A3o=Cr%C3%A9dito+Novo&opera%25C3%25A7%25C3%25A3o=Saque+Cart%C3%A3o+Benef%C3%ADcio&opera%25C3%25A7%25C3%25A3o=Troco+M%C3%A1ximo&plataforma_origem=&vendedor=ingridfigueiredo&vendedor=isabelleazevedo&vendedor=manassescosta&vendedor=paulovitor&vendedor=alicerosa&vendedor=vagner&vendedor=ramonlopes&vendedor=edivanbrito&vendedor=luanaoliveira&vendedor=lucasrangel&vendedor=Igorleone&vendedor=maestro&vendedor=gabrieloliveira&vendedor=silasaragao&vendedor=felipefraga&vendedor=madsonbrito&vendedor=celinaribeiro&vendedor=titocanario&vendedor=anacarolina&vendedor=lucasmourao&vendedor=ytallofraga&vendedor=elidomarcarvalho&vendedor=jaquelineandrade&vendedor=isadora&vendedor=samaracelestino&vendedor=larissamirella&vendedor=camilequeiroz';
 
 // TEAMS
 var TEAMS = {
@@ -996,7 +1010,7 @@ function kpiHtml(lbl,val,sub,color,pct) {
 function buildUI() {
   // Team tabs
   var wrap=document.getElementById('teamTabsWrap'); wrap.innerHTML='';
-  [{id:'head',label:'Head',c:'var(--head)',on:'on-head'},{id:'cart',label:'Carteira',c:'var(--cart)',on:'on-cart'},{id:'atv',label:'Ativação',c:'var(--atv)',on:'on-atv'},{id:'nov',label:'Novos Usuários',c:'var(--nov)',on:'on-nov'}].forEach(function(tab){
+  [{id:'head',label:'Head',c:'var(--head)',on:'on-head'},{id:'cart',label:'Carteira',c:'var(--cart)',on:'on-cart'},{id:'atv',label:'Ativação',c:'var(--atv)',on:'on-atv'},{id:'nov',label:'Novos Usuários',c:'var(--nov)',on:'on-nov'},{id:'realtime',label:'📊 Tempo Real',c:'var(--head)',on:'on-rt'}].forEach(function(tab){
     var d=document.createElement('div'); d.className='ttab'+(ui.team===tab.id?' '+tab.on:'');
     d.innerHTML='<div class="dot" style="background:'+tab.c+';"></div>'+tab.label;
     d.onclick=(function(id){return function(){swTeam(id);};})(tab.id);
@@ -1062,11 +1076,13 @@ function setProfile(pid) {
   renderAll();
 }
 function swTeam(tid) {
-  // Vendedor não pode trocar de time
+  // Vendedor: só pode ficar no time dele OU acessar "Tempo Real"
   if(currentProfile && PROFILES[currentProfile] && PROFILES[currentProfile].role==='vendedor'){
-    return;
+    if(tid !== 'realtime' && tid !== PROFILES[currentProfile].team) return;
   }
-  ui.team=tid; if(tid!=='head') ui.sub='metas'; buildUI(); renderAll();
+  ui.team=tid;
+  if(tid!=='head' && tid!=='realtime') ui.sub='metas';
+  buildUI(); renderAll();
 }
 function swSub(sub) {
   // Vendedor só pode ver: Metas + Consolidada + Individual
@@ -1080,11 +1096,20 @@ function swSub(sub) {
 }
 function renderAll() {
   buildUI();
+  // Esconde todos os painéis primeiro
+  document.getElementById('panel-head').classList.remove('on');
+  document.getElementById('panel-team').classList.remove('on');
+  var pRT = document.getElementById('panel-realtime'); if(pRT) pRT.classList.remove('on');
+  document.getElementById('subTabsBar').style.display='none';
+
   if(ui.team==='head'){
-    document.getElementById('panel-head').classList.add('on'); document.getElementById('panel-team').classList.remove('on');
-    document.getElementById('subTabsBar').style.display='none'; renderHead(); renderHeadOrigConv();
+    document.getElementById('panel-head').classList.add('on');
+    renderHead(); renderHeadOrigConv();
+  } else if(ui.team==='realtime'){
+    if(pRT) pRT.classList.add('on');
+    // Nada a renderizar — só o botão de popup
   } else {
-    document.getElementById('panel-head').classList.remove('on'); document.getElementById('panel-team').classList.add('on');
+    document.getElementById('panel-team').classList.add('on');
     document.getElementById('subTabsBar').style.display='';
     document.querySelectorAll('.stab').forEach(function(t){t.classList.remove('on');}); var st=document.getElementById('st-'+ui.sub); if(st) st.classList.add('on');
     document.querySelectorAll('.subpanel').forEach(function(p){p.classList.remove('on');}); var sp=document.getElementById('sp-'+ui.sub); if(sp) sp.classList.add('on');
@@ -1159,10 +1184,12 @@ function applyAccess(){
     }
   });
 
-  // VENDEDOR: esconde Head + outros times + abas que não são Metas/Consolidada/Individual
+  // VENDEDOR: esconde Head + outros times (MAS mantém "Tempo Real") + abas que não são Metas/Consolidada/Individual
   if(isVend){
     document.querySelectorAll('.ttab').forEach(function(t){
-      t.style.display = (t.classList.contains('on-'+p.team) || t.textContent.toLowerCase().indexOf(TEAMS[p.team].label.toLowerCase())>=0) ? '' : 'none';
+      var isOwnTeam = t.classList.contains('on-'+p.team) || t.textContent.toLowerCase().indexOf(TEAMS[p.team].label.toLowerCase())>=0;
+      var isRealtime = t.classList.contains('on-rt') || (t.textContent||'').indexOf('Tempo Real')>=0;
+      t.style.display = (isOwnTeam || isRealtime) ? '' : 'none';
     });
     // Vendedor vê: Metas + Consolidada + Individual
     ['st-metas','st-consolidado','st-individual'].forEach(function(id){
@@ -2544,25 +2571,12 @@ function setHeadView(v){
   headView=v;
   var bM=document.getElementById('hbtnMes');
   var bD=document.getElementById('hbtnDia');
-  var bRT=document.getElementById('hbtnRT');
   var ds=document.getElementById('headDiaSel');
-  var rtView=document.getElementById('headRTView');
   function btnStyle(b,act){if(!b)return; b.style.cssText='padding:4px 12px;border-radius:16px;font-family:var(--fm);font-size:9px;cursor:pointer;border:1px solid '+(act?'var(--cartb)':'var(--bd)')+';background:'+(act?'var(--cartd)':'var(--s2)')+';color:'+(act?'var(--cart)':'var(--t3)')+';font-weight:'+(act?'700':'400');}
   btnStyle(bM, v==='mes');
   btnStyle(bD, v==='dia');
-  btnStyle(bRT, v==='realtime');
   if(ds) ds.style.display=v==='dia'?'':'none';
-  if(rtView) rtView.style.display=v==='realtime'?'':'none';
-  // Esconde os blocos do consolidado mensal quando em real-time
-  var consolidatedBlocks = document.querySelectorAll('#panel-head .krow.kr4:not(#headRTView .krow), #panel-head .hgrid, #panel-head .card');
-  consolidatedBlocks.forEach(function(el){
-    // Não mexer nos elementos DENTRO de headRTView
-    if(document.getElementById('headRTView') && document.getElementById('headRTView').contains(el)) return;
-    el.style.display = v==='realtime' ? 'none' : '';
-  });
-  if(v!=='realtime'){
-    renderHead();
-  }
+  renderHead();
 }
 
 // Abre o dashboard do Metabase em janela popup (autônomo - usa o login que já existe)
