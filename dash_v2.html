@@ -219,7 +219,7 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 </div>
 <!-- Barras antigas de auth e profile removidas: agora o login obrigatório define o perfil automaticamente.
      Os elementos abaixo ficam invisíveis mas existem para evitar erros de JS que ainda referenciam IDs. -->
-<div class="auth-bar">
+<div class="auth-bar" style="display:none;">
   <span class="auth-lbl off" id="authLbl">⚠️ Não conectado ao Google Sheets — clique para conectar e compartilhar dados</span>
   <button class="btn-goo con" id="authBtn" onclick="connectGoogle()">Conectar com Google ↗</button>
 </div>
@@ -1138,7 +1138,25 @@ function applyAccess(){
   var p=PROFILES[currentProfile];
   var isVend=p.role==='vendedor';
   var editTeamsArr=p.editTeams||(p.team?[p.team]:[]);
-  var edit=(p.role==='gestor')&&(editTeamsArr.indexOf(ui.team)>=0);
+  // Bloqueia edicao em meses anteriores ao mes atual (calendario)
+  var _mc = getMC();
+  var _todayKey = new Date().toISOString().slice(0,7);
+  var isPastMonth = _mc.key < _todayKey;
+  var edit=(p.role==='gestor')&&(editTeamsArr.indexOf(ui.team)>=0)&&!isPastMonth;
+  // Banner visual de mes passado (read-only)
+  var existingPastBanner = document.getElementById('pastMonthBanner');
+  if(isPastMonth && p.role!=='vendedor'){
+    if(!existingPastBanner){
+      var pm = document.createElement('div');
+      pm.id = 'pastMonthBanner';
+      pm.style.cssText = 'background:rgba(240,188,48,.15);border:1px solid rgba(240,188,48,.4);color:#A06200;padding:10px 14px;margin:10px 0;border-radius:6px;font-family:monospace;font-size:11px;text-align:center;font-weight:600;';
+      pm.innerHTML = 'mes encerrado: ' + _mc.label + ' - modo somente leitura. Os dados ficam preservados.';
+      var mainEl = document.querySelector('#panel-team .main');
+      if(mainEl) mainEl.insertBefore(pm, mainEl.firstChild);
+    }
+  } else if(existingPastBanner){
+    existingPastBanner.remove();
+  }
 
   // Banner de aviso quando gestor está em time que NÃO é dele (read-only)
   var existingBanner = document.getElementById('readOnlyBanner');
@@ -1605,10 +1623,27 @@ function removeVendedor(tid, i) {
   if(state.customSellers && state.customSellers[tid]){
     state.customSellers[tid] = state.customSellers[tid].filter(function(s){return s.n!==nome;});
   }
+  // PERSISTE a remoção em state — pra não voltar ao recarregar
+  if(!state.removedSellersHardcoded) state.removedSellersHardcoded = {};
+  if(!state.removedSellersHardcoded[tid]) state.removedSellersHardcoded[tid] = [];
+  if(state.removedSellersHardcoded[tid].indexOf(nome) < 0) state.removedSellersHardcoded[tid].push(nome);
 
   renderAll();
-  markUnsaved();
+  saveLocal();
+  if(typeof gToken !== 'undefined' && gToken) saveToSheets();
   showToast(nome + ' removido. Dados históricos preservados.');
+}
+
+// Aplica remoções persistidas ao TEAMS (chamado no init)
+function applyRemovedSellers(){
+  if(!state.removedSellersHardcoded) return;
+  Object.keys(state.removedSellersHardcoded).forEach(function(tid){
+    if(!TEAMS[tid]) return;
+    var removed = state.removedSellersHardcoded[tid];
+    TEAMS[tid].sellers = TEAMS[tid].sellers.filter(function(s){
+      return removed.indexOf(s.n) < 0;
+    });
+  });
 }
 
 
@@ -2774,6 +2809,7 @@ function init(){
 
   // Carrega dados base sempre
   loadLocal();
+  applyRemovedSellers();
   unmergeAtvNov();             // Reverte fusão antiga (separa atv e nov de volta)
   syncSellersFromState();
   buildSellerProfiles();
