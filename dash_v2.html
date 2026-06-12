@@ -483,19 +483,19 @@ var SHEET_TAB = 'Dados';
 var gToken    = null;
 
 // METABASE — Link do dashboard com filtros: operações comerciais + todos os vendedores Konsi
-var METABASE_DASHBOARD_URL = 'https://konsiencia.metabaseapp.com/dashboard/2410-finalizados-konsigleads-clickhouse?banco=&convenio=&followupid=&opera%25C3%25A7%25C3%25A3o=Saque+Cart%C3%A3o+Consignado&opera%25C3%25A7%25C3%25A3o=Cr%C3%A9dito+Novo&opera%25C3%25A7%25C3%25A3o=Saque+Cart%C3%A3o+Benef%C3%ADcio&opera%25C3%25A7%25C3%25A3o=Troco+M%C3%A1ximo&plataforma_origem=&vendedor=ingridfigueiredo&vendedor=isabelleazevedo&vendedor=manassescosta&vendedor=paulovitor&vendedor=alicerosa&vendedor=vagner&vendedor=ramonlopes&vendedor=edivanbrito&vendedor=luanaoliveira&vendedor=lucasrangel&vendedor=Igorleone&vendedor=maestro&vendedor=gabrieloliveira&vendedor=silasaragao&vendedor=felipefraga&vendedor=madsonbrito&vendedor=celinaribeiro&vendedor=titocanario&vendedor=anacarolina&vendedor=lucasmourao&vendedor=ytallofraga&vendedor=elidomarcarvalho&vendedor=jaquelineandrade&vendedor=isadora&vendedor=samaracelestino&vendedor=larissamirella&vendedor=camilequeiroz';
+var METABASE_DASHBOARD_URL = 'https://konsiencia.metabaseapp.com/dashboard/2410-finalizados-konsigleads-clickhouse?banco=&convenio=&followupid=&opera%25C3%25A7%25C3%25A3o=Saque+Cart%C3%A3o+Consignado&opera%25C3%25A7%25C3%25A3o=Cr%C3%A9dito+Novo&opera%25C3%25A7%25C3%25A3o=Saque+Cart%C3%A3o+Benef%C3%ADcio&opera%25C3%25A7%25C3%25A3o=Troco+M%C3%A1ximo&plataforma_origem=&vendedor=ingridfigueiredo&vendedor=isabelleazevedo&vendedor=manassescosta&vendedor=alicerosa&vendedor=vagner&vendedor=ramonlopes&vendedor=edivanbrito&vendedor=luanaoliveira&vendedor=lucasrangel&vendedor=Igorleone&vendedor=maestro&vendedor=gabrieloliveira&vendedor=silasaragao&vendedor=felipefraga&vendedor=celinaribeiro&vendedor=titocanario&vendedor=anacarolina&vendedor=lucasmourao&vendedor=ytallofraga&vendedor=elidomarcarvalho&vendedor=jaquelineandrade&vendedor=isadora&vendedor=samaracelestino&vendedor=larissamirella&vendedor=camilequeiroz';
 
 // TEAMS
 var TEAMS = {
   cart:{ id:'cart', label:'Carteira', color:'var(--cart)', cls:'c', chip:'chip-c', strip:'ts-cart', icon:'🟦', tabOn:'on-cart',
     origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada'],
-    sellers:[{n:'Ingrid',av:'IN',c:'av0'},{n:'Isabelle',av:'IS',c:'av1'},{n:'Manasses',av:'MA',c:'av2'},{n:'Paulo',av:'PA',c:'av3'},{n:'Alice',av:'AL',c:'av4'},{n:'Vagner',av:'VA',c:'av5'}]},
+    sellers:[{n:'Ingrid',av:'IN',c:'av0'},{n:'Isabelle',av:'IS',c:'av1'},{n:'Manasses',av:'MA',c:'av2'},{n:'Alice',av:'AL',c:'av4'},{n:'Vagner',av:'VA',c:'av5'}]},
   atv:{ id:'atv', label:'Ativação', color:'var(--atv)', cls:'a', chip:'chip-a', strip:'ts-atv', icon:'🔴', tabOn:'on-atv',
     origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada'],
     sellers:[{n:'Silas',av:'SI',c:'av2'},{n:'Luana',av:'LU',c:'av4'},{n:'Ana Carolina',av:'AC',c:'av6'},{n:'Lucas',av:'LC',c:'av5'},{n:'Tito',av:'TI',c:'av7'},{n:'Larissa',av:'LA',c:'avy'}]},
   nov:{ id:'nov', label:'Novos Usuários', color:'var(--nov)', cls:'n', chip:'chip-n', strip:'ts-nov', icon:'🟡', tabOn:'on-nov',
     origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada','Onboarding'],
-    sellers:[{n:'Camile',av:'CA',c:'av1'},{n:'Madson',av:'MD',c:'av8'},{n:'Gabriel',av:'GB',c:'av3'}]}
+    sellers:[{n:'Camile',av:'CA',c:'av1'},{n:'Gabriel',av:'GB',c:'av3'}]}
 };
 
 // Mapping email HubSpot → vendedor → time
@@ -520,7 +520,6 @@ var SELLER_EMAILS = {
   'larissamirella@konsi.com.br':     {team:'atv',  name:'Larissa'},
   // Novos Usuários
   'camilequeiroz@konsi.com.br':      {team:'nov',  name:'Camile'},
-  'madsonbrito@konsi.com.br':        {team:'nov',  name:'Madson'},
   'gabrieloliveira@konsi.com.br':    {team:'nov',  name:'Gabriel'}
 };
 
