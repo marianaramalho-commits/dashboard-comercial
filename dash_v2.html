@@ -587,7 +587,15 @@ var MONTHS = [
     wDias:{1:['01/12','02/12','03/12','04/12'],2:['07/12','08/12','09/12','10/12','11/12'],3:['14/12','15/12','16/12','17/12','18/12'],4:['21/12','22/12','23/12','24/12','28/12','29/12','30/12','31/12']},
     du:[{d:'01/12',n:1},{d:'02/12',n:2},{d:'03/12',n:3},{d:'04/12',n:4},{d:'07/12',n:5},{d:'08/12',n:6},{d:'09/12',n:7},{d:'10/12',n:8},{d:'11/12',n:9},{d:'14/12',n:10},{d:'15/12',n:11},{d:'16/12',n:12},{d:'17/12',n:13},{d:'18/12',n:14},{d:'21/12',n:15},{d:'22/12',n:16},{d:'23/12',n:17},{d:'24/12',n:18},{d:'28/12',n:19},{d:'29/12',n:20},{d:'30/12',n:21},{d:'31/12',n:22}]}
 ];
-var currentMonthKey = '2026-05';
+// Auto-detecta o mês atual em horário de Brasília (UTC-3)
+var currentMonthKey = (function(){
+  var now = new Date();
+  var brt = new Date(now.getTime() - 3*60*60*1000);
+  var y = brt.getUTCFullYear();
+  var m = ('0'+(brt.getUTCMonth()+1)).slice(-2);
+  var autoKey = y+'-'+m;
+  return MONTHS.some(function(mo){return mo.key===autoKey;}) ? autoKey : MONTHS[MONTHS.length-1].key;
+})();
 
 
 // STATE
@@ -626,7 +634,7 @@ function checkCloseBanner() {
   var countdown = document.getElementById('closeCountdown');
   if (md.closed) { if(banner) banner.style.display='none'; if(countdown) countdown.style.display='none'; return; }
   var today = new Date();
-  var lastDay = new Date(mc.lastDay);
+  var parseLocalDate=function(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2]);};var lastDay=parseLocalDate(mc.lastDay);
   var available = new Date(lastDay); available.setDate(available.getDate() + 2);
   var diffDays = Math.ceil((available - today) / (1000*60*60*24));
   if (diffDays <= 0) {
@@ -1139,7 +1147,7 @@ function applyAccess(){
   var editTeamsArr=p.editTeams||(p.team?[p.team]:[]);
   // Bloqueia edicao em meses anteriores ao mes atual (calendario)
   var _mc = getMC();
-  var _todayKey = new Date().toISOString().slice(0,7);
+  var _now=new Date();var _todayKey=_now.getFullYear()+"-"+("0"+(_now.getMonth()+1)).slice(-2);
   var isPastMonth = _mc.key < _todayKey;
   var edit=(p.role==='gestor')&&(editTeamsArr.indexOf(ui.team)>=0)&&!isPastMonth;
   // Banner visual de mes passado (read-only)
