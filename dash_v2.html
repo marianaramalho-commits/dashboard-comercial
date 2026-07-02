@@ -712,7 +712,7 @@ function initGSI() {
   }
   _tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
-    scope: 'openid email profile https://www.googleapis.com/auth/spreadsheets',
+    scope: 'openid email profile https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.readonly',
     callback: handleAuthCallback
   });
   // Habilita botão de login
@@ -876,8 +876,77 @@ function loadFromSheets() {
       catch(e) { showToast('Erro ao ler Sheets'); }
     } else { showToast('Planilha vazia — iniciando'); }
     buildUI(); renderAll();
+    setTimeout(loadLeadsAuto, 600); // auto-carregar leads do HubSpot
   }).catch(function() { showToast('Erro de conexão'); loadLocal(); buildUI(); renderAll(); });
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTO-LEADS: carrega leads HubSpot automaticamente da sheet "Konsi Leads Auto"
+// ─────────────────────────────────────────────────────────────────────────────
+var LEADS_AUTO_PREFIX = 'Konsi Leads Auto ';
+
+function loadLeadsAuto() {
+  if (!gToken) return;
+  var mc = (typeof getMC === 'function') ? getMC() : null;
+  var monthKey = (mc && mc.key) ? mc.key : (typeof currentMonthKey !== 'undefined' ? currentMonthKey : '2026-07');
+  var title = LEADS_AUTO_PREFIX + monthKey;
+  var q = "name='" + title + "' and trashed=false";
+  fetch('https://www.googleapis.com/drive/v3/files?q=' + encodeURIComponent(q) + '&orderBy=modifiedTime+desc&pageSize=1&fields=files(id,name)',
+    {headers: {Authorization: 'Bearer ' + gToken}})
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (!d.files || !d.files[0]) return Promise.reject('nao_encontrada');
+    return fetch('https://sheets.googleapis.com/v4/spreadsheets/' + d.files[0].id + '/values/A%3AZ',
+      {headers: {Authorization: 'Bearer ' + gToken}});
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (!d || !d.values || d.values.length < 2) return;
+    // CSV format: month,team,date,l0,l1,l2,l3,l4,t0,t1,t2,t3,t4
+    // l0-l4 = leads por vendedor, t0-t4 = tkt_rec por vendedor (opcional)
+    var rows = d.values.slice(1);
+    var updated = 0;
+    rows.forEach(function(row) {
+      var month = row[0], team = row[1], date = row[2];
+      if (!month || !team || !date) return;
+      if (!state.months[month] || !state.months[month].teams || !state.months[month].teams[team]) return;
+      var td = state.months[month].teams[team];
+      if (!td.daily) td.daily = {};
+      var numS = td.sellers ? td.sellers.length : 5;
+      if (!td.daily[date]) {
+        td.daily[date] = {sellers: []};
+        for (var n = 0; n < numS; n++) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
+      }
+      // Leads: colunas 3 até 3+numS-1
+      for (var i = 0; i < numS; i++) {
+        var leads = parseInt(row[3 + i], 10) || 0;
+        while (td.daily[date].sellers.length <= i) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
+        if (leads > (td.daily[date].sellers[i].leads || 0)) {
+          td.daily[date].sellers[i].leads = leads;
+          updated++;
+        }
+      }
+      // Tkt Rec: colunas 3+numS até fim (se presentes)
+      var tktOffset = 3 + numS;
+      if (row.length > tktOffset) {
+        for (var j = 0; j < numS; j++) {
+          var tkt = parseFloat(row[tktOffset + j]) || 0;
+          if (tkt > 0 && (td.daily[date].sellers[j].tkt_rec || 0) === 0) {
+            td.daily[date].sellers[j].tkt_rec = tkt;
+            updated++;
+          }
+        }
+      }
+    });
+    if (updated > 0) {
+      renderAll();
+      showToast('🔄 Leads e ticket recebido atualizados automaticamente');
+      setTimeout(function() { if (gToken) saveToSheets(); }, 1200);
+    }
+  })
+  .catch(function(e) { if (e !== 'nao_encontrada') console.log('[loadLeadsAuto]', e); });
+}
+
 function saveToSheets() {
   if (!gToken) { saveLocal(); return; }
   fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+'/values/'+SHEET_TAB+'!A1?valueInputOption=RAW',
