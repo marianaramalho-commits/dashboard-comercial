@@ -902,8 +902,11 @@ function loadLeadsAuto() {
   .then(function(r) { return r.json(); })
   .then(function(d) {
     if (!d || !d.values || d.values.length < 2) return;
-    // CSV format: month,team,date,l0,l1,l2,l3,l4,t0,t1,t2,t3,t4
-    // l0-l4 = leads por vendedor, t0-t4 = tkt_rec por vendedor (opcional)
+    // CSV formato completo: month,team,date,l0..l4,t0..t4,p0..p4,f0..f4
+    // l = leads criados no dia
+    // t = mediana comissao_projetada dos leads do dia (tkt_rec)
+    // p = deals pagos no dia (closedate)
+    // f = soma comissao_konsigleads dos pagos (fat)
     var rows = d.values.slice(1);
     var updated = 0;
     rows.forEach(function(row) {
@@ -917,7 +920,7 @@ function loadLeadsAuto() {
         td.daily[date] = {sellers: []};
         for (var n = 0; n < numS; n++) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
       }
-      // Leads: colunas 3 até 3+numS-1
+      // Leads: colunas 3..3+numS-1
       for (var i = 0; i < numS; i++) {
         var leads = parseInt(row[3 + i], 10) || 0;
         while (td.daily[date].sellers.length <= i) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
@@ -926,13 +929,29 @@ function loadLeadsAuto() {
           updated++;
         }
       }
-      // Tkt Rec: colunas 3+numS até fim (se presentes)
-      var tktOffset = 3 + numS;
-      if (row.length > tktOffset) {
+      var colT = 3 + numS;       // t0..t4: mediana comissao_projetada
+      var colP = 3 + 2 * numS;   // p0..p4: pagos
+      var colF = 3 + 3 * numS;   // f0..f4: fat (comissao_konsigleads)
+      // tkt_rec: mediana comissao_projetada dos leads do dia
+      if (row.length > colT) {
         for (var j = 0; j < numS; j++) {
-          var tkt = parseFloat(row[tktOffset + j]) || 0;
+          var tkt = parseFloat(row[colT + j]) || 0;
+          while (td.daily[date].sellers.length <= j) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
           if (tkt > 0 && (td.daily[date].sellers[j].tkt_rec || 0) === 0) {
             td.daily[date].sellers[j].tkt_rec = tkt;
+            updated++;
+          }
+        }
+      }
+      // Pagos e Fat: comissao_konsigleads dos deals fechados no dia
+      if (row.length > colF) {
+        for (var k = 0; k < numS; k++) {
+          var pagos = parseInt(row[colP + k], 10) || 0;
+          var fat = parseFloat(row[colF + k]) || 0;
+          while (td.daily[date].sellers.length <= k) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
+          if (pagos > 0 || fat > 0) {
+            td.daily[date].sellers[k].pagos = pagos;
+            td.daily[date].sellers[k].fat = fat;
             updated++;
           }
         }
@@ -940,7 +959,7 @@ function loadLeadsAuto() {
     });
     if (updated > 0) {
       renderAll();
-      showToast('🔄 Leads e ticket recebido atualizados automaticamente');
+      showToast('🔄 Leads, pagos e faturamento atualizados automaticamente');
       setTimeout(function() { if (gToken) saveToSheets(); }, 1200);
     }
   })
