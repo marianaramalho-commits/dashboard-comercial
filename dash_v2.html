@@ -915,16 +915,23 @@ function loadLeadsAuto() {
       if (!state.months[month] || !state.months[month].teams || !state.months[month].teams[team]) return;
       var td = state.months[month].teams[team];
       if (!td.daily) td.daily = {};
-      var numS = td.sellers ? td.sellers.length : 5;
+      // numS derivado da propria largura da linha do CSV (3 colunas fixas + 4 blocos de numS),
+      // e nao de td.sellers.length: esse array e mutavel (add/remove vendedor no mes) e pode
+      // divergir do layout real do arquivo, fazendo colP/colF apontarem pra colunas erradas
+      // (ou o "row.length > colF" falhar) e pagos/faturamento ficarem zerados. Fallback pra
+      // td.sellers.length so se a linha vier malformada.
+      var numSFromRow = Math.floor((row.length - 3) / 4);
+      var numS = numSFromRow > 0 ? numSFromRow : (td.sellers ? td.sellers.length : 5);
       if (!td.daily[date]) {
         td.daily[date] = {sellers: []};
         for (var n = 0; n < numS; n++) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
       }
-      // Leads: colunas 3..3+numS-1
+      // Leads: colunas 3..3+numS-1 - sempre sincroniza com o valor da planilha (fonte da
+      // verdade), inclusive correcoes pra baixo (antes so aceitava se o novo valor fosse maior)
       for (var i = 0; i < numS; i++) {
         var leads = parseInt(row[3 + i], 10) || 0;
         while (td.daily[date].sellers.length <= i) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
-        if (leads > (td.daily[date].sellers[i].leads || 0)) {
+        if (leads !== (td.daily[date].sellers[i].leads || 0)) {
           td.daily[date].sellers[i].leads = leads;
           updated++;
         }
@@ -932,24 +939,25 @@ function loadLeadsAuto() {
       var colT = 3 + numS;       // t0..t4: mediana comissao_projetada
       var colP = 3 + 2 * numS;   // p0..p4: pagos
       var colF = 3 + 3 * numS;   // f0..f4: fat (comissao_konsigleads)
-      // tkt_rec: mediana comissao_projetada dos leads do dia
+      // tkt_rec: mediana comissao_projetada dos leads do dia - sempre sincroniza (antes so
+      // atualizava se o valor guardado ainda fosse 0, travando qualquer correcao posterior)
       if (row.length > colT) {
         for (var j = 0; j < numS; j++) {
           var tkt = parseFloat(row[colT + j]) || 0;
           while (td.daily[date].sellers.length <= j) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
-          if (tkt > 0 && (td.daily[date].sellers[j].tkt_rec || 0) === 0) {
+          if (tkt !== (td.daily[date].sellers[j].tkt_rec || 0)) {
             td.daily[date].sellers[j].tkt_rec = tkt;
             updated++;
           }
         }
       }
-      // Pagos e Fat: comissao_konsigleads dos deals fechados no dia
+      // Pagos e Fat: comissao_konsigleads dos deals fechados no dia - sempre sincroniza
       if (row.length > colF) {
         for (var k = 0; k < numS; k++) {
           var pagos = parseInt(row[colP + k], 10) || 0;
           var fat = parseFloat(row[colF + k]) || 0;
           while (td.daily[date].sellers.length <= k) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
-          if (pagos > 0 || fat > 0) {
+          if (pagos !== (td.daily[date].sellers[k].pagos || 0) || fat !== (td.daily[date].sellers[k].fat || 0)) {
             td.daily[date].sellers[k].pagos = pagos;
             td.daily[date].sellers[k].fat = fat;
             updated++;
