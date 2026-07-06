@@ -488,13 +488,13 @@ var METABASE_DASHBOARD_URL = 'https://konsiencia.metabaseapp.com/dashboard/2410-
 // TEAMS
 var TEAMS = {
   cart:{ id:'cart', label:'Carteira', color:'var(--cart)', cls:'c', chip:'chip-c', strip:'ts-cart', icon:'🟦', tabOn:'on-cart',
-    origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada'],
+    origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada','Virada'],
     sellers:[{n:'Ingrid',av:'IN',c:'av0'},{n:'Isabelle',av:'IS',c:'av1'},{n:'Manasses',av:'MA',c:'av2'},{n:'Alice',av:'AL',c:'av4'},{n:'Vagner',av:'VA',c:'av5'}]},
   atv:{ id:'atv', label:'Ativação', color:'var(--atv)', cls:'a', chip:'chip-a', strip:'ts-atv', icon:'🔴', tabOn:'on-atv',
-    origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada'],
+    origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada','Virada'],
     sellers:[{n:'Silas',av:'SI',c:'av2'},{n:'Luana',av:'LU',c:'av4'},{n:'Ana Carolina',av:'AC',c:'av6'},{n:'Lucas',av:'LC',c:'av5'},{n:'Tito',av:'TI',c:'av7'},{n:'Larissa',av:'LA',c:'avy'}]},
   nov:{ id:'nov', label:'Novos Usuários', color:'var(--nov)', cls:'n', chip:'chip-n', strip:'ts-nov', icon:'🟡', tabOn:'on-nov',
-    origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada','Onboarding'],
+    origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada','Onboarding','Virada'],
     sellers:[{n:'Camile',av:'CA',c:'av1'},{n:'Gabriel',av:'GB',c:'av3'}]}
 };
 
@@ -877,6 +877,7 @@ function loadFromSheets() {
     } else { showToast('Planilha vazia — iniciando'); }
     buildUI(); renderAll();
     setTimeout(loadLeadsAuto, 600); // auto-carregar leads do HubSpot
+    setTimeout(loadOrigemAuto, 900); // auto-carregar origem (estrategia de campanha) do HubSpot
   }).catch(function() { showToast('Erro de conexão'); loadLocal(); buildUI(); renderAll(); });
 }
 
@@ -902,8 +903,11 @@ function loadLeadsAuto() {
   .then(function(r) { return r.json(); })
   .then(function(d) {
     if (!d || !d.values || d.values.length < 2) return;
-    // CSV format: month,team,date,l0,l1,l2,l3,l4,t0,t1,t2,t3,t4
-    // l0-l4 = leads por vendedor, t0-t4 = tkt_rec por vendedor (opcional)
+    // CSV formato completo: month,team,date,l0..l4,t0..t4,p0..p4,f0..f4
+    // l = leads criados no dia
+    // t = mediana comissao_projetada dos leads do dia (tkt_rec)
+    // p = deals pagos no dia (closedate)
+    // f = soma comissao_konsigleads dos pagos (fat)
     var rows = d.values.slice(1);
     var updated = 0;
     rows.forEach(function(row) {
@@ -917,7 +921,7 @@ function loadLeadsAuto() {
         td.daily[date] = {sellers: []};
         for (var n = 0; n < numS; n++) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
       }
-      // Leads: colunas 3 até 3+numS-1
+      // Leads: colunas 3..3+numS-1
       for (var i = 0; i < numS; i++) {
         var leads = parseInt(row[3 + i], 10) || 0;
         while (td.daily[date].sellers.length <= i) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
@@ -926,25 +930,109 @@ function loadLeadsAuto() {
           updated++;
         }
       }
-      // Tkt Rec: colunas 3+numS até fim (se presentes)
-      var tktOffset = 3 + numS;
-      if (row.length > tktOffset) {
-        for (var j = 0; j < numS; j++) {
-          var tkt = parseFloat(row[tktOffset + j]) || 0;
-          if (tkt > 0 && (td.daily[date].sellers[j].tkt_rec || 0) === 0) {
-            td.daily[date].sellers[j].tkt_rec = tkt;
-            updated++;
-          }
+      var colT = 3 + numS;       // t0..t4: mediana comissao_projetada
+      var colP = 3 + 2 * numS;   // p0..p4: pagos
+      var colF = 3 + 3 * numS;   // f0..f4: fat (comissao_konsigleads)
+      // tkt_rec: mediana comissao_projetada dos leads do dia
+      // (fix 06/07/2026: removida a trava "row.length > colT" -- mesma logica do bloco de Leads acima,
+      // que ja le direto com fallback 0 e sempre funcionou. A trava travava esse bloco sem necessidade.)
+      for (var j = 0; j < numS; j++) {
+        var tkt = parseFloat(row[colT + j]) || 0;
+        while (td.daily[date].sellers.length <= j) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
+        if (tkt > 0 && (td.daily[date].sellers[j].tkt_rec || 0) === 0) {
+          td.daily[date].sellers[j].tkt_rec = tkt;
+          updated++;
+        }
+      }
+      // Pagos e Fat: comissao_konsigleads dos deals fechados no dia
+      // (fix 06/07/2026: removida a trava "row.length > colF" -- era a causa raiz do bug de
+      // Pagos/Faturamento sempre ficarem zerados: colF e um indice alto na linha e, quando o
+      // Sheets devolvia a linha mais curta que esse limite, o bloco inteiro nunca rodava,
+      // mesmo com os dados corretos na planilha de origem. Leads nao tinha essa trava e sempre funcionou.)
+      for (var k = 0; k < numS; k++) {
+        var pagos = parseInt(row[colP + k], 10) || 0;
+        var fat = parseFloat(row[colF + k]) || 0;
+        while (td.daily[date].sellers.length <= k) td.daily[date].sellers.push({fat:0,pagos:0,leads:0,tkt_rec:0});
+        if (pagos > 0 || fat > 0) {
+          td.daily[date].sellers[k].pagos = pagos;
+          td.daily[date].sellers[k].fat = fat;
+          updated++;
         }
       }
     });
     if (updated > 0) {
       renderAll();
-      showToast('🔄 Leads e ticket recebido atualizados automaticamente');
+      showToast('🔄 Leads, pagos e faturamento atualizados automaticamente');
       setTimeout(function() { if (gToken) saveToSheets(); }, 1200);
     }
   })
   .catch(function(e) { if (e !== 'nao_encontrada') console.log('[loadLeadsAuto]', e); });
+}
+
+// =====================================================
+// AUTO-ORIGEM: carrega origem (estrategia de campanha) automaticamente da sheet "Konsi Origem Auto"
+// CSV com colunas NOMEADAS (nao posicional, de proposito -- evita os bugs de alinhamento
+// posicional que ja causaram incidentes na automacao de Leads):
+// month,team,week,seller_idx,seller_name,origin,leads,pagos,fat,tkt_rec
+// =====================================================
+var ORIGEM_AUTO_PREFIX = 'Konsi Origem Auto ';
+
+function loadOrigemAuto() {
+  if (!gToken) return;
+  var mc = (typeof getMC === 'function') ? getMC() : null;
+  var monthKey = (mc && mc.key) ? mc.key : (typeof currentMonthKey !== 'undefined' ? currentMonthKey : '2026-07');
+  var title = ORIGEM_AUTO_PREFIX + monthKey;
+  var q = "name='" + title + "' and trashed=false";
+  fetch('https://www.googleapis.com/drive/v3/files?q=' + encodeURIComponent(q) + '&orderBy=modifiedTime+desc&pageSize=1&fields=files(id,name)',
+    {headers: {Authorization: 'Bearer ' + gToken}})
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (!d.files || !d.files[0]) return Promise.reject('nao_encontrada');
+    return fetch('https://sheets.googleapis.com/v4/spreadsheets/' + d.files[0].id + '/values/A%3AZ',
+      {headers: {Authorization: 'Bearer ' + gToken}});
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (!d || !d.values || d.values.length < 2) return;
+    var header = d.values[0];
+    var idx = {};
+    header.forEach(function(h, i) { idx[(h || '').trim()] = i; });
+    var need = ['month','team','week','seller_idx','origin','leads','pagos','fat','tkt_rec'];
+    for (var ni = 0; ni < need.length; ni++) {
+      if (idx[need[ni]] === undefined) { console.log('[loadOrigemAuto] coluna faltando no cabecalho:', need[ni]); return; }
+    }
+    var rows = d.values.slice(1);
+    var updated = 0;
+    rows.forEach(function(row) {
+      var month = row[idx.month], team = row[idx.team], wk = row[idx.week];
+      var si = parseInt(row[idx.seller_idx], 10);
+      var ok = (row[idx.origin] || '').trim();
+      if (!month || !team || !wk || isNaN(si) || !ok) return;
+      if (!state.months[month] || !state.months[month].teams || !state.months[month].teams[team]) return;
+      var td = state.months[month].teams[team];
+      if (!td.origins) td.origins = {};
+      if (!td.origins[wk]) td.origins[wk] = {};
+      var sk = 's' + si;
+      if (!td.origins[wk][sk]) td.origins[wk][sk] = {};
+      var leads = parseInt(row[idx.leads], 10) || 0;
+      var pagos = parseInt(row[idx.pagos], 10) || 0;
+      var fat = parseFloat(row[idx.fat]) || 0;
+      var tkt = parseFloat(row[idx.tkt_rec]) || 0;
+      var cur = td.origins[wk][sk][ok] || {fat:0,pagos:0,leads:0,tkt_rec:0};
+      var changed = false;
+      if (leads > (cur.leads || 0)) { cur.leads = leads; changed = true; }
+      if (tkt > 0 && (cur.tkt_rec || 0) === 0) { cur.tkt_rec = tkt; changed = true; }
+      if (pagos > 0 || fat > 0) { cur.pagos = pagos; cur.fat = fat; changed = true; }
+      td.origins[wk][sk][ok] = cur;
+      if (changed) updated++;
+    });
+    if (updated > 0) {
+      renderAll();
+      showToast('\ud83d\udd00 Origem atualizada automaticamente');
+      setTimeout(function() { if (gToken) saveToSheets(); }, 1200);
+    }
+  })
+  .catch(function(e) { if (e !== 'nao_encontrada') console.log('[loadOrigemAuto]', e); });
 }
 
 function saveToSheets() {
