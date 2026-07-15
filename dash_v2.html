@@ -492,10 +492,10 @@ var TEAMS = {
     sellers:[{n:'Ingrid',av:'IN',c:'av0'},{n:'Isabelle',av:'IS',c:'av1'},{n:'Manasses',av:'MA',c:'av2'},{n:'Alice',av:'AL',c:'av4'},{n:'Vagner',av:'VA',c:'av5'}]},
   atv:{ id:'atv', label:'Ativação', color:'var(--atv)', cls:'a', chip:'chip-a', strip:'ts-atv', icon:'🔴', tabOn:'on-atv',
     origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada','Virada'],
-    sellers:[{n:'Silas',av:'SI',c:'av2'},{n:'Luana',av:'LU',c:'av4'},{n:'Ana Carolina',av:'AC',c:'av6'},{n:'Lucas',av:'LC',c:'av5'},{n:'Madson',av:'MD',c:'av7'},{n:'Larissa',av:'LA',c:'avy'}]},
+    sellers:[{n:'Silas',av:'SI',c:'av2'},{n:'Luana',av:'LU',c:'av4'},{n:'Ana Carolina',av:'AC',c:'av6'},{n:'Lucas',av:'LC',c:'av5'},{n:'Madson',av:'MD',c:'av7'},{n:'Larissa',av:'LA',c:'avy'},{n:'Camile',av:'CA',c:'av1'}]},
   nov:{ id:'nov', label:'Novos Usuários', color:'var(--nov)', cls:'n', chip:'chip-n', strip:'ts-nov', icon:'🟡', tabOn:'on-nov',
     origens:['Abandono','Navegação','Esteira','Base / Disparo','Retomada','Onboarding','Virada'],
-    sellers:[{n:'Camile',av:'CA',c:'av1'},{n:'Gabriel',av:'GB',c:'av3'}]}
+    sellers:[{n:'Gabriel',av:'GB',c:'av3'}]}
 };
 
 // Mapping email HubSpot → vendedor → time
@@ -518,8 +518,8 @@ var SELLER_EMAILS = {
   'lucasrangel@konsi.com.br':        {team:'atv',  name:'Lucas'},
   // Madson (idx 4 do time Ativação) ainda sem email de login mapeado aqui -- adicionar quando tiver o email dele
   'larissamirella@konsi.com.br':     {team:'atv',  name:'Larissa'},
+  'camilequeiroz@konsi.com.br':      {team:'atv',  name:'Camile'}, // movida de Novos Usuários -> Ativação em jul/2026
   // Novos Usuários
-  'camilequeiroz@konsi.com.br':      {team:'nov',  name:'Camile'},
   'gabrieloliveira@konsi.com.br':    {team:'nov',  name:'Gabriel'}
 };
 
@@ -548,8 +548,8 @@ function buildSellerProfiles(){
 }
 var PROFILES = {
   giovanna:{ name:'Giovanna', role:'head', team:null, on:'on-head', color:'var(--head)', bg:'var(--headd)', bd:'var(--headb)' },
-  mariana:{ name:'Mariana', role:'gestor', team:'cart', editTeams:['cart'], on:'on-cart', color:'var(--cart)', bg:'var(--cartd)', bd:'var(--cartb)' },
-  icaro:{ name:'Ícaro', role:'gestor', team:'atv', editTeams:['atv','nov'], on:'on-atv', color:'var(--atv)', bg:'var(--atvd)', bd:'var(--atvb)' }
+  mariana:{ name:'Mariana', role:'gestor', team:'cart', editTeams:['cart','atv'], on:'on-cart', color:'var(--cart)', bg:'var(--cartd)', bd:'var(--cartb)' },
+  icaro:{ name:'Ícaro', role:'gestor', team:'nov', editTeams:['nov'], on:'on-nov', color:'var(--nov)', bg:'var(--novd)', bd:'var(--novb)' }
 };
 
 var MONTHS = null; // set below
@@ -1183,7 +1183,7 @@ function buildUI() {
   // Profile btns - apenas Head + Gestores
   var pb=document.getElementById('profileBtns'); pb.innerHTML='';
   var inits={giovanna:'GC',mariana:'MR',icaro:'IS'};
-  var lbs={giovanna:'Head',mariana:'Carteira',icaro:'Ativação & Novos Usuários'};
+  var lbs={giovanna:'Head',mariana:'Carteira & Ativação',icaro:'Novos Usuários'};
   Object.keys(PROFILES).forEach(function(pid){
     var p=PROFILES[pid];
     if(p.role==='vendedor') return; // Vendedores vão na barra separada
