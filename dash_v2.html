@@ -862,10 +862,14 @@ function loadFromSheets() {
     if (d.values && d.values[0] && d.values[0][0]) {
       try {
         var loaded = JSON.parse(d.values[0][0]);
-        // Se o state vindo do Sheets tem atv com 9+ sellers (fundido), separa
-        if(loaded.months && Object.values(loaded.months).some(function(m){return m.teams && m.teams.atv && m.teams.atv.sellers && m.teams.atv.sellers.length>6;})){
-          loaded.unmerge_atv_nov_done = false;
-        }
+        // NOTA (16/07/2026): removido o gatilho automático de re-unmerge baseado em
+        // "atv.sellers.length>6". Esse gatilho fazia sentido quando Ativação tinha só
+        // 6 vendedores (limite ATV_BASE_LEN da migração antiga) -- mas desde a reorganização
+        // dos times, Ativação tem 7 vendedores permanentemente (Silas..Camile), então essa
+        // condição era SEMPRE verdadeira e disparava unmergeAtvNov() em TODO carregamento de
+        // página, arrancando a 7ª posição (Camile) de atv.daily/atv.sellers a cada reload e
+        // jogando os dados dela para o time "nov" -- causava a perda recorrente dos dados de
+        // Camile e desalinhamento de índices no Acumulado do Mês de Ativação.
         Object.assign(state, loaded);
         unmergeAtvNov(); // Separa de volta se vier fundido do Sheets
         syncSellersFromState();
@@ -2883,7 +2887,11 @@ function migrateNovToAtv(){
 function unmergeAtvNov(){
   if(state.unmerge_atv_nov_done) return;
   if(!state.months){ state.unmerge_atv_nov_done = true; return; }
-  var ATV_BASE_LEN = 6; // Ativação tinha 6 sellers originalmente
+  // ATV_BASE_LEN atualizado p/ 7 em 16/07/2026: Ativação tem 7 vendedores permanentes
+  // desde a reorganização de times (Silas,Luana,Ana Carolina,Lucas,Madson,Larissa,Camile).
+  // Mantido em 6 aqui, essa função arrancava a Camile (7ª posição) de atv achando que
+  // era sobra de fusão antiga com "nov" -- ver nota em loadFromSheets().
+  var ATV_BASE_LEN = 7; // Ativação tem 7 sellers permanentes (era 6 antes da reorg de jul/2026)
   var didSomething = false;
   Object.keys(state.months).forEach(function(mk){
     var m = state.months[mk];
