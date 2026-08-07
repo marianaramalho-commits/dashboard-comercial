@@ -172,8 +172,8 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 </style>
 </head>
 <body>
-<!-- Login Screen (DESATIVADO temporariamente — usar barra de perfil) -->
-<div id="loginScreen" class="login-overlay" style="display:none;">
+<!-- Login Screen -->
+<div id="loginScreen" class="login-overlay" style="display:flex;">
   <div class="login-card">
     <div class="login-logo">Konsi<span>.</span>Comercial</div>
     <div style="font-family:monospace;font-size:9px;color:var(--cart);background:var(--cartd);border:1px solid var(--cartb);border-radius:4px;padding:2px 8px;display:inline-block;">DASHBOARD COMERCIAL 2026</div>
@@ -185,10 +185,10 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
     </button>
     <div id="loginErr" class="login-err"></div>
 
-    <!-- Modo Provisório (enquanto OAuth não está liberado) -->
+    <!-- Acesso sem Google (fallback) -->
     <div style="margin-top:24px;padding-top:16px;border-top:1px dashed var(--bd);">
-      <div style="font-family:monospace;font-size:9px;color:var(--yellow);text-align:center;margin-bottom:10px;">⚠️ MODO PROVISÓRIO — enquanto OAuth não está liberado</div>
-      <button onclick="toggleProvisorio()" style="width:100%;padding:10px;border:1px dashed var(--yellow);background:var(--yd);color:var(--yellow);border-radius:8px;font-family:monospace;font-size:10px;cursor:pointer;font-weight:600;">Entrar com email Konsi ↓</button>
+      <div style="font-family:monospace;font-size:9px;color:var(--t3);text-align:center;margin-bottom:10px;">Sem conta Google? Entre com seu email Konsi</div>
+      <button onclick="toggleProvisorio()" style="width:100%;padding:10px;border:1px dashed var(--bd2);background:var(--s2);color:var(--t2);border-radius:8px;font-family:monospace;font-size:10px;cursor:pointer;font-weight:600;">Entrar sem Google (dados locais) ↓</button>
       <div id="provBtns" style="display:none;margin-top:14px;padding:14px;background:var(--s2);border-radius:8px;">
         <div style="font-family:monospace;font-size:9px;color:var(--t3);margin-bottom:8px;text-align:left;">Digite seu email @konsi.com.br:</div>
         <input id="provEmail" type="email" placeholder="seuemail@konsi.com.br" autocomplete="email" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--t1);background:var(--s1);outline:none;box-sizing:border-box;" onkeydown="if(event.key==='Enter')loginProvisorioByEmail();">
@@ -2973,26 +2973,13 @@ function syncSellersFromState(){
 // INICIALIZAÇÃO
 // =====================================================
 function init(){
-  // Restaurar perfil salvo (sistema antigo, sem login obrigatório)
-  try {
-    var savedProf = localStorage.getItem('kc_prof_v6');
-    if(savedProf && PROFILES[savedProf]) currentProfile = savedProf;
-  } catch(e){}
-
-  // Carrega dados base sempre
+  // Carrega dados base sempre (locais)
   loadLocal();
   applyRemovedSellers();
-  unmergeAtvNov();             // Reverte fusão antiga (separa atv e nov de volta)
+  unmergeAtvNov();
   syncSellersFromState();
   buildSellerProfiles();
   initT();
-
-  // Time inicial baseado no perfil
-  if(currentProfile && PROFILES[currentProfile]){
-    var p = PROFILES[currentProfile];
-    if(p.role==='gestor'||p.role==='vendedor') ui.team = p.team;
-    else ui.team = 'head';
-  }
 
   buildUI();
   buildMonthBar();
@@ -3000,15 +2987,52 @@ function init(){
   renderAll();
   setAuthUI(false);
 
-  // Carrega GIS em background pra o botão "Conectar com Google" funcionar (opcional)
+  // Carrega GIS em background
   if (!window._gsiLoaded) {
     var s = document.createElement('script');
     s.src = 'https://accounts.google.com/gsi/client';
     s.onload = function(){ window._gsiLoaded = true; initGSI(); };
-    s.onerror = function(){ /* offline ou bloqueado */ };
+    s.onerror = function(){};
     document.head.appendChild(s);
   } else {
     initGSI();
+  }
+
+  // Verificar sessão existente no sessionStorage
+  var savedPid   = sessionStorage.getItem('kc_pid');
+  var savedToken = sessionStorage.getItem('kc_token');
+  var savedProv  = sessionStorage.getItem('kc_prov');
+  var savedName  = sessionStorage.getItem('kc_name') || '';
+  var tokenExp   = parseInt(sessionStorage.getItem('kc_token_exp') || '0');
+
+  if (savedPid && PROFILES[savedPid]) {
+    // Sessão existente — restaurar
+    currentProfile = savedPid;
+    var p = PROFILES[savedPid];
+    if(p.role==='gestor'||p.role==='vendedor') ui.team = p.team;
+    else ui.team = 'head';
+    showUserChip(savedPid, savedName || p.name);
+    setProfile(savedPid);
+
+    if (savedProv === '1') {
+      // Sessão provisória — dados só locais
+      setTxt('slbl','provisório (sem Sheets)');
+      renderAll();
+    } else if (savedToken && Date.now() < tokenExp) {
+      // Token Google ainda válido — restaurar e sincronizar Sheets
+      gToken = savedToken;
+      setAuthUI(true);
+      loadFromSheets();
+    } else {
+      // Token expirado — pedir novo login
+      sessionStorage.clear();
+      renderAll();
+      showLogin();
+    }
+  } else {
+    // Sem sessão — mostrar tela de login
+    renderAll();
+    showLogin();
   }
 }
 
