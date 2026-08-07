@@ -856,12 +856,13 @@ function setAuthUI(on){
 function connectGoogle(){ loginWithGoogle(); }
 function loadFromSheets() {
   if (!gToken) { loadLocal(); return; }
-  fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+'/values/'+SHEET_TAB+'!A1',{headers:{Authorization:'Bearer '+gToken}})
+  fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+'/values/'+SHEET_TAB+'!A1:A50',{headers:{Authorization:'Bearer '+gToken}})
   .then(function(r){return r.json();})
   .then(function(d) {
-    if (d.values && d.values[0] && d.values[0][0]) {
+    if (d.values && d.values.length > 0 && d.values[0][0]) {
       try {
-        var loaded = JSON.parse(d.values[0][0]);
+        var _jsonStr = d.values.map(function(row){return row[0]||'';}).join('');
+        var loaded = JSON.parse(_jsonStr);
         // NOTA (16/07/2026): removido o gatilho automático de re-unmerge baseado em
         // "atv.sellers.length>6". Esse gatilho fazia sentido quando Ativação tinha só
         // 6 vendedores (limite ATV_BASE_LEN da migração antiga) -- mas desde a reorganização
@@ -1041,9 +1042,13 @@ function loadOrigemAuto() {
 
 function saveToSheets() {
   if (!gToken) { saveLocal(); return; }
-  fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+'/values/'+SHEET_TAB+'!A1?valueInputOption=RAW',
+  var _json=JSON.stringify(state),_CHUNK=45000,_chunks=[];
+  for(var _ci=0;_ci<_json.length;_ci+=_CHUNK)_chunks.push([_json.slice(_ci,_ci+_CHUNK)]);
+  while(_chunks.length<50)_chunks.push(['']);
+  var _range=SHEET_TAB+'!A1:A50';
+  fetch('https://sheets.googleapis.com/v4/spreadsheets/'+SHEET_ID+'/values/'+encodeURIComponent(_range)+'?valueInputOption=RAW',
     {method:'PUT', headers:{'Authorization':'Bearer '+gToken,'Content-Type':'application/json'},
-     body:JSON.stringify({range:SHEET_TAB+'!A1',majorDimension:'ROWS',values:[[JSON.stringify(state)]]})})
+     body:JSON.stringify({range:_range,majorDimension:'ROWS',values:_chunks})})
   .then(function(r){return r.json();})
   .then(function(d) {
     if (d.updatedCells) {
