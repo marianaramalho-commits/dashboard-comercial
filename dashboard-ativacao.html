@@ -14,13 +14,13 @@
     --error:#FF6060;--errorbg:#FFF1F1;
     --ok:#1EA853;--okbg:#DDFBE7;
     --warn:#F3A42E;--warnbg:#FEF9EC;
+    --proj:#7c3aed;--projbg:#EDE9FE;
     --radius:14px;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding-bottom:40px;}
   .mono{font-family:'JetBrains Mono',monospace;}
 
-  /* HEADER */
   header{background:linear-gradient(135deg,var(--darkergreen) 0%,var(--darkgreen) 70%,var(--green) 140%);padding:26px 36px 0;color:#fff;}
   .header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
   .brand{display:flex;align-items:center;gap:12px;}
@@ -40,21 +40,18 @@
   .month-progress .track{height:8px;border-radius:5px;background:rgba(255,255,255,0.14);overflow:hidden;}
   .month-progress .fill{height:100%;background:linear-gradient(90deg,var(--green2),var(--green3));border-radius:5px;}
 
-  /* TABS */
   .nav-tabs{display:flex;gap:3px;padding:18px 36px 0;overflow-x:auto;}
   .nav-tab{padding:9px 16px;border-radius:10px 10px 0 0;border:none;font-family:'Inter';font-size:12.5px;font-weight:600;cursor:pointer;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.07);white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:7px;flex-shrink:0;}
   .nav-tab:hover{background:rgba(255,255,255,0.13);color:rgba(255,255,255,0.9);}
   .nav-tab.active{background:#fff;color:var(--darkgreen);}
   .nav-tab .av{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;}
 
-  /* CONTENT */
-  .content{padding:24px 36px;max-width:1340px;margin:0 auto;}
+  .content{padding:24px 36px;max-width:1380px;margin:0 auto;}
   .tab-panel{display:none;}
   .tab-panel.active{display:block;}
   .section-title{font-size:12.5px;font-weight:700;color:var(--darkgreen);text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;display:flex;align-items:center;gap:8px;}
   .section-title:first-child{margin-top:0;}
 
-  /* KPI */
   .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
   .kpi-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
   .kpi-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
@@ -68,29 +65,17 @@
   .kpi-badge.up{background:var(--okbg);color:var(--ok);}
   .kpi-badge.warn{background:var(--warnbg);color:var(--warn);}
   .kpi-badge.down{background:var(--errorbg);color:var(--error);}
+  .kpi-badge.proj{background:var(--projbg);color:var(--proj);}
 
-
-  /* BIG PROGRESS */
   .big-progress{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;}
   .big-progress .lr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
   .big-progress .lr span{font-size:12px;color:var(--muted);font-weight:600;}
   .big-progress .lr b{font-size:20px;font-weight:800;font-family:'JetBrains Mono';}
-  .big-progress .track{height:14px;border-radius:8px;background:var(--cardbg);overflow:hidden;}
+  .big-progress .track{height:14px;border-radius:8px;background:var(--cardbg);overflow:hidden;position:relative;}
   .big-progress .fill{height:100%;border-radius:8px;transition:width .4s;}
+  .big-progress .fill-proj{position:absolute;top:0;height:100%;border-radius:8px;opacity:0.3;}
   .big-progress .sublabel{font-size:11.5px;color:var(--muted);margin-top:8px;}
 
-  /* TOOLBAR */
-  .toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--card);border:1px solid var(--border);border-left:4px solid var(--green);border-radius:12px;padding:12px 16px;margin-bottom:6px;}
-  .toolbar .lbl{font-size:11px;font-weight:700;color:var(--darkgreen);text-transform:uppercase;letter-spacing:0.4px;white-space:nowrap;}
-  .btn{cursor:pointer;font-family:'Inter';font-size:12.5px;font-weight:700;padding:8px 16px;border-radius:8px;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
-  .btn-primary{background:var(--green);color:#fff;}
-  .btn-primary:hover{background:var(--darkgreen);}
-  .btn-ghost{background:var(--cardbg);color:var(--ink);}
-  .btn-ghost:hover{background:#e6e7e6;}
-  #import-status,#save-status{font-size:11.5px;color:var(--muted);}
-  input[type=file]{display:none;}
-
-  /* RANKING TABLE */
   .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto;}
   table{width:100%;border-collapse:collapse;}
   thead th{background:var(--darkgreen);color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;text-align:left;padding:11px 13px;white-space:nowrap;}
@@ -102,21 +87,19 @@
   tbody tr.today-row td{background:#EAF3DE;font-weight:700;}
   .seller-name{display:flex;align-items:center;gap:9px;font-weight:700;}
   .avatar{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;flex-shrink:0;}
-  .realizado-input{width:110px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono';font-size:12px;text-align:right;}
-  .realizado-input:focus{outline:2px solid var(--green2);border-color:var(--green);}
   .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;}
   .pill.ok{background:var(--okbg);color:var(--ok);}
   .pill.warn{background:var(--warnbg);color:var(--warn);}
   .pill.down{background:var(--errorbg);color:var(--error);}
-  .bar-mini{width:80px;height:6px;border-radius:4px;background:var(--cardbg);overflow:hidden;display:inline-block;vertical-align:middle;}
-  .bar-mini .f{height:100%;border-radius:4px;}
+  .pill.proj{background:var(--projbg);color:var(--proj);}
   .conv-pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;}
   .conv-pill.ok{background:var(--okbg);color:var(--ok);}
   .conv-pill.warn{background:var(--warnbg);color:var(--warn);}
   .conv-pill.down{background:var(--errorbg);color:var(--error);}
   .conv-sub{font-size:10px;color:var(--muted);display:block;margin-top:1px;}
+  .bar-mini{width:80px;height:6px;border-radius:4px;background:var(--cardbg);overflow:hidden;display:inline-block;vertical-align:middle;}
+  .bar-mini .f{height:100%;border-radius:4px;}
 
-  /* SELLER CARDS (overview) */
   .seller-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
   @media(max-width:1100px){.seller-grid{grid-template-columns:repeat(2,1fr);}}
   .seller-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:box-shadow .15s;}
@@ -131,7 +114,6 @@
   .progress-fill{height:100%;border-radius:5px;transition:width .3s;}
   .seller-card .sl{font-size:11px;color:var(--muted);margin-top:4px;}
 
-  /* HERO INDIVIDUAL */
   .seller-hero{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;gap:18px;}
   .seller-hero .av-big{width:58px;height:58px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0;}
   .seller-hero .info h2{font-size:21px;font-weight:800;}
@@ -139,10 +121,47 @@
   .seller-hero .badges{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
   .seller-hero .badge{padding:3px 11px;border-radius:20px;font-size:11.5px;font-weight:700;background:var(--cardbg);color:var(--darkgreen);}
 
-  /* DIA A DIA TABLE */
   .diad-table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-  .diad-table-wrap table{min-width:0;}
-  .diad-table-wrap thead th{background:var(--darkgreen);}
+
+  /* LÍDER FORM */
+  .lider-lock{background:var(--card);border:1px dashed var(--border);border-radius:var(--radius);padding:28px;text-align:center;}
+  .lider-lock .ic{font-size:32px;margin-bottom:10px;}
+  .lider-lock p{font-size:14px;color:var(--muted);margin-bottom:16px;}
+  .btn{cursor:pointer;font-family:'Inter';font-size:12.5px;font-weight:700;padding:8px 16px;border-radius:8px;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+  .btn-primary{background:var(--green);color:#fff;}
+  .btn-primary:hover{background:var(--darkgreen);}
+  .btn-ghost{background:var(--cardbg);color:var(--ink);}
+  .btn-ghost:hover{background:#e6e7e6;}
+  .btn-export{background:var(--darkgreen);color:#fff;font-size:14px;padding:10px 22px;}
+  .btn-export:hover{background:var(--darkergreen);}
+  .lider-form{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  .lider-form-header{background:var(--darkgreen);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  .lider-date-row{display:flex;align-items:center;gap:12px;}
+  .lider-date-row label{font-size:12px;font-weight:700;color:rgba(255,255,255,0.75);}
+  .lider-date-row input[type=date]{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:6px 10px;color:#fff;font-size:13px;font-family:'Inter';}
+  .lider-date-row input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:0.7;}
+  .du-info{font-size:12px;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.1);padding:5px 12px;border-radius:20px;}
+  .lider-table{width:100%;}
+  .lider-table thead th{background:#f7f8f7;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;padding:10px 14px;border-bottom:1px solid var(--border);text-align:left;}
+  .lider-table thead th.num{text-align:right;}
+  .lider-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);}
+  .lider-table tbody tr:last-child td{border-bottom:none;}
+  .lider-table tbody tr:hover{background:#FAFCFB;}
+  .lider-input{width:130px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:'JetBrains Mono';font-size:13px;text-align:right;background:#fff;color:var(--ink);}
+  .lider-input:focus{outline:2px solid var(--green2);border-color:var(--green);}
+  .lider-input-sm{width:80px;}
+  .lider-footer{padding:16px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .proj-card{background:linear-gradient(135deg,var(--darkergreen),var(--darkgreen));border-radius:var(--radius);padding:18px 22px;color:#fff;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  @media(max-width:900px){.proj-card{grid-template-columns:repeat(2,1fr);}}
+  .proj-col .lbl{font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;}
+  .proj-col .val{font-size:20px;font-weight:800;font-family:'JetBrains Mono';margin-top:4px;}
+  .proj-col .sub{font-size:11px;color:rgba(255,255,255,0.55);margin-top:3px;}
+  .proj-badge{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+  .proj-badge.ok{background:rgba(30,168,83,0.25);color:#6EE7A0;}
+  .proj-badge.warn{background:rgba(243,164,46,0.25);color:#FCD47F;}
+  .proj-badge.down{background:rgba(255,96,96,0.2);color:#FF9999;}
+  .info-box{display:flex;gap:11px;background:linear-gradient(135deg,#EAF3DE,#E1F5EE);border:1px solid var(--green2);border-radius:11px;padding:13px 16px;margin-bottom:16px;font-size:12.5px;color:var(--darkgreen);line-height:1.55;}
+  .info-box .ic{font-size:17px;flex-shrink:0;}
 
   /* SIMULADOR */
   .sim-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;}
@@ -184,13 +203,8 @@
   .badge-alta{background:var(--okbg);color:var(--ok);}
   .badge-turbo{background:#EDE9FE;color:#5B21B6;}
   .comm-table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-  .comm-table-wrap table{min-width:0;}
-  .comm-table-wrap thead th{background:var(--darkgreen);}
   .comm-fixo-line{font-size:12px;color:var(--muted);margin:8px 2px 12px;}
   .comm-fixo-line b{color:var(--darkgreen);}
-
-  .info-box{display:flex;gap:11px;background:linear-gradient(135deg,#EAF3DE,#E1F5EE);border:1px solid var(--green2);border-radius:11px;padding:13px 16px;margin-bottom:6px;font-size:12.5px;color:var(--darkgreen);line-height:1.55;}
-  .info-box .ic{font-size:17px;flex-shrink:0;}
 
   footer{text-align:center;font-size:11px;color:var(--muted);padding:22px 0 6px;}
 </style>
@@ -205,12 +219,12 @@
     </div>
     <div class="cycle-badge">
       <span class="dot"></span>
-      <span class="txt">Dia útil <b id="badge-du">8</b> de <b id="badge-du-total">21</b> · <span id="badge-rest">13</span> restantes</span>
+      <span class="txt">Dia útil <b id="badge-du">–</b> de <b id="badge-du-total">–</b> · <span id="badge-rest">–</span> restantes</span>
     </div>
   </div>
   <div class="title-row">
     <h1>Dashboard Ativação — Acompanhamento de Metas</h1>
-    <p id="hdr-sub">Realizado via export HubSpot · Meta total <span id="hdr-meta-total" class="mono"></span> · <span id="data-updated" style="color:rgba(255,255,255,0.5);font-size:11px;"></span></p>
+    <p id="hdr-sub">Realizado via painel líder · Meta total <span id="hdr-meta-total" class="mono"></span> · <span id="data-updated" style="color:rgba(255,255,255,0.5);font-size:11px;"></span></p>
   </div>
   <div class="month-progress">
     <div class="labels"><span>Progresso do mês</span><span id="month-pct"></span></div>
@@ -222,37 +236,20 @@
 <!-- PANEL GERAL -->
 <div class="tab-panel active" id="panel-geral">
   <div class="content">
-
     <div class="section-title">📊 Visão Geral</div>
     <div class="kpi-grid" id="kpi-grid"></div>
 
-    <div class="section-title">✏️ Importar / Atualizar</div>
-    <div class="info-box" style="margin-bottom:8px;">
-      <span class="ic">🔗</span>
-      <div><b>Propostas Pagas</b>: CSV com Proprietário + Comissão Konsigleads (etapa = Pago). <b>Leads</b>: CSV com Proprietário do negócio (todas etapas, funil Ativação).</div>
-    </div>
-    <div class="toolbar">
-      <div class="lbl">📥 Pagos</div>
-      <label class="btn btn-ghost" style="cursor:pointer;">📂 Importar CSV<input type="file" accept=".csv" id="csv-pagos-input" onchange="importPagosCSV(this)"></label>
-      <div style="width:1px;height:24px;background:var(--border);"></div>
-      <div class="lbl">📥 Leads</div>
-      <label class="btn btn-ghost" style="cursor:pointer;">📂 Importar CSV<input type="file" accept=".csv" id="csv-leads-input" onchange="importLeadsCSV(this)"></label>
-      <div id="import-status"></div>
-      <button class="btn btn-primary" style="margin-left:auto;" onclick="exportJSON()">📤 Exportar JSON</button>
-      <button class="btn btn-ghost" onclick="resetState()">🗑️ Zerar</button>
-      <div id="save-status"></div>
-    </div>
-
-    <div class="section-title">🏆 Ranking — Meta × Realizado × Conversão</div>
+    <div class="section-title">🏆 Ranking — Meta × Realizado × Projeção</div>
     <div class="table-wrap">
-      <table style="min-width:860px;">
+      <table style="min-width:900px;">
         <thead><tr>
           <th>#</th><th>Vendedor</th><th>Conversão</th>
-          <th class="num">Meta Mensal</th><th class="num">Meta/DU</th>
-          <th class="num">Meta Prop. (DU <span id="th-du">8</span>)</th>
+          <th class="num">Meta Mensal</th>
+          <th class="num">Meta Prop. (DU <span id="th-du">–</span>)</th>
           <th class="num">Realizado</th>
+          <th class="num">Projeção Mês</th>
           <th class="num">Ating. (vs prop.)</th>
-          <th class="num">Ritmo/DU restante</th>
+          <th class="num">Meta Diária</th>
           <th>Status</th>
         </tr></thead>
         <tbody id="ranking-body"></tbody>
@@ -261,9 +258,9 @@
 
     <div class="section-title">📅 Meta Dia a Dia — Time Ativação</div>
     <div class="diad-table-wrap">
-      <table style="min-width:0;">
+      <table>
         <thead><tr>
-          <th>DU</th><th class="num">Meta Acum. (R$)</th><th class="num">Realizado Acum. (R$)</th><th class="num">Gap (R$)</th><th>Status</th>
+          <th>DU</th><th class="num">Meta Acum.</th><th class="num">Realizado Acum.</th><th class="num">Gap</th><th class="num">Projeção</th><th>Status</th>
         </tr></thead>
         <tbody id="diad-body"></tbody>
       </table>
@@ -271,12 +268,75 @@
 
     <div class="section-title">👥 Cards por Vendedor</div>
     <div class="seller-grid" id="seller-grid"></div>
+  </div>
+</div>
 
+<!-- PANEL LÍDER -->
+<div class="tab-panel" id="panel-lider">
+  <div class="content">
+    <div id="lider-locked">
+      <div class="lider-lock">
+        <div class="ic">🔒</div>
+        <p>Área restrita. Apenas o líder pode inserir e atualizar os dados do time.</p>
+        <button class="btn btn-primary" onclick="unlockLider()">Entrar como líder</button>
+      </div>
+    </div>
+    <div id="lider-unlocked" style="display:none;">
+      <div class="info-box">
+        <span class="ic">ℹ️</span>
+        <div>Preencha os dados acumulados do mês até a data informada. Após salvar, clique em <b>Exportar JSON</b> e suba o arquivo no GitHub para o time ver.</div>
+      </div>
+      <div class="lider-form">
+        <div class="lider-form-header">
+          <div class="lider-date-row">
+            <label>Data de referência:</label>
+            <input type="date" id="lider-date" onchange="updateDateDU()">
+          </div>
+          <div class="du-info" id="lider-du-info">DU – de –</div>
+        </div>
+        <table class="lider-table">
+          <thead><tr>
+            <th>Vendedor</th>
+            <th class="num">Leads recebidos</th>
+            <th class="num">Pagos (qtd)</th>
+            <th class="num">Faturamento acum. (R$)</th>
+            <th class="num">Meta do dia</th>
+            <th class="num">Projeção mês</th>
+          </tr></thead>
+          <tbody id="lider-tbody"></tbody>
+          <tfoot id="lider-tfoot"></tfoot>
+        </table>
+        <div class="lider-footer">
+          <button class="btn btn-export" onclick="saveAndExport()">📤 Salvar e Exportar JSON</button>
+          <button class="btn btn-ghost" onclick="lockLider()">🔒 Sair do modo líder</button>
+          <span id="lider-status" style="font-size:12px;color:var(--muted);"></span>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- PANELS INDIVIDUAIS -->
 <div id="individual-panels"></div>
+
+<!-- PANEL REAL TIME -->
+<div class="tab-panel" id="panel-realtime">
+  <div style="display:flex;flex-direction:column;height:calc(100vh - 220px);padding:16px 36px 0;">
+    <div class="section-title" style="margin:0 0 10px;">📡 Finalizados Konsigleads — Real Time</div>
+    <iframe
+      id="metabase-iframe"
+      src="https://konsiencia.metabaseapp.com/dashboard/2410-finalizados-konsigleads-real-time?banco=&convenio=&followupid=&opera%C3%A7%C3%A3o=Saque+Cart%C3%A3o+Consignado&opera%C3%A7%C3%A3o=Cr%C3%A9dito+Novo&opera%C3%A7%C3%A3o=Saque+Cart%C3%A3o+Benef%C3%ADcio&opera%C3%A7%C3%A3o=Troco+M%C3%A1ximo&opera%C3%A7%C3%A3o=Consignado+CLT&opera%C3%A7%C3%A3o=Cr%C3%A9dito+Pessoal&origem_followup=&vendedor=madsonbrito&vendedor=camilequeiroz&vendedor=lucasrangel&vendedor=anacarolina&vendedor=luanaoliveira&vendedor=larissamirella&vendedor=silasaragao"
+      style="flex:1;border:none;border-radius:14px;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,0.07);"
+      allowfullscreen
+      loading="lazy"
+      id="rt-frame"
+    ></iframe>
+    <div style="font-size:11px;color:var(--muted);padding:8px 2px;text-align:right;">
+      Se o dashboard não carregar, você pode precisar estar logada no Metabase.
+      <a href="https://konsiencia.metabaseapp.com" target="_blank" style="color:var(--green);text-decoration:none;font-weight:600;">Abrir Metabase ↗</a>
+    </div>
+  </div>
+</div>
 
 <!-- PANEL COMISSÃO -->
 <div class="tab-panel" id="panel-comissao">
@@ -293,62 +353,52 @@
         <th>Faixa</th><th class="num">Valor</th><th class="num">Bônus conv.</th><th class="num">Total possível</th>
       </tr></thead><tbody id="comm-table-body"></tbody></table>
     </div>
-    <div style="font-size:11px;color:var(--muted);margin-top:8px;">* Bônus pago só a quem bater a conversão da frente.</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;">* Bônus pago só a quem bater a conversão da faixa.</div>
   </div>
 </div>
 
-<footer>Konsi · Comercial — Funil Ativação · Gerado automaticamente</footer>
+<footer>Konsi · Comercial — Funil Ativação · Dados inseridos pelo líder</footer>
 
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────
-function calcDUAtual(){
-  const n=new Date(),yr=n.getFullYear(),mo=n.getMonth();
+const ADMIN_PIN = 'konsi2026';
+
+function calcDUFromDate(date){
+  const yr=date.getFullYear(),mo=date.getMonth();
   let du=0;
-  for(let d=1;d<=n.getDate();d++){const wd=new Date(yr,mo,d).getDay();if(wd!==0&&wd!==6)du++;}
+  for(let d=1;d<=date.getDate();d++){const wd=new Date(yr,mo,d).getDay();if(wd!==0&&wd!==6)du++;}
   return du;
 }
-function calcDUTotal(){
-  const n=new Date(),yr=n.getFullYear(),mo=n.getMonth();
+function calcDUTotal(date){
+  const yr=(date||new Date()).getFullYear(),mo=(date||new Date()).getMonth();
   const last=new Date(yr,mo+1,0).getDate();
   let du=0;
   for(let d=1;d<=last;d++){const wd=new Date(yr,mo,d).getDay();if(wd!==0&&wd!==6)du++;}
   return du;
 }
+
 const DIAS_UTEIS_MES = calcDUTotal();
-const DU_ATUAL       = calcDUAtual();
-const DIAS_RESTANTES = DIAS_UTEIS_MES - DU_ATUAL;
+let DU_ATUAL       = calcDUFromDate(new Date());
+let DIAS_RESTANTES = DIAS_UTEIS_MES - DU_ATUAL;
 
 const TEAM = [
-  {nome:"Silas",        meta:73000, cor:"#0A9F82", ks:"ks3", nomeCsv:"Silas Aragão"},
-  {nome:"Luana",        meta:51000, cor:"#0DC7A2", ks:"ks2", nomeCsv:"Luana"},
-  {nome:"Ana Carolina", meta:51000, cor:"#04513F", ks:"ks2", nomeCsv:"Ana Carolina"},
-  {nome:"Lucas Rangel", meta:51000, cor:"#F3A42E", ks:"ks2", nomeCsv:"Lucas Rangel"},
-  {nome:"Madson",       meta:56000, cor:"#7c3aed", ks:"ks3", nomeCsv:"Madson"},
-  {nome:"Larissa",      meta:46000, cor:"#0891b2", ks:"ks1", nomeCsv:"Larissa"},
-  {nome:"Camile",       meta:46000, cor:"#e11d48", ks:"ks1", nomeCsv:"Camile"},
-  {nome:"Tanner",       meta:40000, cor:"#16a34a", ks:"ks1", nomeCsv:"Tanner"},
+  {nome:"Silas",        meta:73000, cor:"#0A9F82", ks:"ks3", convMeta:33},
+  {nome:"Luana",        meta:51000, cor:"#0DC7A2", ks:"ks2", convMeta:7},
+  {nome:"Ana Carolina", meta:51000, cor:"#04513F", ks:"ks2", convMeta:7},
+  {nome:"Lucas Rangel", meta:51000, cor:"#F3A42E", ks:"ks2", convMeta:7},
+  {nome:"Madson",       meta:56000, cor:"#7c3aed", ks:"ks3", convMeta:7},
+  {nome:"Larissa",      meta:46000, cor:"#0891b2", ks:"ks1", convMeta:7},
+  {nome:"Camile",       meta:46000, cor:"#e11d48", ks:"ks1", convMeta:7},
+  {nome:"Tanner",       meta:40000, cor:"#16a34a", ks:"ks1", convMeta:7},
 ];
-
 const META_TOTAL = TEAM.reduce((a,v)=>a+v.meta,0);
 
-const SEED_VERSION = 'ago12-atv-v3';
-const STORAGE_KEY  = 'konsi_ativacao_v3_ago';
-let storageOK = true;
-
-// Estado
+// ─── ESTADO ───────────────────────────────────────────────────
 let REALIZADO   = {};
 let LEADS       = {};
 let PAGOS_COUNT = {};
 
-const REALIZADO_SEED   = {Silas:0,Luana:0,"Ana Carolina":0,"Lucas Rangel":0,Madson:0,Larissa:0,Camile:0,Tanner:0};
-const LEADS_SEED       = {Silas:131,Luana:103,"Ana Carolina":107,"Lucas Rangel":93,Madson:109,Larissa:110,Camile:63,Tanner:7};
-const PAGOS_COUNT_SEED = {Silas:0,Luana:0,"Ana Carolina":0,"Lucas Rangel":0,Madson:0,Larissa:0,Camile:0,Tanner:0};
-
-TEAM.forEach(v=>{
-  REALIZADO[v.nome]   = REALIZADO_SEED[v.nome]   || 0;
-  LEADS[v.nome]       = LEADS_SEED[v.nome]        || 0;
-  PAGOS_COUNT[v.nome] = PAGOS_COUNT_SEED[v.nome]  || 0;
-});
+TEAM.forEach(v=>{REALIZADO[v.nome]=0;LEADS[v.nome]=0;PAGOS_COUNT[v.nome]=0;});
 
 // ─── COMISSIONAMENTO ──────────────────────────────────────────
 const CARGO_PLANS={
@@ -367,46 +417,6 @@ function calcComissao(ks,pct,bateu){
   return{label:f?f.l:'Sem faixa',vf,bonus:bateu?BONUS:0,fixo:pl.fixo,total:pl.fixo+vf+(bateu?BONUS:0),gar:!f||f.b<GARANTIDO};
 }
 
-// ─── STATE ────────────────────────────────────────────────────
-function loadState(){
-  try{
-    const raw=localStorage.getItem(STORAGE_KEY);
-    if(!raw) return;
-    const p=JSON.parse(raw);
-    if(p.seedVersion!==SEED_VERSION) return;
-    TEAM.forEach(v=>{
-      if(p.r?.[v.nome]!=null)  REALIZADO[v.nome]   =p.r[v.nome];
-      if(p.l?.[v.nome]!=null)  LEADS[v.nome]        =p.l[v.nome];
-      if(p.pc?.[v.nome]!=null) PAGOS_COUNT[v.nome]  =p.pc[v.nome];
-    });
-  }catch(e){storageOK=false;}
-}
-function saveState(){
-  try{
-    localStorage.setItem(STORAGE_KEY,JSON.stringify({
-      seedVersion:SEED_VERSION,
-      r:REALIZADO,l:LEADS,pc:PAGOS_COUNT
-    }));
-    const el=document.getElementById('save-status');
-    if(el){el.textContent='✔ Salvo às '+new Date().toLocaleTimeString('pt-BR');setTimeout(()=>el.textContent='',3000);}
-  }catch(e){storageOK=false;}
-}
-function resetState(){
-  if(!confirm('Zerar todos os valores?')) return;
-  TEAM.forEach(v=>{REALIZADO[v.nome]=0;LEADS[v.nome]=0;PAGOS_COUNT[v.nome]=0;});
-  saveState();renderAll();
-}
-function restoreOriginal(){
-  if(!confirm('Restaurar dados originais?')) return;
-  try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
-  TEAM.forEach(v=>{
-    REALIZADO[v.nome]  =REALIZADO_SEED[v.nome]  ||0;
-    LEADS[v.nome]      =LEADS_SEED[v.nome]       ||0;
-    PAGOS_COUNT[v.nome]=PAGOS_COUNT_SEED[v.nome] ||0;
-  });
-  saveState();renderAll();
-}
-
 // ─── HELPERS ──────────────────────────────────────────────────
 const fmt   =v=>'R$ '+(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
 const fmt2  =v=>'R$ '+(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -414,10 +424,126 @@ const fmtPct=v=>(isFinite(v)?v:0).toFixed(1)+'%';
 const inits =n=>n.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
 const mp    =meta=>meta/DIAS_UTEIS_MES*DU_ATUAL;
 const mpDia =meta=>meta/DIAS_UTEIS_MES;
+const proj  =real=>DU_ATUAL>0?real/DU_ATUAL*DIAS_UTEIS_MES:0;
 const ritmo =(meta,real)=>{const r=Math.max(0,meta-real);return DIAS_RESTANTES>0?r/DIAS_RESTANTES:r;};
 const stOf  =pct=>pct>=100?{cls:'ok',lbl:'Na meta',bar:'var(--ok)'}:pct>=80?{cls:'warn',lbl:'Atenção',bar:'var(--warn)'}:{cls:'down',lbl:'Abaixo',bar:'var(--error)'};
-const convOf=nome=>{const l=LEADS[nome]||0,p=PAGOS_COUNT[nome]||0,pct=l?p/l*100:0;return{pct,l,p,cls:pct>=35?'ok':pct>=20?'warn':'down'};};
+const stProjOf=pct=>pct>=100?{cls:'ok'}:pct>=80?{cls:'warn'}:{cls:'down'};
+const convOf=nome=>{
+  const v=TEAM.find(t=>t.nome===nome);
+  const cm=v?.convMeta||7;
+  const l=LEADS[nome]||0,p=PAGOS_COUNT[nome]||0;
+  const pct=l?p/l*100:0;
+  const cls=pct>=cm?'ok':pct>=cm*0.7?'warn':'down';
+  return{pct,l,p,cls,convMeta:cm};
+};
 const tabId =nome=>'panel-'+nome.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+
+// ─── LÍDER PANEL ──────────────────────────────────────────────
+function unlockLider(){
+  const pin=prompt('PIN de acesso:');
+  if(pin===ADMIN_PIN){
+    document.getElementById('lider-locked').style.display='none';
+    document.getElementById('lider-unlocked').style.display='block';
+    buildLiderForm();
+  }else if(pin!==null){alert('PIN incorreto.');}
+}
+function lockLider(){
+  document.getElementById('lider-locked').style.display='block';
+  document.getElementById('lider-unlocked').style.display='none';
+}
+
+function todayStr(){
+  const n=new Date(),pad=x=>String(x).padStart(2,'0');
+  return`${n.getFullYear()}-${pad(n.getMonth()+1)}-${pad(n.getDate())}`;
+}
+
+function buildLiderForm(){
+  const dateInput=document.getElementById('lider-date');
+  if(!dateInput.value) dateInput.value=todayStr();
+  updateDateDU();
+  renderLiderTable();
+}
+
+function updateDateDU(){
+  const val=document.getElementById('lider-date').value;
+  if(!val) return;
+  const d=new Date(val+'T12:00:00');
+  DU_ATUAL=calcDUFromDate(d);
+  DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;
+  const info=document.getElementById('lider-du-info');
+  if(info) info.textContent=`DU ${DU_ATUAL} de ${DIAS_UTEIS_MES} · ${DIAS_RESTANTES} dias úteis restantes`;
+  renderLiderTable();
+  renderAll();
+}
+
+function renderLiderTable(){
+  const tbody=document.getElementById('lider-tbody');
+  const tfoot=document.getElementById('lider-tfoot');
+  if(!tbody) return;
+  tbody.innerHTML=TEAM.map(v=>{
+    const real=REALIZADO[v.nome]||0;
+    const leads=LEADS[v.nome]||0;
+    const pagos=PAGOS_COUNT[v.nome]||0;
+    const projV=proj(real);
+    const metaDia=Math.round(v.meta/DIAS_UTEIS_MES);
+    const pctProj=v.meta?projV/v.meta*100:0;
+    const stP=stProjOf(pctProj);
+    return`<tr>
+      <td><div class="seller-name"><span class="avatar" style="background:${v.cor};width:26px;height:26px;">${inits(v.nome)}</span><b>${v.nome}</b></div></td>
+      <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="li-leads-${tabId(v.nome)}" value="${leads}" onchange="liderChange()"></td>
+      <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="li-pagos-${tabId(v.nome)}" value="${pagos}" onchange="liderChange()"></td>
+      <td class="num"><input class="lider-input" type="number" min="0" step="0.01" id="li-real-${tabId(v.nome)}" value="${real||''}" placeholder="0,00" onchange="liderChange()"></td>
+      <td class="num mono" style="color:var(--muted);">${fmt(metaDia)}</td>
+      <td class="num"><span class="pill ${stP.cls}">${fmt(Math.round(projV))}</span><br><span style="font-size:10px;color:var(--muted);">${fmtPct(pctProj)} da meta</span></td>
+    </tr>`;
+  }).join('');
+  // totais
+  const tReal=TEAM.reduce((a,v)=>a+(REALIZADO[v.nome]||0),0);
+  const tLeads=TEAM.reduce((a,v)=>a+(LEADS[v.nome]||0),0);
+  const tPagos=TEAM.reduce((a,v)=>a+(PAGOS_COUNT[v.nome]||0),0);
+  const projTotal=proj(tReal);
+  const pctProjT=META_TOTAL?projTotal/META_TOTAL*100:0;
+  tfoot.innerHTML=`<tr class="total-row">
+    <td><b>TOTAL EQUIPE</b></td>
+    <td class="num">${tLeads}</td>
+    <td class="num">${tPagos}</td>
+    <td class="num mono">${fmt(tReal)}</td>
+    <td class="num mono">${fmt(Math.round(META_TOTAL/DIAS_UTEIS_MES))}</td>
+    <td class="num">${fmt(Math.round(projTotal))} <span style="font-size:10px;opacity:0.75;">(${fmtPct(pctProjT)})</span></td>
+  </tr>`;
+}
+
+function liderChange(){
+  TEAM.forEach(v=>{
+    const id=tabId(v.nome);
+    const l=parseFloat(document.getElementById('li-leads-'+id)?.value)||0;
+    const p=parseFloat(document.getElementById('li-pagos-'+id)?.value)||0;
+    const r=parseFloat(document.getElementById('li-real-'+id)?.value)||0;
+    LEADS[v.nome]=l;
+    PAGOS_COUNT[v.nome]=p;
+    REALIZADO[v.nome]=r;
+  });
+  renderLiderTable();
+  renderAll();
+}
+
+function saveAndExport(){
+  liderChange();
+  const dateVal=document.getElementById('lider-date')?.value||todayStr();
+  const data={
+    updated:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',dateStyle:'short',timeStyle:'short'}),
+    dataReferencia:dateVal,
+    DU_ATUAL,
+    REALIZADO,LEADS,PAGOS_COUNT
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='data.json';
+  a.click();
+  const el=document.getElementById('lider-status');
+  if(el){el.textContent='✔ data.json baixado — sube no GitHub para o time ver';setTimeout(()=>el.textContent='',7000);}
+}
 
 // ─── TABS ─────────────────────────────────────────────────────
 function buildTabs(){
@@ -427,6 +553,8 @@ function buildTabs(){
     h+=`<button class="nav-tab" id="tab-${id}" onclick="switchTab('${id}')">
       <span class="av" style="background:${v.cor}">${inits(v.nome)}</span>${v.nome}</button>`;
   });
+  h+=`<button class="nav-tab" id="tab-lider" onclick="switchTab('lider')">👑 Líder</button>`;
+  h+=`<button class="nav-tab" id="tab-realtime" onclick="switchTab('realtime')">📡 Real Time</button>`;
   h+=`<button class="nav-tab" id="tab-comissao" onclick="switchTab('comissao')">💰 Comissão</button>`;
   document.getElementById('nav-tabs').innerHTML=h;
 }
@@ -445,12 +573,11 @@ function buildIndividualPanels(){
     <div class="tab-panel" id="panel-${id}">
     <div class="content">
 
-      <!-- HERO -->
       <div class="seller-hero">
         <div class="av-big" style="background:${v.cor}">${inits(v.nome)}</div>
         <div class="info">
           <h2>${v.nome}</h2>
-          <p>Funil Ativação · ${CL[v.ks]} · Meta mensal: <b class="mono">${fmt(v.meta)}</b></p>
+          <p>Funil Ativação · ${CL[v.ks]} · Meta mensal: <b class="mono">${fmt(v.meta)}</b> · Meta conversão: <b>${v.convMeta}%</b></p>
           <div class="badges">
             <span class="badge">Meta/DU: <b class="mono">${fmt(Math.round(v.meta/DIAS_UTEIS_MES))}</b></span>
             <span class="badge" id="${id}-hero-badge">–</span>
@@ -458,38 +585,27 @@ function buildIndividualPanels(){
         </div>
       </div>
 
-      <!-- BARRA PROGRESSO MÊS -->
-      <div class="section-title">📈 Progressão do Mês</div>
+      <div class="section-title">📈 Progressão vs Meta Proporcional</div>
       <div class="big-progress">
-        <div class="lr"><span>Atingimento vs Meta Proporcional (DU ${DU_ATUAL}/${DIAS_UTEIS_MES})</span><b id="${id}-pct-prop">—</b></div>
-        <div class="track"><div class="fill" id="${id}-bar" style="width:0%"></div></div>
+        <div class="lr"><span id="${id}-prog-label">Atingimento vs Meta Proporcional</span><b id="${id}-pct-prop">—</b></div>
+        <div class="track">
+          <div class="fill" id="${id}-bar" style="width:0%"></div>
+          <div class="fill-proj" id="${id}-bar-proj" style="width:0%;background:var(--proj)"></div>
+        </div>
         <div class="sublabel" id="${id}-sublabel"></div>
       </div>
 
-      <!-- KPIs MÊS -->
       <div class="section-title">📊 Métricas do Mês</div>
-      <div class="kpi-grid-4" id="${id}-kpis"></div>
+      <div class="kpi-grid" id="${id}-kpis"></div>
 
-      <!-- META DIA A DIA INDIVIDUAL -->
       <div class="section-title">📅 Meta Dia a Dia</div>
       <div class="diad-table-wrap">
         <table><thead><tr>
-          <th>DU</th><th class="num">Meta Acum.</th><th class="num">Realizado Acum.</th><th class="num">Gap</th><th>Status</th>
+          <th>DU</th><th class="num">Meta Acum.</th><th class="num">Realizado Acum.</th><th class="num">Gap</th><th class="num">Projeção</th><th>Status</th>
         </tr></thead>
-        <tbody id="${id}-diad"></tbody>
-        </table>
+        <tbody id="${id}-diad"></tbody></table>
       </div>
 
-      <!-- EDITAR REALIZADO MÊS -->
-      <div class="section-title">✏️ Editar Realizado Acumulado</div>
-      <div class="toolbar" style="max-width:500px;">
-        <div class="lbl">Realizado mês (R$)</div>
-        <input type="number" class="realizado-input" style="width:160px;font-size:14px;"
-          id="${id}-input-real" min="0" step="100" onchange="updateRealizado('${v.nome}',this.value)">
-        <button class="btn btn-primary" onclick="saveState()">💾 Salvar</button>
-      </div>
-
-      <!-- SIMULADOR -->
       <div class="section-title">🎯 Simulador de Comissão</div>
       <div class="sim-card">
         <div class="sim-grid">
@@ -522,36 +638,40 @@ function buildIndividualPanels(){
   }).join('');
 }
 
-
 function renderIndividualPanel(v){
   const id=tabId(v.nome);
   const real=REALIZADO[v.nome]||0;
   const mpV=mp(v.meta);
+  const projV=proj(real);
   const pctP=mpV?real/mpV*100:0;
+  const pctProj=v.meta?projV/v.meta*100:0;
   const pctM=v.meta?real/v.meta*100:0;
   const rt=ritmo(v.meta,real);
   const st=stOf(pctP);
   const cv=convOf(v.nome);
+  const metaDia=Math.round(v.meta/DIAS_UTEIS_MES);
 
-  // hero badge
   const hb=document.getElementById(id+'-hero-badge');
   if(hb){hb.textContent=st.lbl;hb.style.background=pctP>=100?'var(--okbg)':pctP>=80?'var(--warnbg)':'var(--errorbg)';hb.style.color=st.bar;}
 
-  // barra
   const bar=document.getElementById(id+'-bar');
   if(bar){bar.style.width=Math.min(pctP,100)+'%';bar.style.background=st.bar;}
+  const barProj=document.getElementById(id+'-bar-proj');
+  if(barProj){barProj.style.width=Math.min(Math.max(0,pctProj-pctP),100-Math.min(pctP,100))+'%';}
   const pEl=document.getElementById(id+'-pct-prop');
   if(pEl) pEl.textContent=fmtPct(pctP);
+  const pl=document.getElementById(id+'-prog-label');
+  if(pl) pl.textContent=`Atingimento vs Meta Prop. (DU ${DU_ATUAL}/${DIAS_UTEIS_MES})`;
   const sl=document.getElementById(id+'-sublabel');
-  if(sl) sl.textContent=`Realizado: ${fmt(real)} · Meta prop.: ${fmt2(mpV)} · Do mês: ${fmtPct(pctM)} · Ritmo necessário: ${fmt(rt)}/DU nos ${DIAS_RESTANTES} dias restantes`;
+  if(sl) sl.textContent=`Realizado: ${fmt(real)} · Meta prop.: ${fmt2(mpV)} · Projeção mês: ${fmt(Math.round(projV))} (${fmtPct(pctProj)}) · Ritmo: ${fmt(rt)}/DU`;
 
-  // kpis
   const kEl=document.getElementById(id+'-kpis');
   if(kEl) kEl.innerHTML=[
     {label:'Meta Mensal',value:fmt(v.meta),sub:CL[v.ks],color:'var(--green)'},
-    {label:'Meta Prop. (DU '+DU_ATUAL+')',value:fmt2(mpV),sub:'Esperado até hoje',color:'var(--darkgreen)',badge:{text:fmtPct(pctP)+' ating.',cls:pctP>=100?'up':pctP>=80?'warn':'down'}},
+    {label:`Meta Prop. DU ${DU_ATUAL}`,value:fmt2(mpV),sub:'Esperado até hoje',color:'var(--darkgreen)',badge:{text:fmtPct(pctP)+' ating.',cls:pctP>=100?'up':pctP>=80?'warn':'down'}},
     {label:'Realizado',value:fmt(real),sub:fmtPct(pctM)+' da meta mensal',color:'var(--green2)'},
-    {label:'Conversão',value:fmtPct(cv.pct),sub:`${cv.p} pagos / ${cv.l} leads`,color:cv.cls==='ok'?'var(--ok)':cv.cls==='warn'?'var(--warn)':'var(--error)'},
+    {label:'Projeção Fim do Mês',value:fmt(Math.round(projV)),sub:fmtPct(pctProj)+' da meta',color:'var(--proj)',badge:{text:pctProj>=100?'✔ Na meta':pctProj>=80?'Atenção':'Abaixo da meta',cls:pctProj>=100?'up':pctProj>=80?'warn':'down'}},
+    {label:'Conversão',value:fmtPct(cv.pct),sub:`${cv.p} pagos / ${cv.l} leads · meta ${cv.convMeta}%`,color:cv.cls==='ok'?'var(--ok)':cv.cls==='warn'?'var(--warn)':'var(--error)'},
   ].map(k=>`<div class="kpi-card" style="--kc:${k.color}">
     <div class="kpi-label">${k.label}</div>
     <div class="kpi-value mono">${k.value}</div>
@@ -559,14 +679,14 @@ function renderIndividualPanel(v){
     ${k.badge?`<div class="kpi-badge ${k.badge.cls}">${k.badge.text}</div>`:''}
   </div>`).join('');
 
-  // dia a dia individual
   const dEl=document.getElementById(id+'-diad');
   if(dEl){
-    const metaDia=v.meta/DIAS_UTEIS_MES;
+    const metaDiaV=v.meta/DIAS_UTEIS_MES;
     dEl.innerHTML=Array.from({length:DIAS_UTEIS_MES},(_,i)=>{
       const du=i+1;
-      const metaAcum=Math.round(metaDia*du);
-      const realAcum=du<=DU_ATUAL?real:null; // só temos até hoje
+      const metaAcum=Math.round(metaDiaV*du);
+      const realAcum=du<=DU_ATUAL?real:null;
+      const projAcum=du>DU_ATUAL&&DU_ATUAL>0?Math.round(real/DU_ATUAL*du):null;
       const gap=realAcum!=null?realAcum-metaAcum:null;
       const st2=realAcum!=null?stOf(realAcum/metaAcum*100):null;
       const isToday=du===DU_ATUAL;
@@ -575,21 +695,16 @@ function renderIndividualPanel(v){
         <td class="num mono">${fmt(metaAcum)}</td>
         <td class="num mono">${realAcum!=null?fmt(realAcum):'<span style="color:var(--muted)">–</span>'}</td>
         <td class="num mono">${gap!=null?(gap>=0?`<span style="color:var(--ok)">+${fmt(gap)}</span>`:`<span style="color:var(--error)">${fmt(gap)}</span>`):'<span style="color:var(--muted)">–</span>'}</td>
-        <td>${st2?`<span class="pill ${st2.cls}">${st2.lbl}</span>`:'<span style="color:var(--muted);font-size:11px;">aguardando</span>'}</td>
+        <td class="num mono">${projAcum!=null?`<span style="color:var(--proj);font-size:11px;">${fmt(projAcum)}</span>`:'<span style="color:var(--muted)">–</span>'}</td>
+        <td>${st2?`<span class="pill ${st2.cls}">${st2.lbl}</span>`:isToday?'':projAcum!=null?`<span style="color:var(--muted);font-size:11px;">projetado</span>`:'<span style="color:var(--muted);font-size:11px;">aguardando</span>'}</td>
       </tr>`;
     }).join('');
   }
 
-  // input real
-  const inp=document.getElementById(id+'-input-real');
-  if(inp) inp.value=real;
-
-  // sim
   const sc=document.getElementById(id+'-sim-cargo');if(sc) sc.value=v.ks;
   const sm=document.getElementById(id+'-sim-meta'); if(sm) sm.value=v.meta;
   const sr=document.getElementById(id+'-sim-real'); if(sr) sr.value=Math.round(real);
-  const scv=document.getElementById(id+'-sim-conv');if(scv) scv.checked=cv.pct>=35;
-
+  const scv=document.getElementById(id+'-sim-conv');if(scv) scv.checked=cv.pct>=cv.convMeta;
   renderIndSim(id,v.nome);
 }
 
@@ -598,8 +713,8 @@ function renderIndSim(id,nome){
   const meta=parseFloat(document.getElementById(id+'-sim-meta')?.value)||0;
   const real=parseFloat(document.getElementById(id+'-sim-real')?.value)||0;
   const bateu=document.getElementById(id+'-sim-conv')?.checked||false;
-  const proj=DU_ATUAL?real/DU_ATUAL*DIAS_UTEIS_MES:0;
-  const pct=meta?proj/meta*100:0;
+  const projV=DU_ATUAL?real/DU_ATUAL*DIAS_UTEIS_MES:0;
+  const pct=meta?projV/meta*100:0;
   const r=calcComissao(cargo,pct,bateu);
   const el=document.getElementById(id+'-sim-result');if(!el)return;
   el.innerHTML=`
@@ -607,28 +722,13 @@ function renderIndSim(id,nome){
     <div class="pct-val">${fmtPct(pct)}</div>
     <span class="ftag">${CL[cargo]} · ${r.label}${r.gar?' (garantido)':''}</span>
     <div class="sim-bd">
-      <div class="line"><span>Projeção receita</span><span>${fmt(proj)}</span></div>
+      <div class="line"><span>Projeção receita</span><span>${fmt(projV)}</span></div>
       <div class="line"><span>Fixo</span><span>${fmt(r.fixo)}</span></div>
       <div class="line"><span>Comissão da faixa</span><span>${fmt(r.vf)}</span></div>
       <div class="line"><span>Bônus conversão</span><span>${r.bonus?fmt(r.bonus):'—'}</span></div>
     </div>
     <div class="sim-total"><div class="lbl">Total estimado</div><div class="val">${fmt(r.total)}</div></div>
-    <div class="sim-note">Projeção = (${fmt(real)} ÷ ${DU_ATUAL} DU) × ${DIAS_UTEIS_MES} DU.</div>`;
-}
-
-// ─── EXPORT JSON ──────────────────────────────────────────────
-function exportJSON(){
-  const data={
-    updated:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',dateStyle:'short',timeStyle:'short'}),
-    REALIZADO,LEADS,PAGOS_COUNT
-  };
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='data.json';
-  a.click();
-  const el=document.getElementById('save-status');
-  if(el){el.textContent='✔ data.json baixado — sobe no GitHub para atualizar o dashboard';setTimeout(()=>el.textContent='',6000);}
+    <div class="sim-note">Projeção = (${fmt(real)} ÷ DU ${DU_ATUAL}) × ${DIAS_UTEIS_MES} DU</div>`;
 }
 
 // ─── RENDER GERAL ─────────────────────────────────────────────
@@ -641,25 +741,21 @@ function renderHeader(){
   const pct=DU_ATUAL/DIAS_UTEIS_MES*100;
   document.getElementById('month-pct').textContent=pct.toFixed(0)+'%';
   document.getElementById('month-fill').style.width=pct+'%';
-  // mês dinâmico
-  const mes=new Date().toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-  const sub=document.getElementById('hdr-sub');
-  if(sub) sub.childNodes[0].textContent=mes.charAt(0).toUpperCase()+mes.slice(1)+' · Realizado via export HubSpot · Meta total ';
 }
 
 function renderKPIs(){
   const mpT=META_TOTAL/DIAS_UTEIS_MES*DU_ATUAL;
   const real=TEAM.reduce((a,v)=>a+(REALIZADO[v.nome]||0),0);
-  const rest=Math.max(0,META_TOTAL-real);
+  const projTotal=proj(real);
   const pctP=mpT?real/mpT*100:0;
-  const rd=DIAS_RESTANTES?rest/DIAS_RESTANTES:rest;
-  const metaDia=META_TOTAL/DIAS_UTEIS_MES;
+  const pctProj=META_TOTAL?projTotal/META_TOTAL*100:0;
+  const rd=DIAS_RESTANTES?Math.max(0,META_TOTAL-real)/DIAS_RESTANTES:0;
   const kpis=[
-    {label:'Meta Mensal da Equipe',value:fmt(META_TOTAL),sub:`${DIAS_UTEIS_MES} DU · ${TEAM.length} vendedores`,color:'var(--green)'},
-    {label:`Meta Prop. (DU ${DU_ATUAL})`,value:fmt(mpT),sub:'Ritmo até hoje',badge:{text:fmtPct(pctP)+' ating.',cls:pctP>=100?'up':pctP>=80?'warn':'down'},color:'var(--darkgreen)'},
+    {label:'Meta Mensal Equipe',value:fmt(META_TOTAL),sub:`${DIAS_UTEIS_MES} DU · ${TEAM.length} vendedores`,color:'var(--green)'},
+    {label:`Meta Prop. DU ${DU_ATUAL}`,value:fmt(mpT),sub:'Esperado até hoje',badge:{text:fmtPct(pctP)+' ating.',cls:pctP>=100?'up':pctP>=80?'warn':'down'},color:'var(--darkgreen)'},
     {label:'Realizado Mês',value:fmt(real),sub:fmtPct(META_TOTAL?real/META_TOTAL*100:0)+' da meta',color:'var(--green2)'},
-    {label:'Meta do Dia (Equipe)',value:fmt(Math.round(metaDia)),sub:`R$ ${META_TOTAL.toLocaleString('pt-BR')} ÷ ${DIAS_UTEIS_MES} DU`,color:'var(--warn)'},
-    {label:'Ritmo Necessário/DU',value:fmt(rd),sub:`Faltam ${DIAS_RESTANTES} DU`,color:'#7c3aed'},
+    {label:'Projeção Fim do Mês',value:fmt(Math.round(projTotal)),sub:fmtPct(pctProj)+' da meta',badge:{text:pctProj>=100?'✔ Na meta':pctProj>=80?'Atenção':'Abaixo',cls:pctProj>=100?'up':pctProj>=80?'warn':'down'},color:'var(--proj)'},
+    {label:'Ritmo Necessário/DU',value:fmt(rd),sub:`Faltam ${DIAS_RESTANTES} DU`,color:'#0891b2'},
   ];
   document.getElementById('kpi-grid').innerHTML=kpis.map(k=>`
     <div class="kpi-card" style="--kc:${k.color}">
@@ -671,38 +767,40 @@ function renderKPIs(){
 }
 
 function renderRanking(){
-  const real=nome=>REALIZADO[nome]||0;
   const rows=TEAM.map(v=>{
-    const r=real(v.nome),mpV=mp(v.meta),pct=mpV?r/mpV*100:0,rt=ritmo(v.meta,r),md=mpDia(v.meta);
-    return{...v,r,mpV,pct,rt,md};
+    const r=REALIZADO[v.nome]||0,mpV=mp(v.meta),pct=mpV?r/mpV*100:0;
+    const projV=proj(r),pctProj=v.meta?projV/v.meta*100:0;
+    const rt=ritmo(v.meta,r),md=Math.round(v.meta/DIAS_UTEIS_MES);
+    return{...v,r,mpV,pct,projV,pctProj,rt,md};
   }).sort((a,b)=>b.pct-a.pct);
-  const tMeta=META_TOTAL,tReal=TEAM.reduce((a,v)=>a+real(v.nome),0);
-  const tMP=mp(tMeta),tPct=tMP?tReal/tMP*100:0,tRt=ritmo(tMeta,tReal);
+  const tReal=TEAM.reduce((a,v)=>a+(REALIZADO[v.nome]||0),0);
+  const tMP=mp(META_TOTAL),tPct=tMP?tReal/tMP*100:0,tRt=ritmo(META_TOTAL,tReal);
+  const tProj=proj(tReal),tPctProj=META_TOTAL?tProj/META_TOTAL*100:0;
   const tL=TEAM.reduce((a,v)=>a+(LEADS[v.nome]||0),0),tP=TEAM.reduce((a,v)=>a+(PAGOS_COUNT[v.nome]||0),0);
   document.getElementById('ranking-body').innerHTML=rows.map((r,i)=>{
-    const st=stOf(r.pct),cv=convOf(r.nome);
+    const st=stOf(r.pct),cv=convOf(r.nome),stP=stProjOf(r.pctProj);
     return`<tr style="cursor:pointer;" onclick="switchTab('${tabId(r.nome)}')">
       <td>${i+1}</td>
       <td><div class="seller-name"><span class="avatar" style="background:${r.cor}">${inits(r.nome)}</span>${r.nome}</div></td>
-      <td><span class="conv-pill ${cv.cls}">${fmtPct(cv.pct)}</span><span class="conv-sub">${cv.p}/${cv.l} leads</span></td>
+      <td><span class="conv-pill ${cv.cls}">${fmtPct(cv.pct)}</span><span class="conv-sub">${cv.p}/${cv.l} leads · meta ${cv.convMeta}%</span></td>
       <td class="num mono">${fmt(r.meta)}</td>
-      <td class="num mono">${fmt(Math.round(r.md))}</td>
       <td class="num mono">${fmt2(r.mpV)}</td>
-      <td class="num"><input type="number" class="realizado-input" value="${r.r}" min="0" step="100" onclick="event.stopPropagation()" onchange="updateRealizado('${r.nome}',this.value)"></td>
+      <td class="num mono">${fmt(r.r)}</td>
+      <td class="num"><span class="pill ${stP.cls}">${fmt(Math.round(r.projV))}</span><br><span style="font-size:10px;color:var(--muted);">${fmtPct(r.pctProj)}</span></td>
       <td class="num"><span class="bar-mini"><span class="f" style="width:${Math.min(r.pct,100)}%;background:${st.bar}"></span></span>&nbsp;<b class="mono">${fmtPct(r.pct)}</b></td>
-      <td class="num mono">${fmt(r.rt)}</td>
+      <td class="num mono">${fmt(r.md)}</td>
       <td><span class="pill ${st.cls}">${st.lbl}</span></td>
     </tr>`;
   }).join('')+`<tr class="total-row">
-    <td></td><td>TOTAL EQUIPE</td><td>${fmtPct(tL?tP/tL*100:0)}</td>
-    <td class="num mono">${fmt(tMeta)}</td><td class="num mono">${fmt(Math.round(META_TOTAL/DIAS_UTEIS_MES))}</td>
-    <td class="num mono">${fmt2(tMP)}</td><td class="num mono">${fmt(tReal)}</td>
-    <td class="num mono">${fmtPct(tPct)}</td><td class="num mono">${fmt(tRt)}</td><td></td>
+    <td></td><td>TOTAL EQUIPE</td>
+    <td>${fmtPct(tL?tP/tL*100:0)}</td>
+    <td class="num mono">${fmt(META_TOTAL)}</td>
+    <td class="num mono">${fmt2(tMP)}</td>
+    <td class="num mono">${fmt(tReal)}</td>
+    <td class="num mono">${fmt(Math.round(tProj))} <span style="opacity:.7;font-size:11px;">${fmtPct(tPctProj)}</span></td>
+    <td class="num mono">${fmtPct(tPct)}</td>
+    <td class="num mono">${fmt(Math.round(META_TOTAL/DIAS_UTEIS_MES))}</td><td></td>
   </tr>`;
-}
-
-function updateRealizado(nome,val){
-  REALIZADO[nome]=parseFloat(val)||0;saveState();renderAll();
 }
 
 function renderDiaADia(){
@@ -713,6 +811,7 @@ function renderDiaADia(){
     const du=i+1;
     const metaAcum=Math.round(metaDia*du);
     const realAcum=du<=DU_ATUAL?totalReal:null;
+    const projAcum=du>DU_ATUAL&&DU_ATUAL>0?Math.round(totalReal/DU_ATUAL*du):null;
     const gap=realAcum!=null?realAcum-metaAcum:null;
     const st=realAcum!=null?stOf(realAcum/metaAcum*100):null;
     const isToday=du===DU_ATUAL;
@@ -721,7 +820,8 @@ function renderDiaADia(){
       <td class="num mono">${fmt(metaAcum)}</td>
       <td class="num mono">${realAcum!=null?fmt(realAcum):'<span style="color:var(--muted)">–</span>'}</td>
       <td class="num mono">${gap!=null?(gap>=0?`<span style="color:var(--ok)">+${fmt(gap)}</span>`:`<span style="color:var(--error)">${fmt(gap)}</span>`):'<span style="color:var(--muted)">–</span>'}</td>
-      <td>${st?`<span class="pill ${st.cls}">${st.lbl}</span>`:'<span style="color:var(--muted);font-size:11px;">aguardando</span>'}</td>
+      <td class="num mono">${projAcum!=null?`<span style="color:var(--proj);font-size:11px;">${fmt(projAcum)}</span>`:'<span style="color:var(--muted)">–</span>'}</td>
+      <td>${st?`<span class="pill ${st.cls}">${st.lbl}</span>`:projAcum!=null?`<span style="color:var(--muted);font-size:11px;">projetado</span>`:'<span style="color:var(--muted);font-size:11px;">aguardando</span>'}</td>
     </tr>`;
   }).join('');
 }
@@ -729,19 +829,20 @@ function renderDiaADia(){
 function renderCards(){
   document.getElementById('seller-grid').innerHTML=TEAM.map(v=>{
     const real=REALIZADO[v.nome]||0,mpV=mp(v.meta),pct=mpV?real/mpV*100:0;
-    const pctM=v.meta?real/v.meta*100:0,rt=ritmo(v.meta,real),st=stOf(pct),cv=convOf(v.nome);
+    const projV=proj(real),pctProj=v.meta?projV/v.meta*100:0;
+    const pctM=v.meta?real/v.meta*100:0,st=stOf(pct),cv=convOf(v.nome);
+    const stP=stProjOf(pctProj);
     return`<div class="seller-card" style="border-left:4px solid ${v.cor};" onclick="switchTab('${tabId(v.nome)}')">
       <div class="top">
         <span class="avatar" style="background:${v.cor};width:34px;height:34px;">${inits(v.nome)}</span>
         <div><div class="name">${v.nome}</div><div class="role">${CL[v.ks]} · Meta/DU: ${fmt(Math.round(v.meta/DIAS_UTEIS_MES))}</div></div>
         <span class="conv-pill ${cv.cls}" style="margin-left:auto;font-size:10.5px;">${fmtPct(cv.pct)}</span>
       </div>
-      <div class="mr"><span>Meta mensal</span><span class="mono">${fmt(v.meta)}</span></div>
-      <div class="mr"><span>Meta prop. (DU ${DU_ATUAL})</span><span class="mono">${fmt2(mpV)}</span></div>
       <div class="mr"><span>Realizado</span><span class="mono">${fmt(real)}</span></div>
+      <div class="mr"><span>Projeção mês</span><span class="pill ${stP.cls}" style="font-size:11px;">${fmt(Math.round(projV))}</span></div>
       <div class="progress-track"><div class="progress-fill" style="width:${Math.min(pct,100)}%;background:${st.bar}"></div></div>
       <div class="sl"><span class="pill ${st.cls}">${st.lbl}</span> · ${fmtPct(pct)} prop. · ${fmtPct(pctM)} mês</div>
-      <div class="sl">Ritmo: <b class="mono">${fmt(rt)}</b>/DU · Conv: ${cv.p}/${cv.l}</div>
+      <div class="sl">Conv: ${cv.p}/${cv.l} · meta ${cv.convMeta}% · Proj: ${fmtPct(pctProj)}</div>
     </div>`;
   }).join('');
 }
@@ -768,66 +869,6 @@ function renderCommTable(){
   }).join('');
 }
 
-// ─── CSV IMPORT ───────────────────────────────────────────────
-function parseCSVLine(l){
-  const o=[];let c='',q=false;
-  for(let i=0;i<l.length;i++){const ch=l[i];
-    if(ch==='"'){if(q&&l[i+1]==='"'){c+='"';i++;}else q=!q;}
-    else if(ch===','&&!q){o.push(c);c='';}else c+=ch;}
-  o.push(c);return o;
-}
-const norm=s=>(s||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
-function matchKey(keys,v){
-  const cn=norm(v.nomeCsv);let k=keys.find(k=>norm(k)===cn);if(k)return k;
-  const nv=norm(v.nome);return keys.find(k=>{const nk=norm(k);return nk.includes(nv)||nv.includes(nk.split(' ')[0]);});
-}
-function readCSV(file,cb){
-  const r=new FileReader();
-  r.onload=e=>{
-    const ls=e.target.result.split(/\r?\n/).filter(l=>l.trim());
-    if(ls.length<2){setStatus('Arquivo vazio',true);return;}
-    cb(parseCSVLine(ls[0]).map(h=>norm(h)),ls.slice(1).map(l=>parseCSVLine(l)));
-  };r.readAsText(file,'UTF-8');
-}
-function importPagosCSV(input){
-  const f=input.files[0];if(!f)return;
-  readCSV(f,(hdr,body)=>{
-    const iV=hdr.findIndex(h=>h.includes('proprietario')||h.includes('vendedor')||h.includes('owner'));
-    let iC=hdr.findIndex(h=>h.includes('comiss')&&h.includes('konsigleads'));
-    if(iC===-1)iC=hdr.findIndex(h=>h.includes('comiss'));if(iC===-1)iC=hdr.findIndex(h=>h.includes('valor')||h.includes('receita'));
-    const iE=hdr.findIndex(h=>h.includes('etapa'));
-    if(iV===-1||iC===-1){setStatus('Colunas não encontradas',true);return;}
-    const soma={},cnt={};let n=0;
-    body.forEach(c=>{
-      if(iE!==-1&&norm(c[iE])&&norm(c[iE])!=='pago')return;
-      const vd=(c[iV]||'').trim(),vr=(c[iC]||'0').trim();
-      const val=parseFloat(vr.replace(/\s/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.'))||0;
-      if(!vd)return;soma[vd]=(soma[vd]||0)+val;cnt[vd]=(cnt[vd]||0)+1;n++;
-    });
-    let m=0;const ks=Object.keys(soma);
-    TEAM.forEach(v=>{const k=matchKey(ks,v);if(k){REALIZADO[v.nome]=soma[k];PAGOS_COUNT[v.nome]=cnt[k];m++;}});
-    saveState();renderAll();setStatus(`✔ Pagos: ${m} vendedores · ${n} linhas`,false);
-  });
-}
-function importLeadsCSV(input){
-  const f=input.files[0];if(!f)return;
-  readCSV(f,(hdr,body)=>{
-    const iV=hdr.findIndex(h=>h.includes('proprietario')||h.includes('vendedor')||h.includes('owner'));
-    if(iV===-1){setStatus('Coluna de vendedor não encontrada',true);return;}
-    const cnt={};let n=0;
-    body.forEach(c=>{const vd=(c[iV]||'').trim();if(!vd)return;cnt[vd]=(cnt[vd]||0)+1;n++;});
-    let m=0;const ks=Object.keys(cnt);
-    TEAM.forEach(v=>{const k=matchKey(ks,v);if(k){LEADS[v.nome]=cnt[k];m++;}});
-    saveState();renderAll();setStatus(`✔ Leads: ${m} vendedores · ${n} linhas`,false);
-  });
-}
-function setStatus(msg,err){
-  const el=document.getElementById('import-status');
-  el.textContent=msg;el.style.color=err?'var(--error)':'var(--ok)';
-  setTimeout(()=>el.textContent='',5000);
-}
-
-// ─── RENDER ALL ───────────────────────────────────────────────
 function renderAll(){
   renderHeader();
   renderKPIs();
@@ -839,11 +880,10 @@ function renderAll(){
   renderCommTable();
 }
 
+// ─── INIT ─────────────────────────────────────────────────────
 buildTabs();
 buildIndividualPanels();
-loadState(); // fallback localStorage
 
-// Tenta carregar data.json do repositório (GitHub Pages)
 fetch('./data.json?t='+Date.now())
   .then(r=>{if(!r.ok)throw new Error();return r.json();})
   .then(d=>{
@@ -852,10 +892,11 @@ fetch('./data.json?t='+Date.now())
       if(d.LEADS?.[v.nome]!=null)     LEADS[v.nome]=d.LEADS[v.nome];
       if(d.PAGOS_COUNT?.[v.nome]!=null) PAGOS_COUNT[v.nome]=d.PAGOS_COUNT[v.nome];
     });
+    if(d.DU_ATUAL!=null){DU_ATUAL=d.DU_ATUAL;DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;}
     const el=document.getElementById('data-updated');
     if(el&&d.updated) el.textContent='Atualizado: '+d.updated;
   })
-  .catch(()=>{}) // sem data.json: usa seeds/localStorage normalmente
+  .catch(()=>{})
   .finally(()=>renderAll());
 </script>
 </body>
