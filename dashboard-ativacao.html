@@ -207,6 +207,11 @@
   .comm-fixo-line b{color:var(--darkgreen);}
 
   footer{text-align:center;font-size:11px;color:var(--muted);padding:22px 0 6px;}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--darkgreen);color:#fff;padding:12px 24px;border-radius:12px;font-size:13.5px;font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,0.18);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:9999;display:flex;align-items:center;gap:10px;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast .ic{font-size:17px;}
 </style>
 </head>
 <body>
@@ -357,6 +362,7 @@
   </div>
 </div>
 
+<div class="toast" id="toast"><span class="ic">✅</span><span id="toast-msg">Salvo! Pode fechar e voltar quando quiser.</span></div>
 <footer>Konsi · Comercial — Funil Ativação · Dados inseridos pelo líder</footer>
 
 <script>
@@ -472,6 +478,9 @@ function updateDateDU(){
   DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;
   const info=document.getElementById('lider-du-info');
   if(info) info.textContent=`DU ${DU_ATUAL} de ${DIAS_UTEIS_MES} · ${DIAS_RESTANTES} dias úteis restantes`;
+  // salva e avisa que pode fechar
+  saveLocalStorage();
+  showToast(`✅ Data ${val.split('-').reverse().join('/')} salva — DU ${DU_ATUAL}/${DIAS_UTEIS_MES} · Pode fechar e voltar quando quiser.`);
   renderLiderTable();
   renderAll();
 }
@@ -523,8 +532,52 @@ function liderChange(){
     PAGOS_COUNT[v.nome]=p;
     REALIZADO[v.nome]=r;
   });
+  saveLocalStorage();
+  showToast('✅ Dados salvos — pode fechar e voltar quando quiser.');
   renderLiderTable();
   renderAll();
+}
+
+const LS_KEY='konsi-ativacao-v1';
+let toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  const m=document.getElementById('toast-msg');
+  if(!t)return;
+  if(msg) m.textContent=msg;
+  t.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+function saveLocalStorage(){
+  const dateVal=document.getElementById('lider-date')?.value||todayStr();
+  const payload={
+    updated:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',dateStyle:'short',timeStyle:'short'}),
+    dataReferencia:dateVal,
+    DU_ATUAL,
+    REALIZADO,LEADS,PAGOS_COUNT
+  };
+  try{localStorage.setItem(LS_KEY,JSON.stringify(payload));}catch(e){}
+}
+function loadLocalStorage(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(!raw) return false;
+    const d=JSON.parse(raw);
+    TEAM.forEach(v=>{
+      if(d.REALIZADO?.[v.nome]!=null) REALIZADO[v.nome]=d.REALIZADO[v.nome];
+      if(d.LEADS?.[v.nome]!=null)     LEADS[v.nome]=d.LEADS[v.nome];
+      if(d.PAGOS_COUNT?.[v.nome]!=null) PAGOS_COUNT[v.nome]=d.PAGOS_COUNT[v.nome];
+    });
+    if(d.DU_ATUAL!=null){DU_ATUAL=d.DU_ATUAL;DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;}
+    const el=document.getElementById('data-updated');
+    if(el&&d.updated) el.textContent='Salvo localmente: '+d.updated;
+    // preenche o date input
+    const dateInput=document.getElementById('lider-date');
+    if(dateInput&&d.dataReferencia) dateInput.value=d.dataReferencia;
+    return true;
+  }catch(e){return false;}
 }
 
 function saveAndExport(){
@@ -884,6 +937,7 @@ function renderAll(){
 buildTabs();
 buildIndividualPanels();
 
+// Tenta carregar do GitHub (data.json), fallback para localStorage
 fetch('./data.json?t='+Date.now())
   .then(r=>{if(!r.ok)throw new Error();return r.json();})
   .then(d=>{
@@ -895,8 +949,13 @@ fetch('./data.json?t='+Date.now())
     if(d.DU_ATUAL!=null){DU_ATUAL=d.DU_ATUAL;DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;}
     const el=document.getElementById('data-updated');
     if(el&&d.updated) el.textContent='Atualizado: '+d.updated;
+    // sincroniza localStorage com o que veio do GitHub
+    saveLocalStorage();
   })
-  .catch(()=>{})
+  .catch(()=>{
+    // sem data.json — carrega do localStorage (dados locais da líder)
+    loadLocalStorage();
+  })
   .finally(()=>renderAll());
 </script>
 </body>
