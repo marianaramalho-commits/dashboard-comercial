@@ -201,6 +201,9 @@
   .badge-media{background:#DBEAFE;color:#1E40AF;}
   .badge-alta{background:var(--okbg);color:var(--ok);}
   .badge-turbo{background:#EDE9FE;color:#5B21B6;}
+  .calc-cargo-btn{padding:9px 22px;border-radius:8px;border:2px solid var(--border);font-family:'Inter';font-size:14px;font-weight:700;cursor:pointer;background:#fff;color:var(--muted);transition:all .15s;}
+  .calc-cargo-btn:hover{border-color:var(--green);color:var(--darkgreen);}
+  .calc-cargo-btn.active{background:var(--darkgreen);border-color:var(--darkgreen);color:#fff;}
 
   /* TOAST */
   .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--darkgreen);color:#fff;padding:13px 26px;border-radius:12px;font-size:13.5px;font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,0.2);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:9999;display:flex;align-items:center;gap:10px;white-space:nowrap;}
@@ -354,35 +357,37 @@
     <div class="section-title">💰 Calculadora de Comissão</div>
     <div class="comm-rule-box">
       <span class="ic">🧮</span>
-      <div class="txt">Digite sua meta e o valor que deseja atingir para ver quanto vai ganhar de comissão.</div>
+      <div class="txt">Preencha os dados abaixo para ver quanto você vai receber. <b>100% = bateu a meta exata.</b></div>
     </div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;max-width:560px;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;">Cargo</label>
-          <select id="calc-cargo" onchange="calcComissaoLivre()" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:#fff;">
-            <option value="ks1">KS1</option>
-            <option value="ks2">KS2</option>
-            <option value="ks3" selected>KS3</option>
-            <option value="ks4">KS4</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;">Meta mensal (R$)</label>
-          <input id="calc-meta" type="number" min="0" value="51000" oninput="calcComissaoLivre()" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;">Valor que deseja atingir (R$)</label>
-          <input id="calc-valor" type="number" min="0" value="51000" oninput="calcComissaoLivre()" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:'JetBrains Mono',monospace;font-weight:700;">
-        </div>
-        <div style="display:flex;align-items:flex-end;padding-bottom:4px;">
-          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;font-weight:600;">
-            <input id="calc-conv" type="checkbox" onchange="calcComissaoLivre()" style="width:18px;height:18px;accent-color:var(--green);cursor:pointer;">
-            Bateu a conversão (+R$200)
-          </label>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;max-width:540px;">
+
+      <div style="margin-bottom:16px;">
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;">Cargo</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="calc-cargo-btn active" onclick="setCalcCargo('ks1',this)">KS1</button>
+          <button class="calc-cargo-btn" onclick="setCalcCargo('ks2',this)">KS2</button>
+          <button class="calc-cargo-btn" onclick="setCalcCargo('ks3',this)">KS3</button>
+          <button class="calc-cargo-btn" onclick="setCalcCargo('ks4',this)">KS4</button>
         </div>
       </div>
-      <div id="calc-result" style="background:var(--bg);border-radius:10px;padding:20px;margin-top:4px;"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;">Meta mensal (R$)</label>
+          <input id="calc-meta" type="number" min="0" placeholder="ex: 51000" oninput="calcComissaoLivre()" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-family:'JetBrains Mono',monospace;font-weight:600;">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;">Realizado (R$)</label>
+          <input id="calc-valor" type="number" min="0" placeholder="ex: 51000" oninput="calcComissaoLivre()" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;font-family:'JetBrains Mono',monospace;font-weight:600;">
+        </div>
+      </div>
+
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;font-weight:600;margin-bottom:20px;">
+        <input id="calc-conv" type="checkbox" onchange="calcComissaoLivre()" style="width:18px;height:18px;accent-color:var(--green);cursor:pointer;">
+        Bateu a conversão do mês? <span style="color:var(--warn);font-size:13px;">(+ R$200)</span>
+      </label>
+
+      <div id="calc-result"></div>
     </div>
   </div>
 </div>
@@ -764,9 +769,10 @@ function renderIndividualPanel(v){
   const pctP=mpV?real/mpV*100:0,pctProj=v.meta?projV/v.meta*100:0,pctM=v.meta?real/v.meta*100:0;
   const rt=ritmo(v.meta,real),st=stOf(pctP),cv=convOf(v.nome);
 
-  const stM=stOf(pctM); // status baseado em % da meta mensal
+  const st=stOf(pctP);  // badge usa % vs meta proporcional (ritmo do dia)
+  const stM=stOf(pctM); // barra usa % da meta mensal
   const hb=document.getElementById(id+'-hero-badge');
-  if(hb){hb.textContent=stM.lbl;hb.style.background=pctM>=100?'var(--okbg)':pctM>=80?'var(--warnbg)':'var(--errorbg)';hb.style.color=stM.bar;}
+  if(hb){hb.textContent=st.lbl;hb.style.background=pctP>=100?'var(--okbg)':pctP>=80?'var(--warnbg)':'var(--errorbg)';hb.style.color=st.bar;}
   const bar=document.getElementById(id+'-bar');
   if(bar){bar.style.width=Math.min(pctM,100)+'%';bar.style.background=stM.bar;}
   const pEl=document.getElementById(id+'-pct-prop');if(pEl)pEl.textContent=fmtPct(pctM);
@@ -951,35 +957,47 @@ function renderCards(){
 }
 
 // ─── COMISSÃO CALCULADORA LIVRE ───────────────────────────────
+let _calcCargo='ks1';
+function setCalcCargo(k,btn){
+  _calcCargo=k;
+  document.querySelectorAll('.calc-cargo-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  calcComissaoLivre();
+}
 function calcComissaoLivre(){
-  const cargo=document.getElementById('calc-cargo')?.value||'ks2';
   const meta=parseFloat(document.getElementById('calc-meta')?.value)||0;
-  const valor=parseFloat(document.getElementById('calc-valor')?.value)||0;
+  const realizado=parseFloat(document.getElementById('calc-valor')?.value)||0;
   const bateu=document.getElementById('calc-conv')?.checked||false;
   const el=document.getElementById('calc-result');if(!el)return;
-  if(!meta||!valor){el.innerHTML='<span style="color:var(--muted);font-size:13px;">Preencha a meta e o valor desejado.</span>';return;}
-  const pct=valor/meta*100;
-  const r=calcComissao(cargo,pct,bateu);
-  const pctInt=Math.floor(pct);
+  if(!meta||!realizado){
+    el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px 0;">Preencha a meta e o realizado.</div>';
+    return;
+  }
+  // 100% = realizado == meta
+  const pct=realizado/meta*100;
+  const r=calcComissao(_calcCargo,pct,bateu);
   const clsPct=pct>=100?'var(--ok)':pct>=80?'var(--warn)':'var(--error)';
+  const bgTotal=pct>=100?'var(--darkgreen)':'var(--darkgreen)';
   el.innerHTML=`
-    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
-      <span style="font-size:28px;font-weight:800;font-family:'JetBrains Mono';color:${clsPct}">${fmtPct(pct)}</span>
-      <span style="font-size:13px;color:var(--muted);">da meta · Faixa: <b style="color:var(--darkgreen)">${r.label}${r.gar?' (garantido)':''}</b></span>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:14px 16px;background:var(--bg);border-radius:10px;">
+      <span style="font-size:32px;font-weight:800;font-family:'JetBrains Mono';color:${clsPct}">${fmtPct(pct)}</span>
+      <div>
+        <div style="font-size:12px;color:var(--muted);">da meta</div>
+        <div style="font-size:13px;font-weight:700;color:var(--darkgreen);">Faixa: ${r.label}${r.gar?' <span style="color:var(--muted);font-weight:400;">(garantido)</span>':''}</div>
+      </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;">
-      <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#fff;border-radius:8px;">
-        <span style="color:var(--muted);">Salário fixo</span><span class="mono" style="font-weight:600;">${fmt(r.fixo)}</span>
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:14px;">
+      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:8px;">
+        <span style="color:var(--muted);">Comissão da faixa</span>
+        <span class="mono" style="font-weight:700;color:var(--green);">${fmt(r.vf)}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#fff;border-radius:8px;">
-        <span style="color:var(--muted);">Comissão da faixa</span><span class="mono" style="font-weight:600;color:var(--darkgreen)">${fmt(r.vf)}</span>
+      <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:8px;${bateu?'':'opacity:.5'}">
+        <span style="color:var(--muted);">Bônus conversão</span>
+        <span class="mono" style="font-weight:700;color:var(--warn);">${bateu?'+ '+fmt(BONUS):'não bateu'}</span>
       </div>
-      <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#fff;border-radius:8px;opacity:${bateu?1:.45}">
-        <span style="color:var(--muted);">Bônus conversão</span><span class="mono" style="font-weight:600;color:var(--warn)">${bateu?'+ '+fmt(r.bonus):'— (não bateu)'}</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding:12px 14px;background:var(--darkgreen);border-radius:10px;margin-top:4px;">
-        <span style="color:rgba(255,255,255,.8);font-weight:600;">Total estimado</span>
-        <span class="mono" style="font-size:20px;font-weight:800;color:#fff;">${fmt(r.total)}</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:var(--darkgreen);border-radius:10px;margin-top:6px;">
+        <span style="color:rgba(255,255,255,.75);font-weight:600;font-size:13px;">Total comissão</span>
+        <span class="mono" style="font-size:22px;font-weight:800;color:#fff;">${fmt(r.vf+(bateu?BONUS:0))}</span>
       </div>
     </div>`;
 }
