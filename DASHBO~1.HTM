@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ativação — Acompanhamento de Metas · Konsi</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
+  :root{
+    --green:#0A9F82;--green2:#0DC7A2;--green3:#0FE2B8;
+    --darkgreen:#04513F;--darkergreen:#03261F;
+    --ink:#141514;--muted:#7C7C7C;--bg:#F5F6F6;--card:#FFFFFF;
+    --cardbg:#F0F0F0;--border:#E3E5E4;
+    --error:#FF6060;--errorbg:#FFF1F1;
+    --ok:#1EA853;--okbg:#DDFBE7;
+    --warn:#F3A42E;--warnbg:#FEF9EC;
+    --proj:#7c3aed;--projbg:#EDE9FE;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding-bottom:40px;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  header{background:linear-gradient(135deg,var(--darkergreen) 0%,var(--darkgreen) 70%,var(--green) 140%);padding:26px 36px 0;color:#fff;}
+  .header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--green3),var(--green));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:var(--darkergreen);}
+  .brand-name{font-weight:800;font-size:17px;}
+  .brand-sub{font-size:11.5px;color:rgba(255,255,255,0.62);margin-top:1px;}
+  .cycle-badge{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.16);border-radius:10px;padding:9px 16px;}
+  .cycle-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--green3);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .cycle-badge .txt{font-size:12.5px;font-weight:600;}
+  .cycle-badge .txt b{color:var(--green3);}
+  .title-row{margin-top:22px;}
+  .title-row h1{font-size:26px;font-weight:800;}
+  .title-row p{font-size:13.5px;color:rgba(255,255,255,0.68);margin-top:4px;}
+  .month-progress{margin-top:18px;max-width:640px;}
+  .month-progress .labels{display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,0.65);margin-bottom:5px;}
+  .month-progress .track{height:8px;border-radius:5px;background:rgba(255,255,255,0.14);overflow:hidden;}
+  .month-progress .fill{height:100%;background:linear-gradient(90deg,var(--green2),var(--green3));border-radius:5px;}
+
+  .nav-tabs{display:flex;gap:3px;padding:18px 36px 0;overflow-x:auto;}
+  .nav-tab{padding:9px 16px;border-radius:10px 10px 0 0;border:none;font-family:'Inter';font-size:12.5px;font-weight:600;cursor:pointer;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.07);white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:7px;flex-shrink:0;}
+  .nav-tab:hover{background:rgba(255,255,255,0.13);color:rgba(255,255,255,0.9);}
+  .nav-tab.active{background:#fff;color:var(--darkgreen);}
+  .nav-tab .av{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;}
+
+  .content{padding:24px 36px;max-width:1380px;margin:0 auto;}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+  .section-title{font-size:12.5px;font-weight:700;color:var(--darkgreen);text-transform:uppercase;letter-spacing:0.5px;margin:28px 0 12px;display:flex;align-items:center;gap:8px;}
+  .section-title:first-child{margin-top:0;}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+  .kpi-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .kpi-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  @media(max-width:1100px){.kpi-grid,.kpi-grid-4{grid-template-columns:repeat(2,1fr);}}
+  .kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:15px 18px;position:relative;overflow:hidden;}
+  .kpi-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--kc,var(--green));}
+  .kpi-label{font-size:10.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;}
+  .kpi-value{font-size:21px;font-weight:800;margin-top:5px;}
+  .kpi-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+  .kpi-badge{display:inline-block;margin-top:7px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;}
+  .kpi-badge.up{background:var(--okbg);color:var(--ok);}
+  .kpi-badge.warn{background:var(--warnbg);color:var(--warn);}
+  .kpi-badge.down{background:var(--errorbg);color:var(--error);}
+  .kpi-badge.proj{background:var(--projbg);color:var(--proj);}
+
+  .big-progress{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;}
+  .big-progress .lr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+  .big-progress .lr span{font-size:12px;color:var(--muted);font-weight:600;}
+  .big-progress .lr b{font-size:20px;font-weight:800;font-family:'JetBrains Mono';}
+  .big-progress .track{height:14px;border-radius:8px;background:var(--cardbg);overflow:hidden;position:relative;}
+  .big-progress .fill{height:100%;border-radius:8px;transition:width .4s;}
+  .big-progress .fill-proj{position:absolute;top:0;height:100%;border-radius:8px;opacity:0.3;}
+  .big-progress .sublabel{font-size:11.5px;color:var(--muted);margin-top:8px;}
+
+  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;}
+  thead th{background:var(--darkgreen);color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;text-align:left;padding:11px 13px;white-space:nowrap;}
+  thead th.num,td.num{text-align:right;}
+  tbody td{padding:11px 13px;border-bottom:1px solid var(--border);font-size:13px;white-space:nowrap;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#FAFCFB;}
+  tbody tr.total-row td{background:var(--darkgreen);color:#fff;font-weight:800;border-bottom:none;}
+  tbody tr.today-row td{background:#EAF3DE;font-weight:700;}
+  .seller-name{display:flex;align-items:center;gap:9px;font-weight:700;}
+  .avatar{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;flex-shrink:0;}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+  .pill.ok{background:var(--okbg);color:var(--ok);}
+  .pill.warn{background:var(--warnbg);color:var(--warn);}
+  .pill.down{background:var(--errorbg);color:var(--error);}
+  .pill.proj{background:var(--projbg);color:var(--proj);}
+  .conv-pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+  .conv-pill.ok{background:var(--okbg);color:var(--ok);}
+  .conv-pill.warn{background:var(--warnbg);color:var(--warn);}
+  .conv-pill.down{background:var(--errorbg);color:var(--error);}
+  .conv-sub{font-size:10px;color:var(--muted);display:block;margin-top:1px;}
+  .bar-mini{width:80px;height:6px;border-radius:4px;background:var(--cardbg);overflow:hidden;display:inline-block;vertical-align:middle;}
+  .bar-mini .f{height:100%;border-radius:4px;}
+
+  .seller-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  @media(max-width:1100px){.seller-grid{grid-template-columns:repeat(2,1fr);}}
+  .seller-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:box-shadow .15s;}
+  .seller-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.08);}
+  .seller-card .top{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .seller-card .name{font-weight:800;font-size:14px;}
+  .seller-card .role{font-size:10.5px;color:var(--muted);}
+  .seller-card .mr{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;}
+  .seller-card .mr span:first-child{color:var(--muted);}
+  .seller-card .mr span:last-child{font-weight:700;}
+  .progress-track{height:8px;border-radius:5px;background:var(--cardbg);overflow:hidden;margin:8px 0 3px;}
+  .progress-fill{height:100%;border-radius:5px;transition:width .3s;}
+  .seller-card .sl{font-size:11px;color:var(--muted);margin-top:4px;}
+
+  .seller-hero{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:center;gap:18px;}
+  .seller-hero .av-big{width:58px;height:58px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;flex-shrink:0;}
+  .seller-hero .info h2{font-size:21px;font-weight:800;}
+  .seller-hero .info p{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .seller-hero .badges{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+  .seller-hero .badge{padding:3px 11px;border-radius:20px;font-size:11.5px;font-weight:700;background:var(--cardbg);color:var(--darkgreen);}
+
+  .diad-table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+
+  /* LÍDER FORM */
+  .lider-lock{background:var(--card);border:1px dashed var(--border);border-radius:var(--radius);padding:28px;text-align:center;}
+  .lider-lock .ic{font-size:32px;margin-bottom:10px;}
+  .lider-lock p{font-size:14px;color:var(--muted);margin-bottom:16px;}
+  .btn{cursor:pointer;font-family:'Inter';font-size:12.5px;font-weight:700;padding:8px 16px;border-radius:8px;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+  .btn-primary{background:var(--green);color:#fff;}
+  .btn-primary:hover{background:var(--darkgreen);}
+  .btn-ghost{background:var(--cardbg);color:var(--ink);}
+  .btn-ghost:hover{background:#e6e7e6;}
+  .btn-export{background:var(--darkgreen);color:#fff;font-size:14px;padding:10px 22px;}
+  .btn-export:hover{background:var(--darkergreen);}
+  .lider-form{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  .lider-form-header{background:var(--darkgreen);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  .lider-date-row{display:flex;align-items:center;gap:12px;}
+  .lider-date-row label{font-size:12px;font-weight:700;color:rgba(255,255,255,0.75);}
+  .lider-date-row input[type=date]{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:6px 10px;color:#fff;font-size:13px;font-family:'Inter';}
+  .lider-date-row input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:0.7;}
+  .du-info{font-size:12px;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.1);padding:5px 12px;border-radius:20px;}
+  .lider-table{width:100%;}
+  .lider-table thead th{background:#f7f8f7;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;padding:10px 14px;border-bottom:1px solid var(--border);text-align:left;}
+  .lider-table thead th.num{text-align:right;}
+  .lider-table tbody td{padding:10px 14px;border-bottom:1px solid var(--border);}
+  .lider-table tbody tr:last-child td{border-bottom:none;}
+  .lider-table tbody tr:hover{background:#FAFCFB;}
+  .lider-input{width:130px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-family:'JetBrains Mono';font-size:13px;text-align:right;background:#fff;color:var(--ink);}
+  .lider-input:focus{outline:2px solid var(--green2);border-color:var(--green);}
+  .lider-input-sm{width:80px;}
+  .lider-footer{padding:16px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .proj-card{background:linear-gradient(135deg,var(--darkergreen),var(--darkgreen));border-radius:var(--radius);padding:18px 22px;color:#fff;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+  @media(max-width:900px){.proj-card{grid-template-columns:repeat(2,1fr);}}
+  .proj-col .lbl{font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;}
+  .proj-col .val{font-size:20px;font-weight:800;font-family:'JetBrains Mono';margin-top:4px;}
+  .proj-col .sub{font-size:11px;color:rgba(255,255,255,0.55);margin-top:3px;}
+  .proj-badge{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+  .proj-badge.ok{background:rgba(30,168,83,0.25);color:#6EE7A0;}
+  .proj-badge.warn{background:rgba(243,164,46,0.25);color:#FCD47F;}
+  .proj-badge.down{background:rgba(255,96,96,0.2);color:#FF9999;}
+  .info-box{display:flex;gap:11px;background:linear-gradient(135deg,#EAF3DE,#E1F5EE);border:1px solid var(--green2);border-radius:11px;padding:13px 16px;margin-bottom:16px;font-size:12.5px;color:var(--darkgreen);line-height:1.55;}
+  .info-box .ic{font-size:17px;flex-shrink:0;}
+
+  /* SIMULADOR */
+  .sim-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;}
+  .sim-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;}
+  @media(max-width:850px){.sim-grid{grid-template-columns:1fr;}}
+  .sim-field{margin-bottom:14px;}
+  .sim-field label{display:block;font-size:11px;font-weight:700;color:var(--darkgreen);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:5px;}
+  .sim-field select,.sim-field input{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-family:'Inter';font-size:13.5px;color:var(--ink);background:#fff;}
+  .sim-field input.mono{font-family:'JetBrains Mono';}
+  .sim-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .sim-toggle{display:flex;align-items:center;gap:9px;background:var(--cardbg);border-radius:9px;padding:10px 13px;margin-top:4px;cursor:pointer;}
+  .sim-toggle input{width:17px;height:17px;accent-color:var(--green);cursor:pointer;}
+  .sim-toggle span{font-size:12.5px;font-weight:600;}
+  .sim-result{background:linear-gradient(135deg,var(--darkergreen),var(--darkgreen));border-radius:14px;padding:20px 22px;color:#fff;position:relative;overflow:hidden;}
+  .sim-result::after{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:var(--green);opacity:0.22;}
+  .sim-result .pct-lbl{font-size:12px;color:rgba(255,255,255,0.65);position:relative;z-index:1;}
+  .sim-result .pct-val{font-size:30px;font-weight:800;font-family:'JetBrains Mono';position:relative;z-index:1;}
+  .sim-result .ftag{display:inline-block;margin-top:5px;padding:3px 11px;border-radius:20px;background:rgba(255,255,255,0.13);font-size:12px;font-weight:700;position:relative;z-index:1;}
+  .sim-bd{margin-top:16px;position:relative;z-index:1;}
+  .sim-bd .line{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.1);}
+  .sim-bd .line span:first-child{color:rgba(255,255,255,0.65);}
+  .sim-bd .line span:last-child{font-weight:700;font-family:'JetBrains Mono';}
+  .sim-total{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.18);position:relative;z-index:1;}
+  .sim-total .lbl{font-size:10.5px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.4px;}
+  .sim-total .val{font-size:28px;font-weight:800;font-family:'JetBrains Mono';margin-top:2px;}
+  .sim-note{font-size:10.5px;color:rgba(255,255,255,0.5);margin-top:8px;position:relative;z-index:1;}
+
+  /* COMISSÃO */
+  .comm-rule-box{display:flex;gap:12px;background:linear-gradient(135deg,#E1F5EE,#EAF3DE);border:1px solid #9FE1CB;border-radius:14px;padding:16px 18px;margin-bottom:14px;}
+  .comm-rule-box .ic{font-size:18px;flex-shrink:0;}
+  .comm-rule-box .txt{font-size:12.5px;color:var(--darkergreen);line-height:1.6;}
+  .comm-rule-box .txt b{color:var(--darkgreen);}
+  .cargo-tabs{display:flex;gap:5px;background:var(--cardbg);border-radius:11px;padding:4px;margin-bottom:14px;width:fit-content;}
+  .cargo-tab-btn{padding:7px 18px;border-radius:8px;border:none;background:transparent;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;}
+  .cargo-tab-btn.active{background:#fff;color:var(--darkgreen);box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+  .faixa-badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+  .badge-baixa{background:var(--warnbg);color:var(--warn);}
+  .badge-media{background:#DBEAFE;color:#1E40AF;}
+  .badge-alta{background:var(--okbg);color:var(--ok);}
+  .badge-turbo{background:#EDE9FE;color:#5B21B6;}
+  .comm-table-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+  .comm-fixo-line{font-size:12px;color:var(--muted);margin:8px 2px 12px;}
+  .comm-fixo-line b{color:var(--darkgreen);}
+
+  footer{text-align:center;font-size:11px;color:var(--muted);padding:22px 0 6px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="brand">
+      <div class="brand-mark">K</div>
+      <div><div class="brand-name">Konsi · Comercial</div><div class="brand-sub">Funil Ativação</div></div>
+    </div>
+    <div class="cycle-badge">
+      <span class="dot"></span>
+      <span class="txt">Dia útil <b id="badge-du">–</b> de <b id="badge-du-total">–</b> · <span id="badge-rest">–</span> restantes</span>
+    </div>
+  </div>
+  <div class="title-row">
+    <h1>Dashboard Ativação — Acompanhamento de Metas</h1>
+    <p id="hdr-sub">Realizado via painel líder · Meta total <span id="hdr-meta-total" class="mono"></span> · <span id="data-updated" style="color:rgba(255,255,255,0.5);font-size:11px;"></span></p>
+  </div>
+  <div class="month-progress">
+    <div class="labels"><span>Progresso do mês</span><span id="month-pct"></span></div>
+    <div class="track"><div class="fill" id="month-fill"></div></div>
+  </div>
+  <div class="nav-tabs" id="nav-tabs"></div>
+</header>
+
+<!-- PANEL GERAL -->
+<div class="tab-panel active" id="panel-geral">
+  <div class="content">
+    <div class="section-title">📊 Visão Geral</div>
+    <div class="kpi-grid" id="kpi-grid"></div>
+
+    <div class="section-title">🏆 Ranking — Meta × Realizado × Projeção</div>
+    <div class="table-wrap">
+      <table style="min-width:900px;">
+        <thead><tr>
+          <th>#</th><th>Vendedor</th><th>Conversão</th>
+          <th class="num">Meta Mensal</th>
+          <th class="num">Meta Prop. (DU <span id="th-du">–</span>)</th>
+          <th class="num">Realizado</th>
+          <th class="num">Projeção Mês</th>
+          <th class="num">Ating. (vs prop.)</th>
+          <th class="num">Meta Diária</th>
+          <th>Status</th>
+        </tr></thead>
+        <tbody id="ranking-body"></tbody>
+      </table>
+    </div>
+
+    <div class="section-title">📅 Meta Dia a Dia — Time Ativação</div>
+    <div class="diad-table-wrap">
+      <table>
+        <thead><tr>
+          <th>DU</th><th class="num">Meta Acum.</th><th class="num">Realizado Acum.</th><th class="num">Gap</th><th class="num">Projeção</th><th>Status</th>
+        </tr></thead>
+        <tbody id="diad-body"></tbody>
+      </table>
+    </div>
+
+    <div class="section-title">👥 Cards por Vendedor</div>
+    <div class="seller-grid" id="seller-grid"></div>
+  </div>
+</div>
+
+<!-- PANEL LÍDER -->
+<div class="tab-panel" id="panel-lider">
+  <div class="content">
+    <div id="lider-locked">
+      <div class="lider-lock">
+        <div class="ic">🔒</div>
+        <p>Área restrita. Apenas o líder pode inserir e atualizar os dados do time.</p>
+        <button class="btn btn-primary" onclick="unlockLider()">Entrar como líder</button>
+      </div>
+    </div>
+    <div id="lider-unlocked" style="display:none;">
+      <div class="info-box">
+        <span class="ic">ℹ️</span>
+        <div>Preencha os dados acumulados do mês até a data informada. Após salvar, clique em <b>Exportar JSON</b> e suba o arquivo no GitHub para o time ver.</div>
+      </div>
+      <div class="lider-form">
+        <div class="lider-form-header">
+          <div class="lider-date-row">
+            <label>Data de referência:</label>
+            <input type="date" id="lider-date" onchange="updateDateDU()">
+          </div>
+          <div class="du-info" id="lider-du-info">DU – de –</div>
+        </div>
+        <table class="lider-table">
+          <thead><tr>
+            <th>Vendedor</th>
+            <th class="num">Leads recebidos</th>
+            <th class="num">Pagos (qtd)</th>
+            <th class="num">Faturamento acum. (R$)</th>
+            <th class="num">Meta do dia</th>
+            <th class="num">Projeção mês</th>
+          </tr></thead>
+          <tbody id="lider-tbody"></tbody>
+          <tfoot id="lider-tfoot"></tfoot>
+        </table>
+        <div class="lider-footer">
+          <button class="btn btn-export" onclick="saveAndExport()">📤 Salvar e Exportar JSON</button>
+          <button class="btn btn-ghost" onclick="lockLider()">🔒 Sair do modo líder</button>
+          <span id="lider-status" style="font-size:12px;color:var(--muted);"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PANELS INDIVIDUAIS -->
+<div id="individual-panels"></div>
+
+<!-- PANEL REAL TIME -->
+<div class="tab-panel" id="panel-realtime">
+  <div style="display:flex;flex-direction:column;height:calc(100vh - 220px);padding:16px 36px 0;">
+    <div class="section-title" style="margin:0 0 10px;">📡 Finalizados Konsigleads — Real Time</div>
+    <iframe
+      id="metabase-iframe"
+      src="https://konsiencia.metabaseapp.com/dashboard/2410-finalizados-konsigleads-real-time?banco=&convenio=&followupid=&opera%C3%A7%C3%A3o=Saque+Cart%C3%A3o+Consignado&opera%C3%A7%C3%A3o=Cr%C3%A9dito+Novo&opera%C3%A7%C3%A3o=Saque+Cart%C3%A3o+Benef%C3%ADcio&opera%C3%A7%C3%A3o=Troco+M%C3%A1ximo&opera%C3%A7%C3%A3o=Consignado+CLT&opera%C3%A7%C3%A3o=Cr%C3%A9dito+Pessoal&origem_followup=&vendedor=madsonbrito&vendedor=camilequeiroz&vendedor=lucasrangel&vendedor=anacarolina&vendedor=luanaoliveira&vendedor=larissamirella&vendedor=silasaragao"
+      style="flex:1;border:none;border-radius:14px;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,0.07);"
+      allowfullscreen
+      loading="lazy"
+      id="rt-frame"
+    ></iframe>
+    <div style="font-size:11px;color:var(--muted);padding:8px 2px;text-align:right;">
+      Se o dashboard não carregar, você pode precisar estar logada no Metabase.
+      <a href="https://konsiencia.metabaseapp.com" target="_blank" style="color:var(--green);text-decoration:none;font-weight:600;">Abrir Metabase ↗</a>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL COMISSÃO -->
+<div class="tab-panel" id="panel-comissao">
+  <div class="content">
+    <div class="section-title">💰 Tabela de Comissionamento</div>
+    <div class="comm-rule-box">
+      <span class="ic">📈</span>
+      <div class="txt"><b>Faixas + bônus de conversão.</b> Atingiu a faixa? Recebe o valor base. Bateu conversão? + <b>R$200</b>. Sem faixa = <b>garantido R$1.000</b>.</div>
+    </div>
+    <div class="cargo-tabs" id="comm-cargo-tabs"></div>
+    <div class="comm-fixo-line">Fixo: <b id="comm-fixo-valor"></b></div>
+    <div class="comm-table-wrap">
+      <table><thead><tr>
+        <th>Faixa</th><th class="num">Valor</th><th class="num">Bônus conv.</th><th class="num">Total possível</th>
+      </tr></thead><tbody id="comm-table-body"></tbody></table>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;">* Bônus pago só a quem bater a conversão da faixa.</div>
+  </div>
+</div>
+
+<footer>Konsi · Comercial — Funil Ativação · Dados inseridos pelo líder</footer>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────
+const ADMIN_PIN = 'konsi2026';
+
+function calcDUFromDate(date){
+  const yr=date.getFullYear(),mo=date.getMonth();
+  let du=0;
+  for(let d=1;d<=date.getDate();d++){const wd=new Date(yr,mo,d).getDay();if(wd!==0&&wd!==6)du++;}
+  return du;
+}
+function calcDUTotal(date){
+  const yr=(date||new Date()).getFullYear(),mo=(date||new Date()).getMonth();
+  const last=new Date(yr,mo+1,0).getDate();
+  let du=0;
+  for(let d=1;d<=last;d++){const wd=new Date(yr,mo,d).getDay();if(wd!==0&&wd!==6)du++;}
+  return du;
+}
+
+const DIAS_UTEIS_MES = calcDUTotal();
+let DU_ATUAL       = calcDUFromDate(new Date());
+let DIAS_RESTANTES = DIAS_UTEIS_MES - DU_ATUAL;
+
+const TEAM = [
+  {nome:"Silas",        meta:73000, cor:"#0A9F82", ks:"ks3", convMeta:33},
+  {nome:"Luana",        meta:51000, cor:"#0DC7A2", ks:"ks2", convMeta:7},
+  {nome:"Ana Carolina", meta:51000, cor:"#04513F", ks:"ks2", convMeta:7},
+  {nome:"Lucas Rangel", meta:51000, cor:"#F3A42E", ks:"ks2", convMeta:7},
+  {nome:"Madson",       meta:56000, cor:"#7c3aed", ks:"ks3", convMeta:7},
+  {nome:"Larissa",      meta:46000, cor:"#0891b2", ks:"ks1", convMeta:7},
+  {nome:"Camile",       meta:46000, cor:"#e11d48", ks:"ks1", convMeta:7},
+  {nome:"Tanner",       meta:40000, cor:"#16a34a", ks:"ks1", convMeta:7},
+];
+const META_TOTAL = TEAM.reduce((a,v)=>a+v.meta,0);
+
+// ─── ESTADO ───────────────────────────────────────────────────
+let REALIZADO   = {};
+let LEADS       = {};
+let PAGOS_COUNT = {};
+
+TEAM.forEach(v=>{REALIZADO[v.nome]=0;LEADS[v.nome]=0;PAGOS_COUNT[v.nome]=0;});
+
+// ─── COMISSIONAMENTO ──────────────────────────────────────────
+const CARGO_PLANS={
+  ks1:{fixo:3000,faixas:[{l:'63–68%',mn:63,mx:68,b:615},{l:'69–74%',mn:69,mx:74,b:820},{l:'75–79%',mn:75,mx:79,b:1025},{l:'80–84%',mn:80,mx:84,b:1230},{l:'85–89%',mn:85,mx:89,b:1435},{l:'90–94%',mn:90,mx:94,b:1640},{l:'95–99%',mn:95,mx:99,b:1845},{l:'100%',mn:100,mx:100,b:2050},{l:'101–104%',mn:101,mx:104,b:2255},{l:'105–109%',mn:105,mx:109,b:2460},{l:'110–119%',mn:110,mx:119,b:2870},{l:'120–134%',mn:120,mx:134,b:3280},{l:'135–149%',mn:135,mx:149,b:3690},{l:'150%+',mn:150,mx:Infinity,b:4100}]},
+  ks2:{fixo:3250,faixas:[{l:'63–68%',mn:63,mx:68,b:675},{l:'69–74%',mn:69,mx:74,b:900},{l:'75–79%',mn:75,mx:79,b:1125},{l:'80–84%',mn:80,mx:84,b:1350},{l:'85–89%',mn:85,mx:89,b:1575},{l:'90–94%',mn:90,mx:94,b:1800},{l:'95–99%',mn:95,mx:99,b:2025},{l:'100%',mn:100,mx:100,b:2250},{l:'101–104%',mn:101,mx:104,b:2475},{l:'105–109%',mn:105,mx:109,b:2700},{l:'110–119%',mn:110,mx:119,b:3150},{l:'120–134%',mn:120,mx:134,b:3600},{l:'135–149%',mn:135,mx:149,b:4050},{l:'150%+',mn:150,mx:Infinity,b:4500}]},
+  ks3:{fixo:3500,faixas:[{l:'63–68%',mn:63,mx:68,b:750},{l:'69–74%',mn:69,mx:74,b:1000},{l:'75–79%',mn:75,mx:79,b:1250},{l:'80–84%',mn:80,mx:84,b:1500},{l:'85–89%',mn:85,mx:89,b:1750},{l:'90–94%',mn:90,mx:94,b:2000},{l:'95–99%',mn:95,mx:99,b:2250},{l:'100%',mn:100,mx:100,b:2500},{l:'101–104%',mn:101,mx:104,b:2750},{l:'105–109%',mn:105,mx:109,b:3000},{l:'110–119%',mn:110,mx:119,b:3500},{l:'120–134%',mn:120,mx:134,b:4000},{l:'135–149%',mn:135,mx:149,b:4500},{l:'150%+',mn:150,mx:Infinity,b:5000}]},
+  ks4:{fixo:4000,faixas:[{l:'63–68%',mn:63,mx:68,b:810},{l:'69–74%',mn:69,mx:74,b:1080},{l:'75–79%',mn:75,mx:79,b:1350},{l:'80–84%',mn:80,mx:84,b:1620},{l:'85–89%',mn:85,mx:89,b:1890},{l:'90–94%',mn:90,mx:94,b:2160},{l:'95–99%',mn:95,mx:99,b:2430},{l:'100%',mn:100,mx:100,b:2700},{l:'101–104%',mn:101,mx:104,b:2970},{l:'105–109%',mn:105,mx:109,b:3240},{l:'110–119%',mn:110,mx:119,b:3780},{l:'120–134%',mn:120,mx:134,b:4320},{l:'135–149%',mn:135,mx:149,b:4860},{l:'150%+',mn:150,mx:Infinity,b:5400}]},
+};
+const CL={ks1:'KS1',ks2:'KS2',ks3:'KS3',ks4:'KS4'};
+const GARANTIDO=1000,BONUS=200;
+
+function calcComissao(ks,pct,bateu){
+  const pl=CARGO_PLANS[ks];
+  const f=pl.faixas.find(f=>pct>=f.mn&&pct<=f.mx);
+  const vf=f?Math.max(f.b,GARANTIDO):GARANTIDO;
+  return{label:f?f.l:'Sem faixa',vf,bonus:bateu?BONUS:0,fixo:pl.fixo,total:pl.fixo+vf+(bateu?BONUS:0),gar:!f||f.b<GARANTIDO};
+}
+
+// ─── HELPERS ──────────────────────────────────────────────────
+const fmt   =v=>'R$ '+(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+const fmt2  =v=>'R$ '+(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtPct=v=>(isFinite(v)?v:0).toFixed(1)+'%';
+const inits =n=>n.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
+const mp    =meta=>meta/DIAS_UTEIS_MES*DU_ATUAL;
+const mpDia =meta=>meta/DIAS_UTEIS_MES;
+const proj  =real=>DU_ATUAL>0?real/DU_ATUAL*DIAS_UTEIS_MES:0;
+const ritmo =(meta,real)=>{const r=Math.max(0,meta-real);return DIAS_RESTANTES>0?r/DIAS_RESTANTES:r;};
+const stOf  =pct=>pct>=100?{cls:'ok',lbl:'Na meta',bar:'var(--ok)'}:pct>=80?{cls:'warn',lbl:'Atenção',bar:'var(--warn)'}:{cls:'down',lbl:'Abaixo',bar:'var(--error)'};
+const stProjOf=pct=>pct>=100?{cls:'ok'}:pct>=80?{cls:'warn'}:{cls:'down'};
+const convOf=nome=>{
+  const v=TEAM.find(t=>t.nome===nome);
+  const cm=v?.convMeta||7;
+  const l=LEADS[nome]||0,p=PAGOS_COUNT[nome]||0;
+  const pct=l?p/l*100:0;
+  const cls=pct>=cm?'ok':pct>=cm*0.7?'warn':'down';
+  return{pct,l,p,cls,convMeta:cm};
+};
+const tabId =nome=>'panel-'+nome.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+
+// ─── LÍDER PANEL ──────────────────────────────────────────────
+function unlockLider(){
+  const pin=prompt('PIN de acesso:');
+  if(pin===ADMIN_PIN){
+    document.getElementById('lider-locked').style.display='none';
+    document.getElementById('lider-unlocked').style.display='block';
+    buildLiderForm();
+  }else if(pin!==null){alert('PIN incorreto.');}
+}
+function lockLider(){
+  document.getElementById('lider-locked').style.display='block';
+  document.getElementById('lider-unlocked').style.display='none';
+}
+
+function todayStr(){
+  const n=new Date(),pad=x=>String(x).padStart(2,'0');
+  return`${n.getFullYear()}-${pad(n.getMonth()+1)}-${pad(n.getDate())}`;
+}
+
+function buildLiderForm(){
+  const dateInput=document.getElementById('lider-date');
+  if(!dateInput.value) dateInput.value=todayStr();
+  updateDateDU();
+  renderLiderTable();
+}
+
+function updateDateDU(){
+  const val=document.getElementById('lider-date').value;
+  if(!val) return;
+  const d=new Date(val+'T12:00:00');
+  DU_ATUAL=calcDUFromDate(d);
+  DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;
+  const info=document.getElementById('lider-du-info');
+  if(info) info.textContent=`DU ${DU_ATUAL} de ${DIAS_UTEIS_MES} · ${DIAS_RESTANTES} dias úteis restantes`;
+  renderLiderTable();
+  renderAll();
+}
+
+function renderLiderTable(){
+  const tbody=document.getElementById('lider-tbody');
+  const tfoot=document.getElementById('lider-tfoot');
+  if(!tbody) return;
+  tbody.innerHTML=TEAM.map(v=>{
+    const real=REALIZADO[v.nome]||0;
+    const leads=LEADS[v.nome]||0;
+    const pagos=PAGOS_COUNT[v.nome]||0;
+    const projV=proj(real);
+    const metaDia=Math.round(v.meta/DIAS_UTEIS_MES);
+    const pctProj=v.meta?projV/v.meta*100:0;
+    const stP=stProjOf(pctProj);
+    return`<tr>
+      <td><div class="seller-name"><span class="avatar" style="background:${v.cor};width:26px;height:26px;">${inits(v.nome)}</span><b>${v.nome}</b></div></td>
+      <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="li-leads-${tabId(v.nome)}" value="${leads}" onchange="liderChange()"></td>
+      <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="li-pagos-${tabId(v.nome)}" value="${pagos}" onchange="liderChange()"></td>
+      <td class="num"><input class="lider-input" type="number" min="0" step="0.01" id="li-real-${tabId(v.nome)}" value="${real||''}" placeholder="0,00" onchange="liderChange()"></td>
+      <td class="num mono" style="color:var(--muted);">${fmt(metaDia)}</td>
+      <td class="num"><span class="pill ${stP.cls}">${fmt(Math.round(projV))}</span><br><span style="font-size:10px;color:var(--muted);">${fmtPct(pctProj)} da meta</span></td>
+    </tr>`;
+  }).join('');
+  // totais
+  const tReal=TEAM.reduce((a,v)=>a+(REALIZADO[v.nome]||0),0);
+  const tLeads=TEAM.reduce((a,v)=>a+(LEADS[v.nome]||0),0);
+  const tPagos=TEAM.reduce((a,v)=>a+(PAGOS_COUNT[v.nome]||0),0);
+  const projTotal=proj(tReal);
+  const pctProjT=META_TOTAL?projTotal/META_TOTAL*100:0;
+  tfoot.innerHTML=`<tr class="total-row">
+    <td><b>TOTAL EQUIPE</b></td>
+    <td class="num">${tLeads}</td>
+    <td class="num">${tPagos}</td>
+    <td class="num mono">${fmt(tReal)}</td>
+    <td class="num mono">${fmt(Math.round(META_TOTAL/DIAS_UTEIS_MES))}</td>
+    <td class="num">${fmt(Math.round(projTotal))} <span style="font-size:10px;opacity:0.75;">(${fmtPct(pctProjT)})</span></td>
+  </tr>`;
+}
+
+function liderChange(){
+  TEAM.forEach(v=>{
+    const id=tabId(v.nome);
+    const l=parseFloat(document.getElementById('li-leads-'+id)?.value)||0;
+    const p=parseFloat(document.getElementById('li-pagos-'+id)?.value)||0;
+    const r=parseFloat(document.getElementById('li-real-'+id)?.value)||0;
+    LEADS[v.nome]=l;
+    PAGOS_COUNT[v.nome]=p;
+    REALIZADO[v.nome]=r;
+  });
+  renderLiderTable();
+  renderAll();
+}
+
+function saveAndExport(){
+  liderChange();
+  const dateVal=document.getElementById('lider-date')?.value||todayStr();
+  const data={
+    updated:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',dateStyle:'short',timeStyle:'short'}),
+    dataReferencia:dateVal,
+    DU_ATUAL,
+    REALIZADO,LEADS,PAGOS_COUNT
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='data.json';
+  a.click();
+  const el=document.getElementById('lider-status');
+  if(el){el.textContent='✔ data.json baixado — sube no GitHub para o time ver';setTimeout(()=>el.textContent='',7000);}
+}
+
+// ─── TABS ─────────────────────────────────────────────────────
+function buildTabs(){
+  let h=`<button class="nav-tab active" id="tab-geral" onclick="switchTab('geral')">📊 Time</button>`;
+  TEAM.forEach(v=>{
+    const id=tabId(v.nome);
+    h+=`<button class="nav-tab" id="tab-${id}" onclick="switchTab('${id}')">
+      <span class="av" style="background:${v.cor}">${inits(v.nome)}</span>${v.nome}</button>`;
+  });
+  h+=`<button class="nav-tab" id="tab-lider" onclick="switchTab('lider')">👑 Líder</button>`;
+  h+=`<button class="nav-tab" id="tab-realtime" onclick="switchTab('realtime')">📡 Real Time</button>`;
+  h+=`<button class="nav-tab" id="tab-comissao" onclick="switchTab('comissao')">💰 Comissão</button>`;
+  document.getElementById('nav-tabs').innerHTML=h;
+}
+function switchTab(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id)?.classList.add('active');
+  document.getElementById('tab-'+id)?.classList.add('active');
+}
+
+// ─── BUILD INDIVIDUAL PANELS ──────────────────────────────────
+function buildIndividualPanels(){
+  document.getElementById('individual-panels').innerHTML=TEAM.map(v=>{
+    const id=tabId(v.nome);
+    return`
+    <div class="tab-panel" id="panel-${id}">
+    <div class="content">
+
+      <div class="seller-hero">
+        <div class="av-big" style="background:${v.cor}">${inits(v.nome)}</div>
+        <div class="info">
+          <h2>${v.nome}</h2>
+          <p>Funil Ativação · ${CL[v.ks]} · Meta mensal: <b class="mono">${fmt(v.meta)}</b> · Meta conversão: <b>${v.convMeta}%</b></p>
+          <div class="badges">
+            <span class="badge">Meta/DU: <b class="mono">${fmt(Math.round(v.meta/DIAS_UTEIS_MES))}</b></span>
+            <span class="badge" id="${id}-hero-badge">–</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">📈 Progressão vs Meta Proporcional</div>
+      <div class="big-progress">
+        <div class="lr"><span id="${id}-prog-label">Atingimento vs Meta Proporcional</span><b id="${id}-pct-prop">—</b></div>
+        <div class="track">
+          <div class="fill" id="${id}-bar" style="width:0%"></div>
+          <div class="fill-proj" id="${id}-bar-proj" style="width:0%;background:var(--proj)"></div>
+        </div>
+        <div class="sublabel" id="${id}-sublabel"></div>
+      </div>
+
+      <div class="section-title">📊 Métricas do Mês</div>
+      <div class="kpi-grid" id="${id}-kpis"></div>
+
+      <div class="section-title">📅 Meta Dia a Dia</div>
+      <div class="diad-table-wrap">
+        <table><thead><tr>
+          <th>DU</th><th class="num">Meta Acum.</th><th class="num">Realizado Acum.</th><th class="num">Gap</th><th class="num">Projeção</th><th>Status</th>
+        </tr></thead>
+        <tbody id="${id}-diad"></tbody></table>
+      </div>
+
+      <div class="section-title">🎯 Simulador de Comissão</div>
+      <div class="sim-card">
+        <div class="sim-grid">
+          <div>
+            <div class="sim-row2">
+              <div class="sim-field"><label>Cargo</label>
+                <select id="${id}-sim-cargo" onchange="renderIndSim('${id}','${v.nome}')">
+                  <option value="ks1">KS1</option><option value="ks2">KS2</option>
+                  <option value="ks3">KS3</option><option value="ks4">KS4</option>
+                </select>
+              </div>
+              <div class="sim-field"><label>Meta (R$)</label>
+                <input type="number" id="${id}-sim-meta" class="mono" step="100" onchange="renderIndSim('${id}','${v.nome}')">
+              </div>
+            </div>
+            <div class="sim-field"><label>Realizado atual (R$)</label>
+              <input type="number" id="${id}-sim-real" class="mono" step="100" onchange="renderIndSim('${id}','${v.nome}')">
+            </div>
+            <label class="sim-toggle">
+              <input type="checkbox" id="${id}-sim-conv" onchange="renderIndSim('${id}','${v.nome}')">
+              <span>Bateu a conversão? (+ R$200)</span>
+            </label>
+          </div>
+          <div class="sim-result" id="${id}-sim-result"></div>
+        </div>
+      </div>
+
+    </div>
+    </div>`;
+  }).join('');
+}
+
+function renderIndividualPanel(v){
+  const id=tabId(v.nome);
+  const real=REALIZADO[v.nome]||0;
+  const mpV=mp(v.meta);
+  const projV=proj(real);
+  const pctP=mpV?real/mpV*100:0;
+  const pctProj=v.meta?projV/v.meta*100:0;
+  const pctM=v.meta?real/v.meta*100:0;
+  const rt=ritmo(v.meta,real);
+  const st=stOf(pctP);
+  const cv=convOf(v.nome);
+  const metaDia=Math.round(v.meta/DIAS_UTEIS_MES);
+
+  const hb=document.getElementById(id+'-hero-badge');
+  if(hb){hb.textContent=st.lbl;hb.style.background=pctP>=100?'var(--okbg)':pctP>=80?'var(--warnbg)':'var(--errorbg)';hb.style.color=st.bar;}
+
+  const bar=document.getElementById(id+'-bar');
+  if(bar){bar.style.width=Math.min(pctP,100)+'%';bar.style.background=st.bar;}
+  const barProj=document.getElementById(id+'-bar-proj');
+  if(barProj){barProj.style.width=Math.min(Math.max(0,pctProj-pctP),100-Math.min(pctP,100))+'%';}
+  const pEl=document.getElementById(id+'-pct-prop');
+  if(pEl) pEl.textContent=fmtPct(pctP);
+  const pl=document.getElementById(id+'-prog-label');
+  if(pl) pl.textContent=`Atingimento vs Meta Prop. (DU ${DU_ATUAL}/${DIAS_UTEIS_MES})`;
+  const sl=document.getElementById(id+'-sublabel');
+  if(sl) sl.textContent=`Realizado: ${fmt(real)} · Meta prop.: ${fmt2(mpV)} · Projeção mês: ${fmt(Math.round(projV))} (${fmtPct(pctProj)}) · Ritmo: ${fmt(rt)}/DU`;
+
+  const kEl=document.getElementById(id+'-kpis');
+  if(kEl) kEl.innerHTML=[
+    {label:'Meta Mensal',value:fmt(v.meta),sub:CL[v.ks],color:'var(--green)'},
+    {label:`Meta Prop. DU ${DU_ATUAL}`,value:fmt2(mpV),sub:'Esperado até hoje',color:'var(--darkgreen)',badge:{text:fmtPct(pctP)+' ating.',cls:pctP>=100?'up':pctP>=80?'warn':'down'}},
+    {label:'Realizado',value:fmt(real),sub:fmtPct(pctM)+' da meta mensal',color:'var(--green2)'},
+    {label:'Projeção Fim do Mês',value:fmt(Math.round(projV)),sub:fmtPct(pctProj)+' da meta',color:'var(--proj)',badge:{text:pctProj>=100?'✔ Na meta':pctProj>=80?'Atenção':'Abaixo da meta',cls:pctProj>=100?'up':pctProj>=80?'warn':'down'}},
+    {label:'Conversão',value:fmtPct(cv.pct),sub:`${cv.p} pagos / ${cv.l} leads · meta ${cv.convMeta}%`,color:cv.cls==='ok'?'var(--ok)':cv.cls==='warn'?'var(--warn)':'var(--error)'},
+  ].map(k=>`<div class="kpi-card" style="--kc:${k.color}">
+    <div class="kpi-label">${k.label}</div>
+    <div class="kpi-value mono">${k.value}</div>
+    <div class="kpi-sub">${k.sub}</div>
+    ${k.badge?`<div class="kpi-badge ${k.badge.cls}">${k.badge.text}</div>`:''}
+  </div>`).join('');
+
+  const dEl=document.getElementById(id+'-diad');
+  if(dEl){
+    const metaDiaV=v.meta/DIAS_UTEIS_MES;
+    dEl.innerHTML=Array.from({length:DIAS_UTEIS_MES},(_,i)=>{
+      const du=i+1;
+      const metaAcum=Math.round(metaDiaV*du);
+      const realAcum=du<=DU_ATUAL?real:null;
+      const projAcum=du>DU_ATUAL&&DU_ATUAL>0?Math.round(real/DU_ATUAL*du):null;
+      const gap=realAcum!=null?realAcum-metaAcum:null;
+      const st2=realAcum!=null?stOf(realAcum/metaAcum*100):null;
+      const isToday=du===DU_ATUAL;
+      return`<tr class="${isToday?'today-row':''}">
+        <td>${isToday?`<b>DU ${du} ◀ hoje</b>`:`DU ${du}`}</td>
+        <td class="num mono">${fmt(metaAcum)}</td>
+        <td class="num mono">${realAcum!=null?fmt(realAcum):'<span style="color:var(--muted)">–</span>'}</td>
+        <td class="num mono">${gap!=null?(gap>=0?`<span style="color:var(--ok)">+${fmt(gap)}</span>`:`<span style="color:var(--error)">${fmt(gap)}</span>`):'<span style="color:var(--muted)">–</span>'}</td>
+        <td class="num mono">${projAcum!=null?`<span style="color:var(--proj);font-size:11px;">${fmt(projAcum)}</span>`:'<span style="color:var(--muted)">–</span>'}</td>
+        <td>${st2?`<span class="pill ${st2.cls}">${st2.lbl}</span>`:isToday?'':projAcum!=null?`<span style="color:var(--muted);font-size:11px;">projetado</span>`:'<span style="color:var(--muted);font-size:11px;">aguardando</span>'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  const sc=document.getElementById(id+'-sim-cargo');if(sc) sc.value=v.ks;
+  const sm=document.getElementById(id+'-sim-meta'); if(sm) sm.value=v.meta;
+  const sr=document.getElementById(id+'-sim-real'); if(sr) sr.value=Math.round(real);
+  const scv=document.getElementById(id+'-sim-conv');if(scv) scv.checked=cv.pct>=cv.convMeta;
+  renderIndSim(id,v.nome);
+}
+
+function renderIndSim(id,nome){
+  const cargo=document.getElementById(id+'-sim-cargo')?.value||'ks2';
+  const meta=parseFloat(document.getElementById(id+'-sim-meta')?.value)||0;
+  const real=parseFloat(document.getElementById(id+'-sim-real')?.value)||0;
+  const bateu=document.getElementById(id+'-sim-conv')?.checked||false;
+  const projV=DU_ATUAL?real/DU_ATUAL*DIAS_UTEIS_MES:0;
+  const pct=meta?projV/meta*100:0;
+  const r=calcComissao(cargo,pct,bateu);
+  const el=document.getElementById(id+'-sim-result');if(!el)return;
+  el.innerHTML=`
+    <div class="pct-lbl">Projeção fim do mês</div>
+    <div class="pct-val">${fmtPct(pct)}</div>
+    <span class="ftag">${CL[cargo]} · ${r.label}${r.gar?' (garantido)':''}</span>
+    <div class="sim-bd">
+      <div class="line"><span>Projeção receita</span><span>${fmt(projV)}</span></div>
+      <div class="line"><span>Fixo</span><span>${fmt(r.fixo)}</span></div>
+      <div class="line"><span>Comissão da faixa</span><span>${fmt(r.vf)}</span></div>
+      <div class="line"><span>Bônus conversão</span><span>${r.bonus?fmt(r.bonus):'—'}</span></div>
+    </div>
+    <div class="sim-total"><div class="lbl">Total estimado</div><div class="val">${fmt(r.total)}</div></div>
+    <div class="sim-note">Projeção = (${fmt(real)} ÷ DU ${DU_ATUAL}) × ${DIAS_UTEIS_MES} DU</div>`;
+}
+
+// ─── RENDER GERAL ─────────────────────────────────────────────
+function renderHeader(){
+  document.getElementById('badge-du').textContent=DU_ATUAL;
+  document.getElementById('badge-du-total').textContent=DIAS_UTEIS_MES;
+  document.getElementById('badge-rest').textContent=DIAS_RESTANTES;
+  document.getElementById('th-du').textContent=DU_ATUAL;
+  document.getElementById('hdr-meta-total').textContent=fmt(META_TOTAL);
+  const pct=DU_ATUAL/DIAS_UTEIS_MES*100;
+  document.getElementById('month-pct').textContent=pct.toFixed(0)+'%';
+  document.getElementById('month-fill').style.width=pct+'%';
+}
+
+function renderKPIs(){
+  const mpT=META_TOTAL/DIAS_UTEIS_MES*DU_ATUAL;
+  const real=TEAM.reduce((a,v)=>a+(REALIZADO[v.nome]||0),0);
+  const projTotal=proj(real);
+  const pctP=mpT?real/mpT*100:0;
+  const pctProj=META_TOTAL?projTotal/META_TOTAL*100:0;
+  const rd=DIAS_RESTANTES?Math.max(0,META_TOTAL-real)/DIAS_RESTANTES:0;
+  const kpis=[
+    {label:'Meta Mensal Equipe',value:fmt(META_TOTAL),sub:`${DIAS_UTEIS_MES} DU · ${TEAM.length} vendedores`,color:'var(--green)'},
+    {label:`Meta Prop. DU ${DU_ATUAL}`,value:fmt(mpT),sub:'Esperado até hoje',badge:{text:fmtPct(pctP)+' ating.',cls:pctP>=100?'up':pctP>=80?'warn':'down'},color:'var(--darkgreen)'},
+    {label:'Realizado Mês',value:fmt(real),sub:fmtPct(META_TOTAL?real/META_TOTAL*100:0)+' da meta',color:'var(--green2)'},
+    {label:'Projeção Fim do Mês',value:fmt(Math.round(projTotal)),sub:fmtPct(pctProj)+' da meta',badge:{text:pctProj>=100?'✔ Na meta':pctProj>=80?'Atenção':'Abaixo',cls:pctProj>=100?'up':pctProj>=80?'warn':'down'},color:'var(--proj)'},
+    {label:'Ritmo Necessário/DU',value:fmt(rd),sub:`Faltam ${DIAS_RESTANTES} DU`,color:'#0891b2'},
+  ];
+  document.getElementById('kpi-grid').innerHTML=kpis.map(k=>`
+    <div class="kpi-card" style="--kc:${k.color}">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value mono">${k.value}</div>
+      <div class="kpi-sub">${k.sub}</div>
+      ${k.badge?`<div class="kpi-badge ${k.badge.cls}">${k.badge.text}</div>`:''}
+    </div>`).join('');
+}
+
+function renderRanking(){
+  const rows=TEAM.map(v=>{
+    const r=REALIZADO[v.nome]||0,mpV=mp(v.meta),pct=mpV?r/mpV*100:0;
+    const projV=proj(r),pctProj=v.meta?projV/v.meta*100:0;
+    const rt=ritmo(v.meta,r),md=Math.round(v.meta/DIAS_UTEIS_MES);
+    return{...v,r,mpV,pct,projV,pctProj,rt,md};
+  }).sort((a,b)=>b.pct-a.pct);
+  const tReal=TEAM.reduce((a,v)=>a+(REALIZADO[v.nome]||0),0);
+  const tMP=mp(META_TOTAL),tPct=tMP?tReal/tMP*100:0,tRt=ritmo(META_TOTAL,tReal);
+  const tProj=proj(tReal),tPctProj=META_TOTAL?tProj/META_TOTAL*100:0;
+  const tL=TEAM.reduce((a,v)=>a+(LEADS[v.nome]||0),0),tP=TEAM.reduce((a,v)=>a+(PAGOS_COUNT[v.nome]||0),0);
+  document.getElementById('ranking-body').innerHTML=rows.map((r,i)=>{
+    const st=stOf(r.pct),cv=convOf(r.nome),stP=stProjOf(r.pctProj);
+    return`<tr style="cursor:pointer;" onclick="switchTab('${tabId(r.nome)}')">
+      <td>${i+1}</td>
+      <td><div class="seller-name"><span class="avatar" style="background:${r.cor}">${inits(r.nome)}</span>${r.nome}</div></td>
+      <td><span class="conv-pill ${cv.cls}">${fmtPct(cv.pct)}</span><span class="conv-sub">${cv.p}/${cv.l} leads · meta ${cv.convMeta}%</span></td>
+      <td class="num mono">${fmt(r.meta)}</td>
+      <td class="num mono">${fmt2(r.mpV)}</td>
+      <td class="num mono">${fmt(r.r)}</td>
+      <td class="num"><span class="pill ${stP.cls}">${fmt(Math.round(r.projV))}</span><br><span style="font-size:10px;color:var(--muted);">${fmtPct(r.pctProj)}</span></td>
+      <td class="num"><span class="bar-mini"><span class="f" style="width:${Math.min(r.pct,100)}%;background:${st.bar}"></span></span>&nbsp;<b class="mono">${fmtPct(r.pct)}</b></td>
+      <td class="num mono">${fmt(r.md)}</td>
+      <td><span class="pill ${st.cls}">${st.lbl}</span></td>
+    </tr>`;
+  }).join('')+`<tr class="total-row">
+    <td></td><td>TOTAL EQUIPE</td>
+    <td>${fmtPct(tL?tP/tL*100:0)}</td>
+    <td class="num mono">${fmt(META_TOTAL)}</td>
+    <td class="num mono">${fmt2(tMP)}</td>
+    <td class="num mono">${fmt(tReal)}</td>
+    <td class="num mono">${fmt(Math.round(tProj))} <span style="opacity:.7;font-size:11px;">${fmtPct(tPctProj)}</span></td>
+    <td class="num mono">${fmtPct(tPct)}</td>
+    <td class="num mono">${fmt(Math.round(META_TOTAL/DIAS_UTEIS_MES))}</td><td></td>
+  </tr>`;
+}
+
+function renderDiaADia(){
+  const metaDia=META_TOTAL/DIAS_UTEIS_MES;
+  const totalReal=TEAM.reduce((a,v)=>a+(REALIZADO[v.nome]||0),0);
+  const el=document.getElementById('diad-body');if(!el)return;
+  el.innerHTML=Array.from({length:DIAS_UTEIS_MES},(_,i)=>{
+    const du=i+1;
+    const metaAcum=Math.round(metaDia*du);
+    const realAcum=du<=DU_ATUAL?totalReal:null;
+    const projAcum=du>DU_ATUAL&&DU_ATUAL>0?Math.round(totalReal/DU_ATUAL*du):null;
+    const gap=realAcum!=null?realAcum-metaAcum:null;
+    const st=realAcum!=null?stOf(realAcum/metaAcum*100):null;
+    const isToday=du===DU_ATUAL;
+    return`<tr class="${isToday?'today-row':''}">
+      <td>${isToday?`<b>DU ${du} ◀ hoje</b>`:`DU ${du}`}</td>
+      <td class="num mono">${fmt(metaAcum)}</td>
+      <td class="num mono">${realAcum!=null?fmt(realAcum):'<span style="color:var(--muted)">–</span>'}</td>
+      <td class="num mono">${gap!=null?(gap>=0?`<span style="color:var(--ok)">+${fmt(gap)}</span>`:`<span style="color:var(--error)">${fmt(gap)}</span>`):'<span style="color:var(--muted)">–</span>'}</td>
+      <td class="num mono">${projAcum!=null?`<span style="color:var(--proj);font-size:11px;">${fmt(projAcum)}</span>`:'<span style="color:var(--muted)">–</span>'}</td>
+      <td>${st?`<span class="pill ${st.cls}">${st.lbl}</span>`:projAcum!=null?`<span style="color:var(--muted);font-size:11px;">projetado</span>`:'<span style="color:var(--muted);font-size:11px;">aguardando</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCards(){
+  document.getElementById('seller-grid').innerHTML=TEAM.map(v=>{
+    const real=REALIZADO[v.nome]||0,mpV=mp(v.meta),pct=mpV?real/mpV*100:0;
+    const projV=proj(real),pctProj=v.meta?projV/v.meta*100:0;
+    const pctM=v.meta?real/v.meta*100:0,st=stOf(pct),cv=convOf(v.nome);
+    const stP=stProjOf(pctProj);
+    return`<div class="seller-card" style="border-left:4px solid ${v.cor};" onclick="switchTab('${tabId(v.nome)}')">
+      <div class="top">
+        <span class="avatar" style="background:${v.cor};width:34px;height:34px;">${inits(v.nome)}</span>
+        <div><div class="name">${v.nome}</div><div class="role">${CL[v.ks]} · Meta/DU: ${fmt(Math.round(v.meta/DIAS_UTEIS_MES))}</div></div>
+        <span class="conv-pill ${cv.cls}" style="margin-left:auto;font-size:10.5px;">${fmtPct(cv.pct)}</span>
+      </div>
+      <div class="mr"><span>Realizado</span><span class="mono">${fmt(real)}</span></div>
+      <div class="mr"><span>Projeção mês</span><span class="pill ${stP.cls}" style="font-size:11px;">${fmt(Math.round(projV))}</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${Math.min(pct,100)}%;background:${st.bar}"></div></div>
+      <div class="sl"><span class="pill ${st.cls}">${st.lbl}</span> · ${fmtPct(pct)} prop. · ${fmtPct(pctM)} mês</div>
+      <div class="sl">Conv: ${cv.p}/${cv.l} · meta ${cv.convMeta}% · Proj: ${fmtPct(pctProj)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── COMISSIONAMENTO ──────────────────────────────────────────
+let cargoAtivo='ks1';
+function renderCargoTabs(){
+  document.getElementById('comm-cargo-tabs').innerHTML=Object.keys(CARGO_PLANS).map(k=>
+    `<button class="cargo-tab-btn ${k===cargoAtivo?'active':''}" onclick="setCargoAtivo('${k}')">${CL[k]}</button>`).join('');
+}
+function setCargoAtivo(k){cargoAtivo=k;renderCargoTabs();renderCommTable();}
+function fbClass(m){return m<80?'badge-baixa':m<100?'badge-media':m<135?'badge-alta':'badge-turbo';}
+function renderCommTable(){
+  const pl=CARGO_PLANS[cargoAtivo];
+  document.getElementById('comm-fixo-valor').textContent=fmt(pl.fixo);
+  document.getElementById('comm-table-body').innerHTML=pl.faixas.map(f=>{
+    const vp=Math.max(f.b,GARANTIDO),g=f.b<GARANTIDO;
+    return`<tr>
+      <td><span class="faixa-badge ${fbClass(f.mn)}">${f.l}</span></td>
+      <td class="num mono">${fmt(vp)}${g?' <span style="font-size:10px;color:var(--muted)">(garantido)</span>':''}</td>
+      <td class="num mono" style="color:var(--warn);font-weight:700;">+ ${fmt(BONUS)}</td>
+      <td class="num mono" style="font-weight:800;color:var(--darkgreen);">${fmt(pl.fixo+vp+BONUS)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderAll(){
+  renderHeader();
+  renderKPIs();
+  renderRanking();
+  renderDiaADia();
+  renderCards();
+  TEAM.forEach(v=>renderIndividualPanel(v));
+  renderCargoTabs();
+  renderCommTable();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+buildTabs();
+buildIndividualPanels();
+
+fetch('./data.json?t='+Date.now())
+  .then(r=>{if(!r.ok)throw new Error();return r.json();})
+  .then(d=>{
+    TEAM.forEach(v=>{
+      if(d.REALIZADO?.[v.nome]!=null) REALIZADO[v.nome]=d.REALIZADO[v.nome];
+      if(d.LEADS?.[v.nome]!=null)     LEADS[v.nome]=d.LEADS[v.nome];
+      if(d.PAGOS_COUNT?.[v.nome]!=null) PAGOS_COUNT[v.nome]=d.PAGOS_COUNT[v.nome];
+    });
+    if(d.DU_ATUAL!=null){DU_ATUAL=d.DU_ATUAL;DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;}
+    const el=document.getElementById('data-updated');
+    if(el&&d.updated) el.textContent='Atualizado: '+d.updated;
+  })
+  .catch(()=>{})
+  .finally(()=>renderAll());
+</script>
+</body>
+</html>
