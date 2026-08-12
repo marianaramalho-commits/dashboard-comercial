@@ -433,7 +433,8 @@ const CL={ks1:'KS1',ks2:'KS2',ks3:'KS3',ks4:'KS4'};
 const GARANTIDO=1000,BONUS=200;
 function calcComissao(ks,pct,bateu){
   const pl=CARGO_PLANS[ks];
-  const f=pl.faixas.find(f=>pct>=f.mn&&pct<=f.mx);
+  const pctInt=Math.floor(pct); // faixas usam inteiros; 99.7% deve cair em 95-99%, não gap
+  const f=pl.faixas.find(f=>pctInt>=f.mn&&pctInt<=f.mx);
   const vf=f?Math.max(f.b,GARANTIDO):GARANTIDO;
   return{label:f?f.l:'Sem faixa',vf,bonus:bateu?BONUS:0,fixo:pl.fixo,total:pl.fixo+vf+(bateu?BONUS:0),gar:!f||f.b<GARANTIDO};
 }
