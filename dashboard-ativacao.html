@@ -238,6 +238,14 @@
   <div class="content">
     <div class="section-title">📊 Visão Geral</div>
     <div class="kpi-grid" id="kpi-grid"></div>
+    <div class="big-progress" id="team-progress-wrap" style="margin-top:14px;">
+      <div class="lr">
+        <span id="team-prog-label">% da Meta Mensal do Time</span>
+        <b id="team-prog-pct" class="mono">—</b>
+      </div>
+      <div class="track"><div class="fill" id="team-prog-bar" style="width:0%;background:var(--ok)"></div></div>
+      <div class="sublabel" id="team-prog-sub"></div>
+    </div>
     <div class="section-title">🏆 Ranking</div>
     <div class="table-wrap">
       <table style="min-width:860px;">
@@ -343,17 +351,38 @@
 <!-- COMISSÃO -->
 <div class="tab-panel" id="panel-comissao">
   <div class="content">
-    <div class="section-title">💰 Tabela de Comissionamento</div>
+    <div class="section-title">💰 Calculadora de Comissão</div>
     <div class="comm-rule-box">
-      <span class="ic">📈</span>
-      <div class="txt"><b>Faixas + bônus de conversão.</b> Atingiu a faixa? Recebe o valor base. Bateu conversão? + <b>R$200</b>. Sem faixa = <b>garantido R$1.000</b>.</div>
+      <span class="ic">🧮</span>
+      <div class="txt">Digite sua meta e o valor que deseja atingir para ver quanto vai ganhar de comissão.</div>
     </div>
-    <div class="cargo-tabs" id="comm-cargo-tabs"></div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Fixo: <b id="comm-fixo-valor"></b></div>
-    <div class="table-wrap">
-      <table><thead><tr>
-        <th>Faixa</th><th class="num">Valor</th><th class="num">Bônus conv.</th><th class="num">Total possível</th>
-      </tr></thead><tbody id="comm-table-body"></tbody></table>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;max-width:560px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;">Cargo</label>
+          <select id="calc-cargo" onchange="calcComissaoLivre()" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;background:#fff;">
+            <option value="ks1">KS1</option>
+            <option value="ks2">KS2</option>
+            <option value="ks3" selected>KS3</option>
+            <option value="ks4">KS4</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;">Meta mensal (R$)</label>
+          <input id="calc-meta" type="number" min="0" value="51000" oninput="calcComissaoLivre()" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px;">Valor que deseja atingir (R$)</label>
+          <input id="calc-valor" type="number" min="0" value="51000" oninput="calcComissaoLivre()" style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:'JetBrains Mono',monospace;font-weight:700;">
+        </div>
+        <div style="display:flex;align-items:flex-end;padding-bottom:4px;">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;font-weight:600;">
+            <input id="calc-conv" type="checkbox" onchange="calcComissaoLivre()" style="width:18px;height:18px;accent-color:var(--green);cursor:pointer;">
+            Bateu a conversão (+R$200)
+          </label>
+        </div>
+      </div>
+      <div id="calc-result" style="background:var(--bg);border-radius:10px;padding:20px;margin-top:4px;"></div>
     </div>
   </div>
 </div>
@@ -391,9 +420,9 @@ const TEAM=[
   {nome:"Madson",       meta:56000,cor:"#7c3aed",ks:"ks3",convMeta:7},
   {nome:"Larissa",      meta:46000,cor:"#0891b2",ks:"ks1",convMeta:7},
   {nome:"Camile",       meta:46000,cor:"#e11d48",ks:"ks1",convMeta:7},
-  {nome:"Tanner",       meta:40000,cor:"#16a34a",ks:"ks1",convMeta:7},
+  {nome:"Tanner",       meta:40000,cor:"#16a34a",ks:"ks1",convMeta:7,bonus:true},
 ];
-const META_TOTAL=TEAM.reduce((a,v)=>a+v.meta,0);
+const META_TOTAL=TEAM.reduce((a,v)=>v.bonus?a:a+v.meta,0); // Tanner (bonus) não conta na meta do time
 
 // ─── ESTADO ───────────────────────────────────────────────────
 // DIAS: { "2026-08-12": { "Silas": {leads:5, pagos:2, fat:10000}, ... } }
@@ -542,7 +571,7 @@ function renderDayForm(dateKey,du){
     const pctP=v.meta?projV/v.meta*100:0;
     const sc=pctP>=100?'ok':pctP>=80?'warn':'down';
     return`<tr>
-      <td><div class="seller-name"><span class="avatar" style="background:${v.cor};width:26px;height:26px;">${inits(v.nome)}</span><b>${v.nome}</b></div></td>
+      <td><div class="seller-name"><span class="avatar" style="background:${v.cor};width:26px;height:26px;">${inits(v.nome)}</span><b>${v.nome}</b>${v.bonus?'<span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:5px;">bônus</span>':''}</div></td>
       <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="lf-leads-${tabId(v.nome)}" value="${leads||''}" placeholder="0"></td>
       <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="lf-pagos-${tabId(v.nome)}" value="${pagos||''}" placeholder="0"></td>
       <td class="num"><input class="lider-input" type="number" min="0" step="0.01" id="lf-fat-${tabId(v.nome)}" value="${fat||''}" placeholder="0,00"></td>
@@ -556,17 +585,26 @@ function renderDayForm(dateKey,du){
   const tLeads=TEAM.reduce((a,v)=>a+(day[v.nome]?.leads||0),0);
   const tPagos=TEAM.reduce((a,v)=>a+(day[v.nome]?.pagos||0),0);
   const tFat=TEAM.reduce((a,v)=>a+(day[v.nome]?.fat||0),0);
-  const tAcum=TEAM.reduce((a,v)=>a+acumAntes[v.nome]+(day[v.nome]?.fat||0),0);
+  const tAcum=TEAM.reduce((a,v)=>v.bonus?a:a+acumAntes[v.nome]+(day[v.nome]?.fat||0),0); // exclui bônus
+  const bonusAcum=TEAM.reduce((a,v)=>v.bonus?a+acumAntes[v.nome]+(day[v.nome]?.fat||0):a,0);
+  const tFatTeam=TEAM.reduce((a,v)=>v.bonus?a:a+(day[v.nome]?.fat||0),0);
   const tProj=du>0?(tAcum/du)*DIAS_UTEIS_MES:0;
   const tPctP=META_TOTAL?tProj/META_TOTAL*100:0;
   tfoot.innerHTML=`<tr class="total-row">
     <td><b>TOTAL EQUIPE</b></td>
     <td class="num">${tLeads||'–'}</td>
     <td class="num">${tPagos||'–'}</td>
-    <td class="num mono">${fmt(tFat)}</td>
+    <td class="num mono">${fmt(tFatTeam)}</td>
     <td class="num mono">${fmt(tAcum)}</td>
     <td class="num">${fmt(Math.round(tProj))} <span style="opacity:.7;font-size:11px;">(${fmtPct(tPctP)})</span></td>
-  </tr>`;
+  </tr>${bonusAcum>0?`<tr style="background:#fefce8;">
+    <td style="color:var(--warn);font-weight:600;">⭐ Bônus (Tanner)</td>
+    <td></td><td></td>
+    <td class="num mono" style="color:var(--warn);font-weight:700;">+ ${fmt(day['Tanner']?.fat||0)}</td>
+    <td class="num mono" style="color:var(--warn);font-weight:700;">+ ${fmt(bonusAcum)}</td>
+    <td></td>
+  </tr>`:''}`;
+
 }
 
 function saveDayData(){
@@ -726,14 +764,15 @@ function renderIndividualPanel(v){
   const pctP=mpV?real/mpV*100:0,pctProj=v.meta?projV/v.meta*100:0,pctM=v.meta?real/v.meta*100:0;
   const rt=ritmo(v.meta,real),st=stOf(pctP),cv=convOf(v.nome);
 
+  const stM=stOf(pctM); // status baseado em % da meta mensal
   const hb=document.getElementById(id+'-hero-badge');
-  if(hb){hb.textContent=st.lbl;hb.style.background=pctP>=100?'var(--okbg)':pctP>=80?'var(--warnbg)':'var(--errorbg)';hb.style.color=st.bar;}
+  if(hb){hb.textContent=stM.lbl;hb.style.background=pctM>=100?'var(--okbg)':pctM>=80?'var(--warnbg)':'var(--errorbg)';hb.style.color=stM.bar;}
   const bar=document.getElementById(id+'-bar');
-  if(bar){bar.style.width=Math.min(pctP,100)+'%';bar.style.background=st.bar;}
-  const pEl=document.getElementById(id+'-pct-prop');if(pEl)pEl.textContent=fmtPct(pctP);
-  const pl=document.getElementById(id+'-prog-label');if(pl)pl.textContent=`Atingimento vs Meta Prop. (DU ${DU_ATUAL}/${DIAS_UTEIS_MES})`;
+  if(bar){bar.style.width=Math.min(pctM,100)+'%';bar.style.background=stM.bar;}
+  const pEl=document.getElementById(id+'-pct-prop');if(pEl)pEl.textContent=fmtPct(pctM);
+  const pl=document.getElementById(id+'-prog-label');if(pl)pl.textContent=`% da Meta Mensal (DU ${DU_ATUAL}/${DIAS_UTEIS_MES})`;
   const sl=document.getElementById(id+'-sublabel');
-  if(sl)sl.textContent=`Realizado: ${fmt(real)} · Meta prop.: ${fmt(Math.round(mpV))} · Projeção: ${fmt(Math.round(projV))} (${fmtPct(pctProj)}) · Ritmo: ${fmt(rt)}/DU`;
+  if(sl)sl.textContent=`Realizado: ${fmt(real)} · Meta: ${fmt(v.meta)} · Projeção: ${fmt(Math.round(projV))} (${fmtPct(pctProj)}) · Ritmo nec.: ${fmt(rt)}/DU`;
 
   const kEl=document.getElementById(id+'-kpis');
   if(kEl)kEl.innerHTML=[
@@ -825,7 +864,7 @@ function renderHeader(){
 }
 
 function renderKPIs(){
-  const real=TEAM.reduce((a,v)=>a+(REALIZADO[v.nome]||0),0);
+  const real=TEAM.reduce((a,v)=>v.bonus?a:a+(REALIZADO[v.nome]||0),0); // exclui bônus (Tanner)
   const mpT=META_TOTAL/DIAS_UTEIS_MES*DU_ATUAL,projTotal=proj(real);
   const pctP=mpT?real/mpT*100:0,pctProj=META_TOTAL?projTotal/META_TOTAL*100:0;
   const rd=DIAS_RESTANTES?Math.max(0,META_TOTAL-real)/DIAS_RESTANTES:0;
@@ -839,6 +878,16 @@ function renderKPIs(){
     <div class="kpi-label">${k.label}</div><div class="kpi-value mono">${k.value}</div><div class="kpi-sub">${k.sub}</div>
     ${k.badge?`<div class="kpi-badge ${k.badge.cls}">${k.badge.text}</div>`:''}
   </div>`).join('');
+
+  // barra de progresso do time
+  const pctMeta=META_TOTAL?real/META_TOTAL*100:0;
+  const barColor=pctMeta>=100?'var(--ok)':pctMeta>=80?'var(--warn)':'var(--error)';
+  const pb=document.getElementById('team-prog-bar');
+  if(pb){pb.style.width=Math.min(pctMeta,100)+'%';pb.style.background=barColor;}
+  const pp=document.getElementById('team-prog-pct');
+  if(pp)pp.textContent=fmtPct(pctMeta);
+  const ps=document.getElementById('team-prog-sub');
+  if(ps)ps.textContent=`Realizado: ${fmt(real)} · Meta: ${fmt(META_TOTAL)} · Projeção: ${fmt(Math.round(projTotal))} (${fmtPct(pctProj)}) · Ritmo nec.: ${fmt(Math.round(rd))}/DU`;
 }
 
 function renderRanking(){
@@ -847,7 +896,8 @@ function renderRanking(){
     const projV=proj(r),pctProj=v.meta?projV/v.meta*100:0;
     return{...v,r,mpV,pct,projV,pctProj,rt:ritmo(v.meta,r)};
   }).sort((a,b)=>b.pct-a.pct);
-  const tReal=TEAM.reduce((a,v)=>a+(REALIZADO[v.nome]||0),0);
+  const tReal=TEAM.reduce((a,v)=>v.bonus?a:a+(REALIZADO[v.nome]||0),0); // exclui bônus
+  const bonusReal=TEAM.reduce((a,v)=>v.bonus?a+(REALIZADO[v.nome]||0):a,0); // só bônus
   const tMP=mp(META_TOTAL),tPct=tMP?tReal/tMP*100:0;
   const tProj=proj(tReal),tPctProj=META_TOTAL?tProj/META_TOTAL*100:0;
   document.getElementById('ranking-body').innerHTML=rows.map((r,i)=>{
@@ -855,7 +905,7 @@ function renderRanking(){
     const stP=r.pctProj>=100?'ok':r.pctProj>=80?'warn':'down';
     return`<tr style="cursor:pointer;" onclick="switchTab('${tabId(r.nome)}')">
       <td>${i+1}</td>
-      <td><div class="seller-name"><span class="avatar" style="background:${r.cor}">${inits(r.nome)}</span>${r.nome}</div></td>
+      <td><div class="seller-name"><span class="avatar" style="background:${r.cor}">${inits(r.nome)}</span>${r.nome}${r.bonus?'<span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:5px;">bônus</span>':''}</div></td>
       <td><span class="conv-pill ${cv.cls}">${fmtPct(cv.pct)}</span><span class="conv-sub">${cv.p}/${cv.l} · meta ${cv.convMeta}%</span></td>
       <td class="num mono">${fmt(r.meta)}</td>
       <td class="num mono">${fmt(Math.round(r.mpV))}</td>
@@ -866,13 +916,19 @@ function renderRanking(){
       <td><span class="pill ${st.cls}">${st.lbl}</span></td>
     </tr>`;
   }).join('')+`<tr class="total-row">
-    <td></td><td>TOTAL</td><td></td>
+    <td></td><td>TOTAL EQUIPE</td><td></td>
     <td class="num mono">${fmt(META_TOTAL)}</td>
     <td class="num mono">${fmt(Math.round(tMP))}</td>
     <td class="num mono">${fmt(tReal)}</td>
     <td class="num">${fmt(Math.round(tProj))} <span style="opacity:.7;font-size:11px;">${fmtPct(tPctProj)}</span></td>
     <td class="num">${fmtPct(tPct)}</td><td></td><td></td>
-  </tr>`;
+  </tr>${bonusReal>0?`<tr style="background:#fefce8;border-top:1px dashed var(--warn);">
+    <td></td><td style="color:var(--warn);font-weight:600;">⭐ Bônus (Tanner)</td><td></td>
+    <td class="num mono" style="color:var(--muted);">—</td><td></td>
+    <td class="num mono" style="color:var(--warn);font-weight:700;">+ ${fmt(bonusReal)}</td>
+    <td></td><td></td><td></td><td></td>
+  </tr>`:''}`;
+
 }
 
 function renderCards(){
@@ -894,33 +950,45 @@ function renderCards(){
   }).join('');
 }
 
-// ─── COMISSÃO ─────────────────────────────────────────────────
-let cargoAtivo='ks1';
-function renderCargoTabs(){
-  document.getElementById('comm-cargo-tabs').innerHTML=Object.keys(CARGO_PLANS).map(k=>
-    `<button class="cargo-tab-btn ${k===cargoAtivo?'active':''}" onclick="setCargoAtivo('${k}')">${CL[k]}</button>`).join('');
-}
-function setCargoAtivo(k){cargoAtivo=k;renderCargoTabs();renderCommTable();}
-function renderCommTable(){
-  const pl=CARGO_PLANS[cargoAtivo];
-  document.getElementById('comm-fixo-valor').textContent=fmt(pl.fixo);
-  document.getElementById('comm-table-body').innerHTML=pl.faixas.map(f=>{
-    const vp=Math.max(f.b,GARANTIDO),g=f.b<GARANTIDO;
-    const cls=f.mn<80?'badge-baixa':f.mn<100?'badge-media':f.mn<135?'badge-alta':'badge-turbo';
-    return`<tr>
-      <td><span class="faixa-badge ${cls}">${f.l}</span></td>
-      <td class="num mono">${fmt(vp)}${g?' <span style="font-size:10px;color:var(--muted)">(gnt)</span>':''}</td>
-      <td class="num mono" style="color:var(--warn);font-weight:700;">+ ${fmt(BONUS)}</td>
-      <td class="num mono" style="font-weight:800;">${fmt(pl.fixo+vp+BONUS)}</td>
-    </tr>`;
-  }).join('');
+// ─── COMISSÃO CALCULADORA LIVRE ───────────────────────────────
+function calcComissaoLivre(){
+  const cargo=document.getElementById('calc-cargo')?.value||'ks2';
+  const meta=parseFloat(document.getElementById('calc-meta')?.value)||0;
+  const valor=parseFloat(document.getElementById('calc-valor')?.value)||0;
+  const bateu=document.getElementById('calc-conv')?.checked||false;
+  const el=document.getElementById('calc-result');if(!el)return;
+  if(!meta||!valor){el.innerHTML='<span style="color:var(--muted);font-size:13px;">Preencha a meta e o valor desejado.</span>';return;}
+  const pct=valor/meta*100;
+  const r=calcComissao(cargo,pct,bateu);
+  const pctInt=Math.floor(pct);
+  const clsPct=pct>=100?'var(--ok)':pct>=80?'var(--warn)':'var(--error)';
+  el.innerHTML=`
+    <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px;">
+      <span style="font-size:28px;font-weight:800;font-family:'JetBrains Mono';color:${clsPct}">${fmtPct(pct)}</span>
+      <span style="font-size:13px;color:var(--muted);">da meta · Faixa: <b style="color:var(--darkgreen)">${r.label}${r.gar?' (garantido)':''}</b></span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:14px;">
+      <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#fff;border-radius:8px;">
+        <span style="color:var(--muted);">Salário fixo</span><span class="mono" style="font-weight:600;">${fmt(r.fixo)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#fff;border-radius:8px;">
+        <span style="color:var(--muted);">Comissão da faixa</span><span class="mono" style="font-weight:600;color:var(--darkgreen)">${fmt(r.vf)}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#fff;border-radius:8px;opacity:${bateu?1:.45}">
+        <span style="color:var(--muted);">Bônus conversão</span><span class="mono" style="font-weight:600;color:var(--warn)">${bateu?'+ '+fmt(r.bonus):'— (não bateu)'}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:12px 14px;background:var(--darkgreen);border-radius:10px;margin-top:4px;">
+        <span style="color:rgba(255,255,255,.8);font-weight:600;">Total estimado</span>
+        <span class="mono" style="font-size:20px;font-weight:800;color:#fff;">${fmt(r.total)}</span>
+      </div>
+    </div>`;
 }
 
 // ─── RENDER ALL ───────────────────────────────────────────────
 function renderAll(){
   renderHeader();renderKPIs();renderRanking();renderCards();
   TEAM.forEach(v=>renderIndividualPanel(v));
-  renderCargoTabs();renderCommTable();
+  calcComissaoLivre();
   renderHistorico();
 }
 
