@@ -1,33 +1,33 @@
 {
-  "updated": "aguardando primeira importação",
+  "updated": "12/08/2026, 15:01",
   "REALIZADO": {
-    "Silas": 0,
-    "Luana": 0,
-    "Ana Carolina": 0,
-    "Lucas Rangel": 0,
-    "Madson": 0,
-    "Larissa": 0,
-    "Camile": 0,
-    "Tanner": 0
+    "Silas": 33623.83000000001,
+    "Luana": 13106.369999999999,
+    "Ana Carolina": 16205.55,
+    "Lucas Rangel": 18274.38,
+    "Madson": 6622.709999999999,
+    "Larissa": 25575.48,
+    "Camile": 4199.84,
+    "Tanner": 1793.35
   },
   "LEADS": {
-    "Silas": 131,
-    "Luana": 103,
-    "Ana Carolina": 107,
-    "Lucas Rangel": 93,
-    "Madson": 109,
-    "Larissa": 110,
-    "Camile": 63,
-    "Tanner": 7
+    "Silas": 149,
+    "Luana": 119,
+    "Ana Carolina": 119,
+    "Lucas Rangel": 104,
+    "Madson": 122,
+    "Larissa": 116,
+    "Camile": 77,
+    "Tanner": 13
   },
   "PAGOS_COUNT": {
-    "Silas": 0,
-    "Luana": 0,
-    "Ana Carolina": 0,
-    "Lucas Rangel": 0,
-    "Madson": 0,
-    "Larissa": 0,
-    "Camile": 0,
-    "Tanner": 0
+    "Silas": 45,
+    "Luana": 13,
+    "Ana Carolina": 11,
+    "Lucas Rangel": 12,
+    "Madson": 7,
+    "Larissa": 12,
+    "Camile": 5,
+    "Tanner": 3
   }
 }
