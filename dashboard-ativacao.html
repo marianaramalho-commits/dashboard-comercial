@@ -768,8 +768,6 @@ function renderIndividualPanel(v){
   const real=REALIZADO[v.nome]||0,mpV=mp(v.meta),projV=proj(real);
   const pctP=mpV?real/mpV*100:0,pctProj=v.meta?projV/v.meta*100:0,pctM=v.meta?real/v.meta*100:0;
   const rt=ritmo(v.meta,real),st=stOf(pctP),cv=convOf(v.nome);
-
-  const st=stOf(pctP);  // badge usa % vs meta proporcional (ritmo do dia)
   const stM=stOf(pctM); // barra usa % da meta mensal
   const hb=document.getElementById(id+'-hero-badge');
   if(hb){hb.textContent=st.lbl;hb.style.background=pctP>=100?'var(--okbg)':pctP>=80?'var(--warnbg)':'var(--errorbg)';hb.style.color=st.bar;}
