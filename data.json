@@ -1,5 +1,5 @@
 {
-  "updated": "12/08/2026, 17:13",
+  "updated": "13/08/2026, 08:22",
   "DU_ATUAL": 8,
   "DIAS": {
     "2026-08-03": {
@@ -254,7 +254,7 @@
         "fat": 0
       }
     },
-    "2026-08-12": {
+    "2026-08-11": {
       "Silas": {
         "leads": 18,
         "pagos": 7,
@@ -293,37 +293,79 @@
       "Tanner": {
         "leads": 1,
         "pagos": 1,
-        "fat": 1066
+        "fat": 1600
+      }
+    },
+    "2026-08-12": {
+      "Silas": {
+        "leads": 18,
+        "pagos": 6,
+        "fat": 7068
+      },
+      "Luana": {
+        "leads": 10,
+        "pagos": 4,
+        "fat": 3459
+      },
+      "Ana Carolina": {
+        "leads": 12,
+        "pagos": 0,
+        "fat": 0
+      },
+      "Lucas Rangel": {
+        "leads": 10,
+        "pagos": 0,
+        "fat": 0
+      },
+      "Madson": {
+        "leads": 12,
+        "pagos": 0,
+        "fat": 0
+      },
+      "Larissa": {
+        "leads": 6,
+        "pagos": 1,
+        "fat": 318
+      },
+      "Camile": {
+        "leads": 13,
+        "pagos": 0,
+        "fat": 0
+      },
+      "Tanner": {
+        "leads": 1,
+        "pagos": 0,
+        "fat": 0
       }
     }
   },
   "REALIZADO": {
-    "Silas": 34043,
-    "Luana": 15620,
+    "Silas": 41111,
+    "Luana": 19079,
     "Ana Carolina": 16206,
     "Lucas Rangel": 20086,
     "Madson": 11579,
-    "Larissa": 32988,
+    "Larissa": 33306,
     "Camile": 7393,
-    "Tanner": 1259
+    "Tanner": 1793
   },
   "LEADS": {
-    "Silas": 146,
-    "Luana": 113,
-    "Ana Carolina": 119,
-    "Lucas Rangel": 103,
-    "Madson": 121,
-    "Larissa": 116,
-    "Camile": 74,
-    "Tanner": 8
+    "Silas": 164,
+    "Luana": 123,
+    "Ana Carolina": 131,
+    "Lucas Rangel": 113,
+    "Madson": 133,
+    "Larissa": 122,
+    "Camile": 87,
+    "Tanner": 9
   },
   "PAGOS_COUNT": {
-    "Silas": 47,
-    "Luana": 14,
+    "Silas": 53,
+    "Luana": 18,
     "Ana Carolina": 10,
     "Lucas Rangel": 14,
     "Madson": 7,
-    "Larissa": 15,
+    "Larissa": 16,
     "Camile": 10,
     "Tanner": 2
   }
