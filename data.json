@@ -1,5 +1,5 @@
 {
-  "updated": "14/08/2026, 08:33",
+  "updated": "14/08/2026, 08:39",
   "DU_ATUAL": 9,
   "DIAS": {
     "2026-08-03": {
@@ -377,7 +377,7 @@
       "Tanner": {
         "leads": 14,
         "pagos": 0,
-        "fat": 0
+        "fat": 493
       }
     }
   },
@@ -389,7 +389,7 @@
     "Madson": 11579,
     "Larissa": 33306,
     "Camile": 9248,
-    "Tanner": 1793
+    "Tanner": 2286
   },
   "LEADS": {
     "Silas": 175,
