@@ -1,5 +1,5 @@
 {
-  "updated": "17/08/2026, 22:42",
+  "updated": "17/08/2026, 22:53",
   "DU_ATUAL": 11,
   "DIAS": {
     "2026-08-03": {
@@ -445,8 +445,8 @@
       },
       "Madson": {
         "leads": 19,
-        "pagos": 0,
-        "fat": 0
+        "pagos": 1,
+        "fat": 251
       },
       "Larissa": {
         "leads": 17,
@@ -455,8 +455,8 @@
       },
       "Camile": {
         "leads": 18,
-        "pagos": 2,
-        "fat": 6013
+        "pagos": 4,
+        "fat": 7646
       },
       "Tanner": {
         "leads": 0,
@@ -470,9 +470,9 @@
     "Luana": 30376,
     "Ana Carolina": 29849,
     "Lucas Rangel": 29142,
-    "Madson": 14863,
+    "Madson": 15114,
     "Larissa": 35222,
-    "Camile": 16111,
+    "Camile": 17744,
     "Tanner": 1793
   },
   "LEADS": {
@@ -490,9 +490,9 @@
     "Luana": 22,
     "Ana Carolina": 13,
     "Lucas Rangel": 20,
-    "Madson": 12,
+    "Madson": 13,
     "Larissa": 20,
-    "Camile": 16,
+    "Camile": 18,
     "Tanner": 2
   }
 }
