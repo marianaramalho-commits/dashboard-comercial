@@ -1,5 +1,5 @@
 {
-  "updated": "19/08/2026, 08:53",
+  "updated": "19/08/2026, 16:37",
   "DU_ATUAL": 12,
   "DIAS": {
     "2026-08-03": {
@@ -431,7 +431,7 @@
       "Luana": {
         "leads": 17,
         "pagos": 1,
-        "fat": 5014
+        "fat": 0
       },
       "Ana Carolina": {
         "leads": 18,
@@ -509,7 +509,7 @@
   },
   "REALIZADO": {
     "Silas": 63879,
-    "Luana": 35651,
+    "Luana": 30637,
     "Ana Carolina": 31632,
     "Lucas Rangel": 37385,
     "Madson": 24719,
