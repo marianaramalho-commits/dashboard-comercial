@@ -1,7 +1,6 @@
-
 {
-  "updated": "17/08/2026, 22:55",
-  "DU_ATUAL": 11,
+  "updated": "19/08/2026, 08:53",
+  "DU_ATUAL": 12,
   "DIAS": {
     "2026-08-03": {
       "Silas": {
@@ -464,36 +463,78 @@
         "pagos": 0,
         "fat": 0
       }
+    },
+    "2026-08-18": {
+      "Silas": {
+        "leads": 11,
+        "pagos": 7,
+        "fat": 5259
+      },
+      "Luana": {
+        "leads": 15,
+        "pagos": 3,
+        "fat": 5275
+      },
+      "Ana Carolina": {
+        "leads": 14,
+        "pagos": 3,
+        "fat": 1783
+      },
+      "Lucas Rangel": {
+        "leads": 14,
+        "pagos": 3,
+        "fat": 8243
+      },
+      "Madson": {
+        "leads": 16,
+        "pagos": 2,
+        "fat": 9605
+      },
+      "Larissa": {
+        "leads": 15,
+        "pagos": 0,
+        "fat": 0
+      },
+      "Camile": {
+        "leads": 16,
+        "pagos": 2,
+        "fat": 2706
+      },
+      "Tanner": {
+        "leads": 1,
+        "pagos": 0,
+        "fat": 0
+      }
     }
   },
   "REALIZADO": {
-    "Silas": 58620,
-    "Luana": 30376,
-    "Ana Carolina": 29849,
-    "Lucas Rangel": 29142,
-    "Madson": 15114,
+    "Silas": 63879,
+    "Luana": 35651,
+    "Ana Carolina": 31632,
+    "Lucas Rangel": 37385,
+    "Madson": 24719,
     "Larissa": 35222,
-    "Camile": 17744,
+    "Camile": 20450,
     "Tanner": 1793
   },
   "LEADS": {
-    "Silas": 216,
-    "Luana": 165,
-    "Ana Carolina": 175,
-    "Lucas Rangel": 155,
-    "Madson": 179,
-    "Larissa": 158,
-    "Camile": 133,
-    "Tanner": 23
+    "Silas": 227,
+    "Luana": 180,
+    "Ana Carolina": 189,
+    "Lucas Rangel": 169,
+    "Madson": 195,
+    "Larissa": 173,
+    "Camile": 149,
+    "Tanner": 24
   },
   "PAGOS_COUNT": {
-    "Silas": 67,
-    "Luana": 22,
-    "Ana Carolina": 13,
-    "Lucas Rangel": 20,
-    "Madson": 13,
+    "Silas": 74,
+    "Luana": 25,
+    "Ana Carolina": 16,
+    "Lucas Rangel": 23,
+    "Madson": 15,
     "Larissa": 20,
-    "Camile": 18,
+    "Camile": 20,
     "Tanner": 2
   }
 }
