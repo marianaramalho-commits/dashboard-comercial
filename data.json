@@ -1,5 +1,5 @@
 {
-  "updated": "21/08/2026, 08:17",
+  "updated": "21/08/2026, 09:09",
   "DU_ATUAL": 14,
   "DIAS": {
     "2026-08-03": {
@@ -582,7 +582,7 @@
       "Camile": {
         "leads": 29,
         "pagos": 1,
-        "fat": 100
+        "fat": 1000
       },
       "Tanner": {
         "leads": 1,
@@ -598,7 +598,7 @@
     "Lucas Rangel": 37385,
     "Madson": 27174,
     "Larissa": 35941,
-    "Camile": 20550,
+    "Camile": 21450,
     "Tanner": 1793
   },
   "LEADS": {
