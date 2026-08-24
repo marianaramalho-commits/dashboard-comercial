@@ -1,6 +1,6 @@
 {
-  "updated": "21/08/2026, 09:09",
-  "DU_ATUAL": 14,
+  "updated": "24/08/2026, 08:41",
+  "DU_ATUAL": 15,
   "DIAS": {
     "2026-08-03": {
       "Silas": {
@@ -589,36 +589,78 @@
         "pagos": 0,
         "fat": 0
       }
+    },
+    "2026-08-21": {
+      "Silas": {
+        "leads": 50,
+        "pagos": 5,
+        "fat": 4675
+      },
+      "Luana": {
+        "leads": 52,
+        "pagos": 5,
+        "fat": 6459
+      },
+      "Ana Carolina": {
+        "leads": 49,
+        "pagos": 2,
+        "fat": 5437
+      },
+      "Lucas Rangel": {
+        "leads": 51,
+        "pagos": 2,
+        "fat": 798
+      },
+      "Madson": {
+        "leads": 49,
+        "pagos": 0,
+        "fat": 0
+      },
+      "Larissa": {
+        "leads": 53,
+        "pagos": 0,
+        "fat": 0
+      },
+      "Camile": {
+        "leads": 51,
+        "pagos": 1,
+        "fat": 1121
+      },
+      "Tanner": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 0
+      }
     }
   },
   "REALIZADO": {
-    "Silas": 68785,
-    "Luana": 38665,
-    "Ana Carolina": 34500,
-    "Lucas Rangel": 37385,
+    "Silas": 73460,
+    "Luana": 45124,
+    "Ana Carolina": 39937,
+    "Lucas Rangel": 38183,
     "Madson": 27174,
     "Larissa": 35941,
-    "Camile": 21450,
+    "Camile": 22571,
     "Tanner": 1793
   },
   "LEADS": {
-    "Silas": 250,
-    "Luana": 230,
-    "Ana Carolina": 239,
-    "Lucas Rangel": 222,
-    "Madson": 236,
-    "Larissa": 223,
-    "Camile": 202,
+    "Silas": 300,
+    "Luana": 282,
+    "Ana Carolina": 288,
+    "Lucas Rangel": 273,
+    "Madson": 285,
+    "Larissa": 276,
+    "Camile": 253,
     "Tanner": 26
   },
   "PAGOS_COUNT": {
-    "Silas": 80,
-    "Luana": 28,
-    "Ana Carolina": 17,
-    "Lucas Rangel": 23,
+    "Silas": 85,
+    "Luana": 33,
+    "Ana Carolina": 19,
+    "Lucas Rangel": 25,
     "Madson": 18,
     "Larissa": 22,
-    "Camile": 21,
+    "Camile": 22,
     "Tanner": 2
   }
 }
