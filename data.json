@@ -1,5 +1,5 @@
 {
-  "updated": "26/08/2026, 09:32",
+  "updated": "26/08/2026, 09:36",
   "DU_ATUAL": 17,
   "DIAS": {
     "2026-08-03": {
@@ -214,7 +214,7 @@
     },
     "2026-08-10": {
       "Silas": {
-        "leads": 32,
+        "leads": 11,
         "pagos": 10,
         "fat": 6516
       },
@@ -728,7 +728,7 @@
     "Tanner": 1793
   },
   "LEADS": {
-    "Silas": 297,
+    "Silas": 276,
     "Luana": 329,
     "Ana Carolina": 335,
     "Lucas Rangel": 325,
