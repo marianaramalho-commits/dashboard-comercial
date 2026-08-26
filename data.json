@@ -1,6 +1,6 @@
 {
-  "updated": "26/08/2026, 09:21",
-  "DU_ATUAL": 17,
+  "updated": "26/08/2026, 09:27",
+  "DU_ATUAL": 16,
   "DIAS": {
     "2026-08-03": {
       "Silas": {
@@ -634,7 +634,7 @@
     },
     "2026-08-24": {
       "Silas": {
-        "leads": 24,
+        "leads": 22,
         "pagos": 4,
         "fat": 1728
       },
@@ -673,77 +673,35 @@
         "pagos": 0,
         "fat": 0
       }
-    },
-    "2026-08-25": {
-      "Silas": {
-        "leads": 16,
-        "pagos": 4,
-        "fat": 2294
-      },
-      "Luana": {
-        "leads": 17,
-        "pagos": 0,
-        "fat": 1154
-      },
-      "Ana Carolina": {
-        "leads": 7,
-        "pagos": 1,
-        "fat": 1417
-      },
-      "Lucas Rangel": {
-        "leads": 20,
-        "pagos": 0,
-        "fat": 0
-      },
-      "Madson": {
-        "leads": 7,
-        "pagos": 3,
-        "fat": 8326
-      },
-      "Larissa": {
-        "leads": 16,
-        "pagos": 1,
-        "fat": 536
-      },
-      "Camile": {
-        "leads": 18,
-        "pagos": 0,
-        "fat": 0
-      },
-      "Tanner": {
-        "leads": 0,
-        "pagos": 0,
-        "fat": 0
-      }
     }
   },
   "REALIZADO": {
-    "Silas": 77482,
-    "Luana": 46278,
-    "Ana Carolina": 41354,
+    "Silas": 75188,
+    "Luana": 45124,
+    "Ana Carolina": 39937,
     "Lucas Rangel": 53492,
-    "Madson": 37155,
-    "Larissa": 36477,
+    "Madson": 28829,
+    "Larissa": 35941,
     "Camile": 23563,
     "Tanner": 1793
   },
   "LEADS": {
-    "Silas": 299,
-    "Luana": 329,
-    "Ana Carolina": 326,
-    "Lucas Rangel": 325,
-    "Madson": 322,
-    "Larissa": 324,
-    "Camile": 303,
+    "Silas": 281,
+    "Luana": 312,
+    "Ana Carolina": 319,
+    "Lucas Rangel": 305,
+    "Madson": 315,
+    "Larissa": 308,
+    "Camile": 285,
     "Tanner": 26
   },
   "PAGOS_COUNT": {
-    "Silas": 93,
+    "Silas": 89,
     "Luana": 33,
-    "Ana Carolina": 20,
+    "Ana Carolina": 19,
     "Lucas Rangel": 27,
-    "Madson": 23,
-    "Larissa": 23,
+    "Madson": 20,
+    "Larissa": 22,
     "Camile": 23,
     "Tanner": 2
   }
