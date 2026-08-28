@@ -257,8 +257,8 @@
           <th class="num">Meta Mensal</th>
           <th class="num">Meta Prop. DU <span id="th-du">–</span></th>
           <th class="num">Realizado</th>
+          <th class="num">Ating. Real</th>
           <th class="num">Projeção Mês</th>
-          <th class="num">Ating.</th>
           <th class="num">Ritmo/DU</th>
           <th>Status</th>
         </tr></thead>
@@ -744,21 +744,6 @@ function buildIndividualPanels(){
           <th>Data</th><th>DU</th><th class="num">Fat. Dia</th><th class="num">Leads</th><th class="num">Pagos</th><th class="num">Acum. Fat.</th><th class="num">Meta Acum.</th><th class="num">Gap</th>
         </tr></thead><tbody id="${id}-diad"></tbody></table>
       </div>
-      <div class="section-title">🎯 Simulador</div>
-      <div class="sim-card"><div class="sim-grid">
-        <div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
-            <div class="sim-field"><label>Cargo</label>
-              <select id="${id}-sim-cargo" onchange="renderIndSim('${id}','${v.nome}')">
-                <option value="ks1">KS1</option><option value="ks2">KS2</option><option value="ks3">KS3</option><option value="ks4">KS4</option>
-              </select></div>
-            <div class="sim-field"><label>Meta (R$)</label><input type="number" id="${id}-sim-meta" class="mono" step="100" onchange="renderIndSim('${id}','${v.nome}')"></div>
-          </div>
-          <div class="sim-field"><label>Realizado atual (R$)</label><input type="number" id="${id}-sim-real" class="mono" step="100" onchange="renderIndSim('${id}','${v.nome}')"></div>
-          <label class="sim-toggle"><input type="checkbox" id="${id}-sim-conv" onchange="renderIndSim('${id}','${v.nome}')"><span>Bateu a conversão? (+ R$200)</span></label>
-        </div>
-        <div class="sim-result" id="${id}-sim-result"></div>
-      </div></div>
     </div></div>`;
   }).join('');
 }
@@ -897,8 +882,8 @@ function renderKPIs(){
 function renderRanking(){
   const rows=TEAM.map(v=>{
     const r=REALIZADO[v.nome]||0,mpV=mp(v.meta),pct=mpV?r/mpV*100:0;
-    const projV=proj(r),pctProj=v.meta?projV/v.meta*100:0;
-    return{...v,r,mpV,pct,projV,pctProj,rt:ritmo(v.meta,r)};
+    const projV=proj(r),pctProj=v.meta?projV/v.meta*100:0,pctM=v.meta?r/v.meta*100:0;
+    return{...v,r,mpV,pct,projV,pctProj,pctM,rt:ritmo(v.meta,r)};
   }).sort((a,b)=>b.pct-a.pct);
   const tReal=TEAM.reduce((a,v)=>v.bonus?a:a+(REALIZADO[v.nome]||0),0); // exclui bônus
   const bonusReal=TEAM.reduce((a,v)=>v.bonus?a+(REALIZADO[v.nome]||0):a,0); // só bônus
@@ -914,8 +899,8 @@ function renderRanking(){
       <td class="num mono">${fmt(r.meta)}</td>
       <td class="num mono">${fmt(Math.round(r.mpV))}</td>
       <td class="num mono">${fmt(r.r)}</td>
+      <td class="num"><span class="bar-mini"><span class="f" style="width:${Math.min(r.pctM,100)}%;background:${stOf(r.pctM).bar}"></span></span>&nbsp;<b>${fmtPct(r.pctM)}</b></td>
       <td class="num"><span class="pill ${stP}">${fmt(Math.round(r.projV))}</span><br><span style="font-size:10px;color:var(--muted);">${fmtPct(r.pctProj)}</span></td>
-      <td class="num"><span class="bar-mini"><span class="f" style="width:${Math.min(r.pct,100)}%;background:${st.bar}"></span></span>&nbsp;<b>${fmtPct(r.pct)}</b></td>
       <td class="num mono">${fmt(Math.round(r.rt))}</td>
       <td><span class="pill ${st.cls}">${st.lbl}</span></td>
     </tr>`;
@@ -924,8 +909,9 @@ function renderRanking(){
     <td class="num mono">${fmt(META_TOTAL)}</td>
     <td class="num mono">${fmt(Math.round(tMP))}</td>
     <td class="num mono">${fmt(tReal)}</td>
+    <td class="num">${fmtPct(META_TOTAL?tReal/META_TOTAL*100:0)}</td>
     <td class="num">${fmt(Math.round(tProj))} <span style="opacity:.7;font-size:11px;">${fmtPct(tPctProj)}</span></td>
-    <td class="num">${fmtPct(tPct)}</td><td></td><td></td>
+    <td></td><td></td>
   </tr>${bonusReal>0?`<tr style="background:#fefce8;border-top:1px dashed var(--warn);">
     <td></td><td style="color:var(--warn);font-weight:600;">⭐ Bônus (Tanner)</td><td></td>
     <td class="num mono" style="color:var(--muted);">—</td><td></td>
