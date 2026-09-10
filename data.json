@@ -1,5 +1,5 @@
 {
-  "updated": "10/09/2026, 14:48",
+  "updated": "10/09/2026, 15:04",
   "DU_ATUAL": 21,
   "DIAS": {
     "2026-08-03": {
@@ -258,7 +258,7 @@
       "Silas": {
         "leads": 18,
         "pagos": 7,
-        "fat": 9733
+        "fat": 8202
       },
       "Luana": {
         "leads": 10,
@@ -510,7 +510,7 @@
       "Silas": {
         "leads": 10,
         "pagos": 3,
-        "fat": 2178
+        "fat": 178
       },
       "Luana": {
         "leads": 19,
@@ -762,7 +762,7 @@
       "Silas": {
         "leads": 1,
         "pagos": 4,
-        "fat": 4752
+        "fat": 2752
       },
       "Luana": {
         "leads": 41,
@@ -886,7 +886,7 @@
     }
   },
   "REALIZADO": {
-    "Silas": 95794,
+    "Silas": 90263,
     "Luana": 58940,
     "Ana Carolina": 47251,
     "Lucas Rangel": 54454,
