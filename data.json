@@ -1,5 +1,5 @@
 {
-  "updated": "10/09/2026, 15:56",
+  "updated": "10/09/2026, 16:21",
   "DU_ATUAL": 21,
   "DIAS": {
     "2026-08-03": {
@@ -188,7 +188,7 @@
       },
       "Lucas Rangel": {
         "leads": 6,
-        "pagos": 2,
+        "pagos": 5,
         "fat": 2960
       },
       "Madson": {
@@ -198,7 +198,7 @@
       },
       "Larissa": {
         "leads": 5,
-        "pagos": 2,
+        "pagos": 4,
         "fat": 10223
       },
       "Camile": {
@@ -885,6 +885,7 @@
       }
     }
   },
+  "METAS_BY_MONTH": {},
   "REALIZADO": {
     "Silas": 90263,
     "Luana": 58940,
@@ -909,9 +910,9 @@
     "Silas": 109,
     "Luana": 39,
     "Ana Carolina": 24,
-    "Lucas Rangel": 28,
+    "Lucas Rangel": 31,
     "Madson": 31,
-    "Larissa": 28,
+    "Larissa": 30,
     "Camile": 30,
     "Tanner": 2
   }
