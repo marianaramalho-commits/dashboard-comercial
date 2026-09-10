@@ -40,7 +40,14 @@
   .month-progress .track{height:8px;border-radius:5px;background:rgba(255,255,255,0.14);overflow:hidden;}
   .month-progress .fill{height:100%;background:linear-gradient(90deg,var(--green2),var(--green3));border-radius:5px;}
 
-  .nav-tabs{display:flex;gap:3px;padding:18px 36px 0;overflow-x:auto;}
+  /* MONTH NAV */
+  .month-nav{display:flex;align-items:center;gap:8px;padding:14px 0 6px;}
+  .month-nav-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:8px;padding:5px 14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter';transition:background .15s;line-height:1.5;}
+  .month-nav-btn:hover{background:rgba(255,255,255,0.22);}
+  #month-nav-label{font-size:15px;font-weight:800;color:#fff;min-width:160px;text-align:center;}
+  .month-nav-sep{font-size:11px;color:rgba(255,255,255,0.4);margin-left:12px;}
+
+  .nav-tabs{display:flex;gap:3px;padding:12px 36px 0;overflow-x:auto;}
   .nav-tab{padding:9px 16px;border-radius:10px 10px 0 0;border:none;font-family:'Inter';font-size:12.5px;font-weight:600;cursor:pointer;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.07);white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:7px;flex-shrink:0;}
   .nav-tab:hover{background:rgba(255,255,255,0.13);color:rgba(255,255,255,0.9);}
   .nav-tab.active{background:#fff;color:var(--darkgreen);}
@@ -209,6 +216,19 @@
   .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--darkgreen);color:#fff;padding:13px 26px;border-radius:12px;font-size:13.5px;font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,0.2);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:9999;display:flex;align-items:center;gap:10px;white-space:nowrap;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+  /* HIST MESES */
+  .hist-mes-active{background:#EAF3DE;}
+  .hist-mes-row{cursor:pointer;}
+  .hist-mes-row:hover td{background:#f0faf7;}
+  .hist-mes-expand{display:none;background:#FAFCFB;}
+  .hist-mes-expand td{padding:0 !important;}
+  .hist-expand-inner{padding:12px 16px 16px;}
+  .hist-expand-inner table{background:#fff;border-radius:10px;overflow:hidden;width:100%;}
+  .hist-expand-inner thead th{background:#f0faf7;color:var(--darkgreen);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;padding:8px 12px;}
+  .hist-expand-inner tbody td{padding:8px 12px;border-bottom:1px solid #f0f0f0;font-size:12.5px;}
+  .hist-expand-inner tbody tr:last-child td{border-bottom:none;}
+  .hist-chevron{transition:transform .2s;display:inline-block;font-size:11px;margin-right:6px;color:var(--muted);}
+
   footer{text-align:center;font-size:11px;color:var(--muted);padding:22px 0 6px;}
 </style>
 </head>
@@ -226,12 +246,19 @@
     </div>
   </div>
   <div class="title-row">
-    <h1>Dashboard Ativação — Acompanhamento de Metas</h1>
+    <h1 id="main-title">Dashboard Ativação — Acompanhamento de Metas</h1>
     <p>Meta total <span id="hdr-meta-total" class="mono"></span> · <span id="data-updated" style="color:rgba(255,255,255,0.55);font-size:11px;"></span></p>
   </div>
   <div class="month-progress">
     <div class="labels"><span>Progresso do mês</span><span id="month-pct"></span></div>
     <div class="track"><div class="fill" id="month-fill"></div></div>
+  </div>
+  <!-- NAVEGAÇÃO DE MÊS -->
+  <div class="month-nav">
+    <button class="month-nav-btn" onclick="changeMonth(-1)">‹ Anterior</button>
+    <span id="month-nav-label">—</span>
+    <button class="month-nav-btn" onclick="changeMonth(1)">Próximo ›</button>
+    <span class="month-nav-sep" id="month-nav-hint"></span>
   </div>
   <div class="nav-tabs" id="nav-tabs"></div>
 </header>
@@ -282,6 +309,28 @@
     </div>
     <div id="lider-unlocked" style="display:none;">
 
+      <!-- METAS DO MÊS -->
+      <div class="lider-day-card" style="margin-bottom:20px;">
+        <div class="lider-day-header" style="cursor:pointer;" onclick="toggleMetaConfig()">
+          <div style="font-weight:700;font-size:14px;">⚙️ Metas de <span id="lider-meta-month-label">—</span></div>
+          <button class="btn btn-ghost" style="pointer-events:none;font-size:12px;">Editar metas ▾</button>
+        </div>
+        <div id="meta-config-body" style="display:none;">
+          <table class="lider-table">
+            <thead><tr>
+              <th>Vendedor</th>
+              <th class="num">Meta mensal (R$)</th>
+              <th class="num">Meta padrão</th>
+            </tr></thead>
+            <tbody id="meta-config-tbody"></tbody>
+          </table>
+          <div class="lider-footer">
+            <button class="btn btn-primary" onclick="saveMetas()">💾 Salvar metas deste mês</button>
+            <span style="font-size:12px;color:var(--muted);">Metas por mês. Outros meses mantêm suas próprias configurações.</span>
+          </div>
+        </div>
+      </div>
+
       <!-- ENTRADA DO DIA -->
       <div class="lider-day-card">
         <div class="lider-day-header">
@@ -314,9 +363,9 @@
         </div>
       </div>
 
-      <!-- HISTÓRICO -->
-      <div class="section-title">📋 Histórico de dias inseridos</div>
-      <div id="hist-empty" style="display:none;color:var(--muted);font-size:13px;padding:16px 0;">Nenhum dia inserido ainda.</div>
+      <!-- HISTÓRICO DE DIAS (mês ativo) -->
+      <div class="section-title">📋 Histórico de dias — <span id="hist-month-label">—</span></div>
+      <div id="hist-empty" style="display:none;color:var(--muted);font-size:13px;padding:16px 0;">Nenhum dia inserido neste mês ainda.</div>
       <div class="hist-wrap">
         <table id="hist-table" style="min-width:700px;">
           <thead><tr>
@@ -337,6 +386,28 @@
 
 <!-- PAINÉIS INDIVIDUAIS -->
 <div id="individual-panels"></div>
+
+<!-- HISTÓRICO MESES -->
+<div class="tab-panel" id="panel-historico">
+  <div class="content">
+    <div class="section-title">📅 Histórico por Mês</div>
+    <div class="info-box"><span class="ic">💡</span><span>Cada mês tem seus próprios dados e metas. Clique em <b>Ver →</b> para navegar até aquele mês. O mês ativo está destacado em verde.</span></div>
+    <div class="table-wrap">
+      <table id="hist-meses-table" style="min-width:620px;">
+        <thead><tr>
+          <th>Mês</th>
+          <th class="num">DU Total</th>
+          <th class="num">Meta Time</th>
+          <th class="num">Realizado</th>
+          <th class="num">% Meta</th>
+          <th class="num">Dias Reg.</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="hist-meses-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 <!-- REAL TIME -->
 <div class="tab-panel" id="panel-realtime">
@@ -398,6 +469,7 @@
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────
 const ADMIN_PIN = 'konsi2026';
+const MO_NAMES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
 function calcDUFromDate(date){
   const yr=date.getFullYear(),mo=date.getMonth();
@@ -413,9 +485,34 @@ function calcDUTotal(yr,mo){
 }
 
 const _now=new Date();
-const DIAS_UTEIS_MES=calcDUTotal(_now.getFullYear(),_now.getMonth());
-let DU_ATUAL=Math.max(1,calcDUFromDate(_now));
-let DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;
+
+// ─── MULTI-MÊS ────────────────────────────────────────────────
+function todayMonthStr(){ const n=new Date(),p=x=>String(x).padStart(2,'0'); return `${n.getFullYear()}-${p(n.getMonth()+1)}`; }
+function moLabel(mo){ const [yr,m]=mo.split('-').map(Number); return `${MO_NAMES[m-1]} ${yr}`; }
+function getActiveYrMo(){ const [yr,mo]=ACTIVE_MONTH.split('-').map(Number); return {yr,mo:mo-1}; }
+
+let ACTIVE_MONTH = todayMonthStr(); // e.g. "2026-09"
+let METAS_BY_MONTH = {};            // { "2026-08": {Silas:73000,...}, ... }
+
+function getActiveMeta(nome){
+  const mm=METAS_BY_MONTH[ACTIVE_MONTH];
+  const v=TEAM.find(t=>t.nome===nome);
+  const def=v?v.meta:0;
+  return (mm&&mm[nome]!==undefined)?mm[nome]:def;
+}
+function getMetaTotal(){ return TEAM.reduce((a,v)=>isBonus(v,ACTIVE_MONTH)?a:a+getActiveMeta(v.nome),0); }
+function getMonthMetaTotal(mo){
+  const mm=METAS_BY_MONTH[mo];
+  return TEAM.reduce((a,v)=>{
+    if(isBonus(v,mo)) return a;
+    return a+((mm&&mm[v.nome]!==undefined)?mm[v.nome]:v.meta);
+  },0);
+}
+function updateActiveDU(){ const {yr,mo}=getActiveYrMo(); DIAS_UTEIS_MES=calcDUTotal(yr,mo); }
+
+let DIAS_UTEIS_MES = calcDUTotal(_now.getFullYear(),_now.getMonth());
+let DU_ATUAL = Math.max(1,calcDUFromDate(_now));
+let DIAS_RESTANTES = Math.max(0,DIAS_UTEIS_MES-DU_ATUAL);
 
 const TEAM=[
   {nome:"Silas",        meta:73000,cor:"#0A9F82",ks:"ks3",convMeta:33},
@@ -425,20 +522,21 @@ const TEAM=[
   {nome:"Madson",       meta:56000,cor:"#7c3aed",ks:"ks3",convMeta:7},
   {nome:"Larissa",      meta:46000,cor:"#0891b2",ks:"ks1",convMeta:7},
   {nome:"Camile",       meta:46000,cor:"#e11d48",ks:"ks1",convMeta:7},
-  {nome:"Tanner",       meta:40000,cor:"#16a34a",ks:"ks1",convMeta:7,bonus:true},
+  {nome:"Tanner",       meta:40000,cor:"#16a34a",ks:"ks1",convMeta:7,bonus:true,bonusUntil:"2026-08"},
 ];
-const META_TOTAL=TEAM.reduce((a,v)=>v.bonus?a:a+v.meta,0); // Tanner (bonus) não conta na meta do time
+
+// isBonus: considera bonusUntil para saber se é bônus em um mês específico
+function isBonus(v, mo){ if(!v.bonus) return false; if(!v.bonusUntil) return true; return mo<=v.bonusUntil; }
 
 // ─── ESTADO ───────────────────────────────────────────────────
 // DIAS: { "2026-08-12": { "Silas": {leads:5, pagos:2, fat:10000}, ... } }
 let DIAS={};
-
-// Totais calculados a partir de DIAS:
 let REALIZADO={},LEADS={},PAGOS_COUNT={};
 
 function computeTotals(){
   TEAM.forEach(v=>{REALIZADO[v.nome]=0;LEADS[v.nome]=0;PAGOS_COUNT[v.nome]=0;});
-  Object.values(DIAS).forEach(day=>{
+  // Filter by ACTIVE_MONTH
+  Object.entries(DIAS).filter(([dk])=>dk.startsWith(ACTIVE_MONTH)).forEach(([,day])=>{
     TEAM.forEach(v=>{
       if(day[v.nome]){
         REALIZADO[v.nome]+=(day[v.nome].fat||0);
@@ -447,13 +545,42 @@ function computeTotals(){
       }
     });
   });
-  // DU da data mais recente registrada
-  const dates=Object.keys(DIAS).sort();
-  if(dates.length>0){
-    const d=new Date(dates[dates.length-1]+'T12:00:00');
+  // DU from last recorded date in active month
+  const datesInMonth=Object.keys(DIAS).filter(dk=>dk.startsWith(ACTIVE_MONTH)).sort();
+  if(datesInMonth.length>0){
+    const d=new Date(datesInMonth[datesInMonth.length-1]+'T12:00:00');
     DU_ATUAL=Math.max(1,calcDUFromDate(d));
-    DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;
+  } else {
+    // No data in this month
+    const {yr,mo}=getActiveYrMo();
+    const n=new Date();
+    if(yr===n.getFullYear()&&mo===n.getMonth()){
+      DU_ATUAL=Math.max(1,calcDUFromDate(n)); // current month: use today
+    } else if(new Date(yr,mo+1,0)<n){
+      DU_ATUAL=DIAS_UTEIS_MES; // past month: assume full
+    } else {
+      DU_ATUAL=1;
+    }
   }
+  DIAS_RESTANTES=Math.max(0,DIAS_UTEIS_MES-DU_ATUAL);
+}
+
+function changeMonth(delta){
+  const {yr,mo}=getActiveYrMo();
+  const d=new Date(yr,mo+delta,1);
+  const p=x=>String(x).padStart(2,'0');
+  ACTIVE_MONTH=`${d.getFullYear()}-${p(d.getMonth()+1)}`;
+  updateActiveDU();
+  computeTotals();
+  renderAll();
+}
+
+function switchToMonth(mo){
+  ACTIVE_MONTH=mo;
+  updateActiveDU();
+  computeTotals();
+  renderAll();
+  switchTab('geral');
 }
 
 // ─── COMISSIONAMENTO ──────────────────────────────────────────
@@ -467,7 +594,7 @@ const CL={ks1:'KS1',ks2:'KS2',ks3:'KS3',ks4:'KS4'};
 const GARANTIDO=1000,BONUS=200;
 function calcComissao(ks,pct,bateu){
   const pl=CARGO_PLANS[ks];
-  const pctInt=Math.floor(pct); // faixas usam inteiros; 99.7% deve cair em 95-99%, não gap
+  const pctInt=Math.floor(pct);
   const f=pl.faixas.find(f=>pctInt>=f.mn&&pctInt<=f.mx);
   const vf=f?Math.max(f.b,GARANTIDO):GARANTIDO;
   return{label:f?f.l:'Sem faixa',vf,bonus:bateu?BONUS:0,fixo:pl.fixo,total:pl.fixo+vf+(bateu?BONUS:0),gar:!f||f.b<GARANTIDO};
@@ -478,7 +605,7 @@ const fmt   =v=>'R$ '+(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,max
 const fmtN  =v=>(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtPct=v=>(isFinite(v)?v:0).toFixed(1)+'%';
 const inits =n=>n.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
-const mp    =meta=>meta/DIAS_UTEIS_MES*DU_ATUAL;
+const mp    =meta=>DIAS_UTEIS_MES>0?meta/DIAS_UTEIS_MES*DU_ATUAL:0;
 const proj  =real=>DU_ATUAL>0?real/DU_ATUAL*DIAS_UTEIS_MES:0;
 const ritmo =(meta,real)=>{const r=Math.max(0,meta-real);return DIAS_RESTANTES>0?r/DIAS_RESTANTES:r;};
 const stOf  =pct=>pct>=100?{cls:'ok',lbl:'Na meta',bar:'var(--ok)'}:pct>=80?{cls:'warn',lbl:'Atenção',bar:'var(--warn)'}:{cls:'down',lbl:'Abaixo',bar:'var(--error)'};
@@ -507,7 +634,7 @@ function showToast(msg,ic='✅'){
 const LS_KEY='konsi-ativ-v2';
 function saveLS(){
   try{localStorage.setItem(LS_KEY,JSON.stringify({
-    savedAt:new Date().toISOString(),DIAS
+    savedAt:new Date().toISOString(),DIAS,METAS_BY_MONTH
   }));}catch(e){}
 }
 function loadLS(){
@@ -515,9 +642,46 @@ function loadLS(){
     const raw=localStorage.getItem(LS_KEY);if(!raw)return false;
     const d=JSON.parse(raw);
     if(d.DIAS) DIAS=d.DIAS;
+    if(d.METAS_BY_MONTH) METAS_BY_MONTH=d.METAS_BY_MONTH;
+    updateActiveDU();
     computeTotals();
     return true;
   }catch(e){return false;}
+}
+
+// ─── METAS CONFIG ─────────────────────────────────────────────
+function toggleMetaConfig(){
+  const body=document.getElementById('meta-config-body');
+  if(!body) return;
+  const isOpen=body.style.display!=='none';
+  body.style.display=isOpen?'none':'block';
+  if(!isOpen) renderMetaConfigForm();
+}
+function renderMetaConfigForm(){
+  const tbody=document.getElementById('meta-config-tbody');
+  if(!tbody) return;
+  tbody.innerHTML=TEAM.map(v=>{
+    const cur=getActiveMeta(v.nome);
+    return`<tr>
+      <td><div class="seller-name"><span class="avatar" style="background:${v.cor};width:24px;height:24px;">${inits(v.nome)}</span><b>${v.nome}</b>${isBonus(v,ACTIVE_MONTH)?'<span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:4px;">bônus</span>':''}</div></td>
+      <td class="num"><input class="lider-input" type="number" min="0" id="meta-inp-${tabId(v.nome)}" value="${cur}" placeholder="${v.meta}"></td>
+      <td class="num" style="color:var(--muted);font-size:12px;">${fmt(v.meta)}</td>
+    </tr>`;
+  }).join('');
+}
+function saveMetas(){
+  if(!METAS_BY_MONTH[ACTIVE_MONTH]) METAS_BY_MONTH[ACTIVE_MONTH]={};
+  TEAM.forEach(v=>{
+    const inp=document.getElementById('meta-inp-'+tabId(v.nome));
+    if(inp) METAS_BY_MONTH[ACTIVE_MONTH][v.nome]=parseFloat(inp.value)||v.meta;
+  });
+  saveLS();
+  computeTotals();
+  renderAll();
+  showToast(`Metas de ${moLabel(ACTIVE_MONTH)} salvas ✔`);
+  // collapse
+  const body=document.getElementById('meta-config-body');
+  if(body) body.style.display='none';
 }
 
 // ─── LÍDER ────────────────────────────────────────────────────
@@ -536,7 +700,13 @@ function lockLider(){
 
 function initLiderForm(){
   const inp=document.getElementById('lider-date');
-  if(!inp.value) inp.value=todayStr();
+  const today=todayStr();
+  // Default to today if in active month, else first day of active month
+  if(today.startsWith(ACTIVE_MONTH)){
+    inp.value=today;
+  } else {
+    inp.value=ACTIVE_MONTH+'-01';
+  }
   onDateChange();
 }
 
@@ -545,25 +715,32 @@ function onDateChange(){
   if(!val) return;
   const d=new Date(val+'T12:00:00');
   const du=Math.max(1,calcDUFromDate(d));
-  const rest=DIAS_UTEIS_MES-du;
-  document.getElementById('lider-du-badge').textContent=`DU ${du} de ${DIAS_UTEIS_MES} · ${rest} restantes`;
+  // Compute total DU for this date's month (not necessarily ACTIVE_MONTH)
+  const dateMo=val.substring(0,7);
+  const [dyr,dmo]=dateMo.split('-').map(Number);
+  const duTotalForDate=calcDUTotal(dyr,dmo-1);
+  const rest=duTotalForDate-du;
+  document.getElementById('lider-du-badge').textContent=`DU ${du} de ${duTotalForDate} · ${rest} restantes`;
   const exists=!!DIAS[val];
   const eb=document.getElementById('lider-exists-badge');
   eb.style.display=exists?'inline':'none';
   renderDayForm(val,du);
-  // auto-salva a seleção de data
   saveLS();
   showToast(`Data ${fmtDate(val)} · DU ${du} — pode fechar e voltar quando quiser.`);
 }
 
 function renderDayForm(dateKey,du){
+  // For projection, use the month of the dateKey (not ACTIVE_MONTH necessarily)
+  const dateMo=dateKey.substring(0,7);
+  const [dyr,dmo]=dateMo.split('-').map(Number);
+  const duTotalForDate=calcDUTotal(dyr,dmo-1);
+
   const day=DIAS[dateKey]||{};
-  // acumulados até agora (sem este dia, recomputed)
   const acumAntes={};
   TEAM.forEach(v=>{
     let s=0;
     Object.entries(DIAS).forEach(([dk,dv])=>{
-      if(dk!==dateKey&&dv[v.nome]) s+=dv[v.nome].fat||0;
+      if(dk!==dateKey&&dk.startsWith(dateMo)&&dv[v.nome]) s+=dv[v.nome].fat||0;
     });
     acumAntes[v.nome]=s;
   });
@@ -572,11 +749,12 @@ function renderDayForm(dateKey,du){
     const existing=day[v.nome]||{};
     const leads=existing.leads||0,pagos=existing.pagos||0,fat=existing.fat||0;
     const acumTotal=acumAntes[v.nome]+fat;
-    const projV=du>0?(acumTotal/du)*DIAS_UTEIS_MES:0;
-    const pctP=v.meta?projV/v.meta*100:0;
+    const metaV=getActiveMeta(v.nome);
+    const projV=du>0?(acumTotal/du)*duTotalForDate:0;
+    const pctP=metaV?projV/metaV*100:0;
     const sc=pctP>=100?'ok':pctP>=80?'warn':'down';
     return`<tr>
-      <td><div class="seller-name"><span class="avatar" style="background:${v.cor};width:26px;height:26px;">${inits(v.nome)}</span><b>${v.nome}</b>${v.bonus?'<span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:5px;">bônus</span>':''}</div></td>
+      <td><div class="seller-name"><span class="avatar" style="background:${v.cor};width:26px;height:26px;">${inits(v.nome)}</span><b>${v.nome}</b>${isBonus(v,ACTIVE_MONTH)?'<span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:5px;">bônus</span>':''}</div></td>
       <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="lf-leads-${tabId(v.nome)}" value="${leads||''}" placeholder="0"></td>
       <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="lf-pagos-${tabId(v.nome)}" value="${pagos||''}" placeholder="0"></td>
       <td class="num"><input class="lider-input" type="number" min="0" step="0.01" id="lf-fat-${tabId(v.nome)}" value="${fat||''}" placeholder="0,00"></td>
@@ -585,16 +763,16 @@ function renderDayForm(dateKey,du){
     </tr>`;
   }).join('');
 
-  // totais da linha do rodapé
   const tfoot=document.getElementById('lider-tfoot');
   const tLeads=TEAM.reduce((a,v)=>a+(day[v.nome]?.leads||0),0);
   const tPagos=TEAM.reduce((a,v)=>a+(day[v.nome]?.pagos||0),0);
   const tFat=TEAM.reduce((a,v)=>a+(day[v.nome]?.fat||0),0);
-  const tAcum=TEAM.reduce((a,v)=>v.bonus?a:a+acumAntes[v.nome]+(day[v.nome]?.fat||0),0); // exclui bônus
-  const bonusAcum=TEAM.reduce((a,v)=>v.bonus?a+acumAntes[v.nome]+(day[v.nome]?.fat||0):a,0);
-  const tFatTeam=TEAM.reduce((a,v)=>v.bonus?a:a+(day[v.nome]?.fat||0),0);
-  const tProj=du>0?(tAcum/du)*DIAS_UTEIS_MES:0;
-  const tPctP=META_TOTAL?tProj/META_TOTAL*100:0;
+  const tAcum=TEAM.reduce((a,v)=>isBonus(v,ACTIVE_MONTH)?a:a+acumAntes[v.nome]+(day[v.nome]?.fat||0),0);
+  const bonusAcum=TEAM.reduce((a,v)=>isBonus(v,ACTIVE_MONTH)?a+acumAntes[v.nome]+(day[v.nome]?.fat||0):a,0);
+  const tFatTeam=TEAM.reduce((a,v)=>isBonus(v,ACTIVE_MONTH)?a:a+(day[v.nome]?.fat||0),0);
+  const metaTotalForDate=getMonthMetaTotal(dateMo);
+  const tProj=du>0?(tAcum/du)*duTotalForDate:0;
+  const tPctP=metaTotalForDate?tProj/metaTotalForDate*100:0;
   tfoot.innerHTML=`<tr class="total-row">
     <td><b>TOTAL EQUIPE</b></td>
     <td class="num">${tLeads||'–'}</td>
@@ -609,7 +787,6 @@ function renderDayForm(dateKey,du){
     <td class="num mono" style="color:var(--warn);font-weight:700;">+ ${fmt(bonusAcum)}</td>
     <td></td>
   </tr>`:''}`;
-
 }
 
 function saveDayData(){
@@ -623,14 +800,15 @@ function saveDayData(){
     const fat  =parseFloat(document.getElementById('lf-fat-'+id)?.value)||0;
     DIAS[dateKey][v.nome]={leads,pagos,fat};
   });
-  computeTotals();
+  // If date is in active month, update totals
+  if(dateKey.startsWith(ACTIVE_MONTH)) computeTotals();
   saveLS();
   renderHistorico();
+  renderHistoricoMeses();
   renderAll();
-  // marca badge
   const eb=document.getElementById('lider-exists-badge');
   if(eb) eb.style.display='inline';
-  showToast(`Dia ${fmtDate(dateKey)} salvo ✔ Pode fechar e voltar quando quiser.`);
+  showToast(`Dia ${fmtDate(dateKey)} salvo ✔`);
 }
 
 function loadDayIntoForm(dateKey){
@@ -641,15 +819,19 @@ function loadDayIntoForm(dateKey){
 function deleteDayData(dateKey){
   if(!confirm(`Apagar todos os dados de ${fmtDate(dateKey)}?`)) return;
   delete DIAS[dateKey];
-  computeTotals();
+  if(dateKey.startsWith(ACTIVE_MONTH)) computeTotals();
   saveLS();
   renderHistorico();
+  renderHistoricoMeses();
   renderAll();
   showToast(`Dia ${fmtDate(dateKey)} removido.`,'🗑️');
 }
 
 function renderHistorico(){
-  const dates=Object.keys(DIAS).sort();
+  // Show only dates in ACTIVE_MONTH
+  const dates=Object.keys(DIAS).filter(dk=>dk.startsWith(ACTIVE_MONTH)).sort();
+  const lbl=document.getElementById('hist-month-label');
+  if(lbl) lbl.textContent=moLabel(ACTIVE_MONTH);
   const empty=document.getElementById('hist-empty');
   const table=document.getElementById('hist-table');
   if(dates.length===0){
@@ -659,7 +841,6 @@ function renderHistorico(){
   }
   if(empty) empty.style.display='none';
   if(table) table.style.display='table';
-  // Calcula acumulado progressivo
   let acumFat=0,acumLeads=0,acumPagos=0;
   const tbody=document.getElementById('hist-tbody');
   tbody.innerHTML=dates.map(dk=>{
@@ -687,10 +868,120 @@ function renderHistorico(){
   }).join('');
 }
 
+function toggleHistMes(mo){
+  const exp=document.getElementById('hist-exp-'+mo);
+  const chev=document.getElementById('hist-chev-'+mo);
+  if(!exp) return;
+  const open=exp.style.display==='table-row';
+  exp.style.display=open?'none':'table-row';
+  if(chev) chev.style.transform=open?'rotate(0deg)':'rotate(90deg)';
+}
+
+function renderHistoricoMeses(){
+  // Collect all months present in DIAS
+  const months={};
+  Object.keys(DIAS).forEach(dk=>{
+    const mo=dk.substring(0,7);
+    if(!months[mo]) months[mo]=[];
+    months[mo].push(dk);
+  });
+  // Also include ACTIVE_MONTH even if empty
+  if(!months[ACTIVE_MONTH]) months[ACTIVE_MONTH]=[];
+
+  const sorted=Object.keys(months).sort();
+  const tbody=document.getElementById('hist-meses-tbody');
+  if(!tbody) return;
+  if(sorted.length===0){
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:18px;">Nenhum mês com dados ainda.</td></tr>`;
+    return;
+  }
+
+  const rows=sorted.map(mo=>{
+    const [yr,m]=mo.split('-').map(Number);
+    const duTotal=calcDUTotal(yr,m-1);
+    const dates=(months[mo]||[]).sort();
+    const isActive=mo===ACTIVE_MONTH;
+
+    // Per-seller totals for this month
+    const sellerTotals={};
+    TEAM.forEach(v=>{ sellerTotals[v.nome]={fat:0,leads:0,pagos:0}; });
+    dates.forEach(dk=>{
+      const day=DIAS[dk];
+      TEAM.forEach(v=>{
+        if(day&&day[v.nome]){
+          sellerTotals[v.nome].fat  +=(day[v.nome].fat||0);
+          sellerTotals[v.nome].leads+=(day[v.nome].leads||0);
+          sellerTotals[v.nome].pagos+=(day[v.nome].pagos||0);
+        }
+      });
+    });
+
+    const realTotal=TEAM.reduce((a,v)=>isBonus(v,mo)?a:a+sellerTotals[v.nome].fat,0);
+    const metaT=getMonthMetaTotal(mo);
+    const pctMeta=metaT?realTotal/metaT*100:0;
+    const cls=pctMeta>=100?'ok':pctMeta>=80?'warn':'down';
+    const moLbl=`${MO_NAMES[m-1]} ${yr}`;
+    const moId=mo.replace('-','');
+
+    // Build per-seller expand rows (sorted by fat desc)
+    const sellerRows=TEAM.slice()
+      .sort((a,b)=>(sellerTotals[b.nome].fat)-(sellerTotals[a.nome].fat))
+      .map(v=>{
+        const s=sellerTotals[v.nome];
+        const metaV=((METAS_BY_MONTH[mo]&&METAS_BY_MONTH[mo][v.nome]!==undefined)?METAS_BY_MONTH[mo][v.nome]:v.meta);
+        const pctV=metaV?s.fat/metaV*100:0;
+        const cv=s.leads?s.pagos/s.leads*100:0;
+        const sc=pctV>=100?'ok':pctV>=80?'warn':'down';
+        return`<tr>
+          <td><div class="seller-name" style="gap:7px;"><span class="avatar" style="background:${v.cor};width:22px;height:22px;font-size:9px;">${inits(v.nome)}</span><b>${v.nome}</b>${isBonus(v,mo)?'<span style="font-size:10px;color:var(--warn);margin-left:4px;">bônus</span>':''}</div></td>
+          <td class="num mono">${fmt(metaV)}</td>
+          <td class="num mono">${fmt(s.fat)}</td>
+          <td class="num"><span class="pill ${sc}" style="font-size:10px;">${fmtPct(pctV)}</span></td>
+          <td class="num">${s.leads}</td>
+          <td class="num">${s.pagos}</td>
+          <td class="num">${s.leads?`<span style="font-size:11px;color:var(--muted);">${fmtPct(cv)}</span>`:'—'}</td>
+        </tr>`;
+      }).join('');
+
+    const mainRow=`<tr class="hist-mes-row${isActive?' hist-mes-active':''}" onclick="toggleHistMes('${moId}')">
+      <td><span class="hist-chevron" id="hist-chev-${moId}">▶</span><b>${moLbl}</b>${isActive?' <span class="pill ok" style="font-size:10px;padding:1px 7px;">ativo</span>':''}</td>
+      <td class="num">${duTotal}</td>
+      <td class="num mono">${fmt(metaT)}</td>
+      <td class="num mono">${fmt(realTotal)}</td>
+      <td class="num">${dates.length>0?`<span class="pill ${cls}">${fmtPct(pctMeta)}</span>`:'<span style="color:var(--muted);">—</span>'}</td>
+      <td class="num">${dates.length}</td>
+      <td><button class="btn btn-ghost" style="font-size:11px;padding:4px 12px;" onclick="event.stopPropagation();switchToMonth('${mo}')">Ver →</button></td>
+    </tr>`;
+
+    const expandRow=`<tr class="hist-mes-expand" id="hist-exp-${moId}">
+      <td colspan="7">
+        <div class="hist-expand-inner">
+          <table>
+            <thead><tr>
+              <th>Vendedor</th>
+              <th class="num">Meta</th>
+              <th class="num">Realizado</th>
+              <th class="num">% Meta</th>
+              <th class="num">Leads</th>
+              <th class="num">Pagos</th>
+              <th class="num">Conv.</th>
+            </tr></thead>
+            <tbody>${sellerRows}</tbody>
+          </table>
+        </div>
+      </td>
+    </tr>`;
+
+    return mainRow+expandRow;
+  }).join('');
+
+  tbody.innerHTML=rows;
+}
+
 function saveAndExport(){
   const data={
     updated:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',dateStyle:'short',timeStyle:'short'}),
-    DU_ATUAL,DIAS,
+    DU_ATUAL,DIAS,METAS_BY_MONTH,
     REALIZADO,LEADS,PAGOS_COUNT
   };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
@@ -706,6 +997,7 @@ function buildTabs(){
     h+=`<button class="nav-tab" id="tab-${id}" onclick="switchTab('${id}')"><span class="av" style="background:${v.cor}">${inits(v.nome)}</span>${v.nome}</button>`;
   });
   h+=`<button class="nav-tab" id="tab-lider" onclick="switchTab('lider')">👑 Líder</button>`;
+  h+=`<button class="nav-tab" id="tab-historico" onclick="switchTab('historico')">📅 Histórico</button>`;
   h+=`<button class="nav-tab" id="tab-realtime" onclick="switchTab('realtime')">📡 Real Time</button>`;
   h+=`<button class="nav-tab" id="tab-comissao" onclick="switchTab('comissao')">💰 Comissão</button>`;
   document.getElementById('nav-tabs').innerHTML=h;
@@ -726,8 +1018,8 @@ function buildIndividualPanels(){
       <div class="seller-hero">
         <div class="av-big" style="background:${v.cor}">${inits(v.nome)}</div>
         <div class="info"><h2>${v.nome}</h2>
-          <p>${CL[v.ks]} · Meta mensal: <b>${fmt(v.meta)}</b> · Meta conversão: <b>${v.convMeta}%</b></p>
-          <div class="badges"><span class="badge">Meta/DU: ${fmt(Math.round(v.meta/DIAS_UTEIS_MES))}</span><span class="badge" id="${id}-hero-badge">–</span></div>
+          <p>${CL[v.ks]} · Meta mensal: <b id="${id}-badge-meta">—</b> · Meta conversão: <b>${v.convMeta}%</b></p>
+          <div class="badges"><span class="badge" id="${id}-badge-metadu">Meta/DU: —</span><span class="badge" id="${id}-hero-badge">–</span></div>
         </div>
       </div>
       <div class="section-title">📈 Progressão</div>
@@ -750,10 +1042,17 @@ function buildIndividualPanels(){
 
 function renderIndividualPanel(v){
   const id=tabId(v.nome);
-  const real=REALIZADO[v.nome]||0,mpV=mp(v.meta),projV=proj(real);
-  const pctP=mpV?real/mpV*100:0,pctProj=v.meta?projV/v.meta*100:0,pctM=v.meta?real/v.meta*100:0;
-  const rt=ritmo(v.meta,real),st=stOf(pctP),cv=convOf(v.nome);
-  const stM=stOf(pctM); // barra usa % da meta mensal
+  const metaV=getActiveMeta(v.nome);
+  const real=REALIZADO[v.nome]||0,mpV=mp(metaV),projV=proj(real);
+  const pctP=mpV?real/mpV*100:0,pctProj=metaV?projV/metaV*100:0,pctM=metaV?real/metaV*100:0;
+  const rt=ritmo(metaV,real),st=stOf(pctP),cv=convOf(v.nome);
+  const stM=stOf(pctM);
+
+  // Update hero
+  const bm=document.getElementById(id+'-badge-meta');
+  if(bm) bm.textContent=fmt(metaV);
+  const bmd=document.getElementById(id+'-badge-metadu');
+  if(bmd) bmd.textContent=`Meta/DU: ${fmt(Math.round(DIAS_UTEIS_MES>0?metaV/DIAS_UTEIS_MES:0))}`;
   const hb=document.getElementById(id+'-hero-badge');
   if(hb){hb.textContent=st.lbl;hb.style.background=pctP>=100?'var(--okbg)':pctP>=80?'var(--warnbg)':'var(--errorbg)';hb.style.color=st.bar;}
   const bar=document.getElementById(id+'-bar');
@@ -761,11 +1060,11 @@ function renderIndividualPanel(v){
   const pEl=document.getElementById(id+'-pct-prop');if(pEl)pEl.textContent=fmtPct(pctM);
   const pl=document.getElementById(id+'-prog-label');if(pl)pl.textContent=`% da Meta Mensal (DU ${DU_ATUAL}/${DIAS_UTEIS_MES})`;
   const sl=document.getElementById(id+'-sublabel');
-  if(sl)sl.textContent=`Realizado: ${fmt(real)} · Meta: ${fmt(v.meta)} · Projeção: ${fmt(Math.round(projV))} (${fmtPct(pctProj)}) · Ritmo nec.: ${fmt(rt)}/DU`;
+  if(sl)sl.textContent=`Realizado: ${fmt(real)} · Meta: ${fmt(metaV)} · Projeção: ${fmt(Math.round(projV))} (${fmtPct(pctProj)}) · Ritmo nec.: ${fmt(rt)}/DU`;
 
   const kEl=document.getElementById(id+'-kpis');
   if(kEl)kEl.innerHTML=[
-    {label:'Meta Mensal',value:fmt(v.meta),sub:CL[v.ks],color:'var(--green)'},
+    {label:'Meta Mensal',value:fmt(metaV),sub:CL[v.ks],color:'var(--green)'},
     {label:`Meta Prop. DU ${DU_ATUAL}`,value:fmt(Math.round(mpV)),sub:'Esperado até hoje',color:'var(--darkgreen)',badge:{text:fmtPct(pctP),cls:pctP>=100?'up':pctP>=80?'warn':'down'}},
     {label:'Realizado',value:fmt(real),sub:fmtPct(pctM)+' da meta',color:'var(--green2)'},
     {label:'Projeção Mês',value:fmt(Math.round(projV)),sub:fmtPct(pctProj)+' da meta',color:'var(--proj)',badge:{text:pctProj>=100?'✔ Na meta':pctProj>=80?'Atenção':'Abaixo',cls:pctProj>=100?'up':pctProj>=80?'warn':'down'}},
@@ -775,14 +1074,14 @@ function renderIndividualPanel(v){
     ${k.badge?`<div class="kpi-badge ${k.badge.cls}">${k.badge.text}</div>`:''}
   </div>`).join('');
 
-  // Dia a dia do vendedor
+  // Dia a dia — only show dates in ACTIVE_MONTH
   const dEl=document.getElementById(id+'-diad');
   if(dEl){
-    const dates=Object.keys(DIAS).sort();
+    const dates=Object.keys(DIAS).filter(dk=>dk.startsWith(ACTIVE_MONTH)).sort();
     let acum=0;
-    const metaDia=v.meta/DIAS_UTEIS_MES;
+    const metaDia=DIAS_UTEIS_MES>0?metaV/DIAS_UTEIS_MES:0;
     dEl.innerHTML=dates.length===0
-      ?`<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:18px;">Sem dados inseridos ainda</td></tr>`
+      ?`<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:18px;">Sem dados inseridos em ${moLabel(ACTIVE_MONTH)}</td></tr>`
       :dates.map(dk=>{
         const day=DIAS[dk];
         const d=new Date(dk+'T12:00:00');
@@ -805,62 +1104,52 @@ function renderIndividualPanel(v){
         </tr>`;
       }).join('');
   }
-
-  const sc=document.getElementById(id+'-sim-cargo');if(sc)sc.value=v.ks;
-  const sm=document.getElementById(id+'-sim-meta');if(sm)sm.value=v.meta;
-  const sr=document.getElementById(id+'-sim-real');if(sr)sr.value=Math.round(real);
-  const scv=document.getElementById(id+'-sim-conv');if(scv)scv.checked=cv.pct>=cv.convMeta;
-  renderIndSim(id,v.nome);
-}
-
-function renderIndSim(id,nome){
-  const cargo=document.getElementById(id+'-sim-cargo')?.value||'ks2';
-  const meta=parseFloat(document.getElementById(id+'-sim-meta')?.value)||0;
-  const real=parseFloat(document.getElementById(id+'-sim-real')?.value)||0;
-  const bateu=document.getElementById(id+'-sim-conv')?.checked||false;
-  const projV=DU_ATUAL?real/DU_ATUAL*DIAS_UTEIS_MES:0;
-  const pct=meta?projV/meta*100:0;
-  const r=calcComissao(cargo,pct,bateu);
-  const el=document.getElementById(id+'-sim-result');if(!el)return;
-  el.innerHTML=`
-    <div class="pct-lbl">Projeção fim do mês</div>
-    <div class="pct-val">${fmtPct(pct)}</div>
-    <span class="ftag">${CL[cargo]} · ${r.label}${r.gar?' (garantido)':''}</span>
-    <div class="sim-bd">
-      <div class="line"><span>Projeção receita</span><span>${fmt(projV)}</span></div>
-      <div class="line"><span>Fixo</span><span>${fmt(r.fixo)}</span></div>
-      <div class="line"><span>Comissão da faixa</span><span>${fmt(r.vf)}</span></div>
-      <div class="line"><span>Bônus conversão</span><span>${r.bonus?fmt(r.bonus):'—'}</span></div>
-    </div>
-    <div class="sim-total"><div class="lbl">Total estimado</div><div class="val">${fmt(r.total)}</div></div>
-    <div class="sim-note">Projeção = (${fmt(real)} ÷ DU ${DU_ATUAL}) × ${DIAS_UTEIS_MES} DU</div>`;
 }
 
 // ─── RENDER GERAL ─────────────────────────────────────────────
+function renderMonthNav(){
+  const lbl=moLabel(ACTIVE_MONTH);
+  const el=document.getElementById('month-nav-label');
+  if(el) el.textContent=lbl;
+  // Update main title
+  const title=document.getElementById('main-title');
+  if(title) title.textContent=`Dashboard Ativação — ${lbl}`;
+  // Update líder meta month label
+  const lml=document.getElementById('lider-meta-month-label');
+  if(lml) lml.textContent=lbl;
+  // Hint: show if viewing past month
+  const hint=document.getElementById('month-nav-hint');
+  if(hint) hint.textContent=ACTIVE_MONTH===todayMonthStr()?'mês atual':'clique para voltar ao mês atual';
+  // Re-render meta config form if visible
+  const body=document.getElementById('meta-config-body');
+  if(body&&body.style.display!=='none') renderMetaConfigForm();
+}
+
 function renderHeader(){
   document.getElementById('badge-du').textContent=DU_ATUAL;
   document.getElementById('badge-du-total').textContent=DIAS_UTEIS_MES;
   document.getElementById('badge-rest').textContent=DIAS_RESTANTES;
   document.getElementById('th-du').textContent=DU_ATUAL;
-  document.getElementById('hdr-meta-total').textContent=fmt(META_TOTAL);
-  const pct=DU_ATUAL/DIAS_UTEIS_MES*100;
+  document.getElementById('hdr-meta-total').textContent=fmt(getMetaTotal());
+  const pct=DIAS_UTEIS_MES>0?DU_ATUAL/DIAS_UTEIS_MES*100:0;
   document.getElementById('month-pct').textContent=pct.toFixed(0)+'%';
   document.getElementById('month-fill').style.width=pct+'%';
-  // atualizado
-  const dates=Object.keys(DIAS).sort();
+  // Last updated
+  const dates=Object.keys(DIAS).filter(dk=>dk.startsWith(ACTIVE_MONTH)).sort();
   const el=document.getElementById('data-updated');
-  if(el) el.textContent=dates.length>0?`Último dia: ${fmtDate(dates[dates.length-1])} · ${dates.length} dia(s) inserido(s)`:'Sem dados ainda';
+  if(el) el.textContent=dates.length>0?`Último dia: ${fmtDate(dates[dates.length-1])} · ${dates.length} dia(s)`:'Sem dados neste mês';
 }
 
 function renderKPIs(){
-  const real=TEAM.reduce((a,v)=>v.bonus?a:a+(REALIZADO[v.nome]||0),0); // exclui bônus (Tanner)
-  const mpT=META_TOTAL/DIAS_UTEIS_MES*DU_ATUAL,projTotal=proj(real);
-  const pctP=mpT?real/mpT*100:0,pctProj=META_TOTAL?projTotal/META_TOTAL*100:0;
-  const rd=DIAS_RESTANTES?Math.max(0,META_TOTAL-real)/DIAS_RESTANTES:0;
+  const metaTotal=getMetaTotal();
+  const real=TEAM.reduce((a,v)=>isBonus(v,ACTIVE_MONTH)?a:a+(REALIZADO[v.nome]||0),0);
+  const mpT=mp(metaTotal),projTotal=proj(real);
+  const pctP=mpT?real/mpT*100:0,pctProj=metaTotal?projTotal/metaTotal*100:0;
+  const rd=DIAS_RESTANTES?Math.max(0,metaTotal-real)/DIAS_RESTANTES:0;
   document.getElementById('kpi-grid').innerHTML=[
-    {label:'Meta Mensal Equipe',value:fmt(META_TOTAL),sub:`${DIAS_UTEIS_MES} DU · ${TEAM.length} vendedores`,color:'var(--green)'},
+    {label:'Meta Mensal Equipe',value:fmt(metaTotal),sub:`${DIAS_UTEIS_MES} DU · ${TEAM.length} vendedores`,color:'var(--green)'},
     {label:`Meta Prop. DU ${DU_ATUAL}`,value:fmt(Math.round(mpT)),sub:'Esperado até hoje',badge:{text:fmtPct(pctP),cls:pctP>=100?'up':pctP>=80?'warn':'down'},color:'var(--darkgreen)'},
-    {label:'Realizado Mês',value:fmt(real),sub:fmtPct(META_TOTAL?real/META_TOTAL*100:0)+' da meta',color:'var(--green2)'},
+    {label:'Realizado Mês',value:fmt(real),sub:fmtPct(metaTotal?real/metaTotal*100:0)+' da meta',color:'var(--green2)'},
     {label:'Projeção Fim do Mês',value:fmt(Math.round(projTotal)),sub:fmtPct(pctProj)+' da meta',badge:{text:pctProj>=100?'✔ Na meta':pctProj>=80?'Atenção':'Abaixo',cls:pctProj>=100?'up':pctProj>=80?'warn':'down'},color:'var(--proj)'},
     {label:'Ritmo Necessário/DU',value:fmt(Math.round(rd)),sub:`Faltam ${DIAS_RESTANTES} DU`,color:'#0891b2'},
   ].map(k=>`<div class="kpi-card" style="--kc:${k.color}">
@@ -868,35 +1157,37 @@ function renderKPIs(){
     ${k.badge?`<div class="kpi-badge ${k.badge.cls}">${k.badge.text}</div>`:''}
   </div>`).join('');
 
-  // barra de progresso do time
-  const pctMeta=META_TOTAL?real/META_TOTAL*100:0;
+  const metaTotal2=getMetaTotal();
+  const pctMeta=metaTotal2?real/metaTotal2*100:0;
   const barColor=pctMeta>=100?'var(--ok)':pctMeta>=80?'var(--warn)':'var(--error)';
   const pb=document.getElementById('team-prog-bar');
   if(pb){pb.style.width=Math.min(pctMeta,100)+'%';pb.style.background=barColor;}
   const pp=document.getElementById('team-prog-pct');
   if(pp)pp.textContent=fmtPct(pctMeta);
   const ps=document.getElementById('team-prog-sub');
-  if(ps)ps.textContent=`Realizado: ${fmt(real)} · Meta: ${fmt(META_TOTAL)} · Projeção: ${fmt(Math.round(projTotal))} (${fmtPct(pctProj)}) · Ritmo nec.: ${fmt(Math.round(rd))}/DU`;
+  if(ps)ps.textContent=`Realizado: ${fmt(real)} · Meta: ${fmt(metaTotal2)} · Projeção: ${fmt(Math.round(projTotal))} (${fmtPct(pctProj)}) · Ritmo nec.: ${fmt(Math.round(rd))}/DU`;
 }
 
 function renderRanking(){
+  const metaTotal=getMetaTotal();
   const rows=TEAM.map(v=>{
-    const r=REALIZADO[v.nome]||0,mpV=mp(v.meta),pct=mpV?r/mpV*100:0;
-    const projV=proj(r),pctProj=v.meta?projV/v.meta*100:0,pctM=v.meta?r/v.meta*100:0;
-    return{...v,r,mpV,pct,projV,pctProj,pctM,rt:ritmo(v.meta,r)};
+    const metaV=getActiveMeta(v.nome);
+    const r=REALIZADO[v.nome]||0,mpV=mp(metaV),pct=mpV?r/mpV*100:0;
+    const projV=proj(r),pctProj=metaV?projV/metaV*100:0,pctM=metaV?r/metaV*100:0;
+    return{...v,metaV,r,mpV,pct,projV,pctProj,pctM,rt:ritmo(metaV,r)};
   }).sort((a,b)=>b.pct-a.pct);
-  const tReal=TEAM.reduce((a,v)=>v.bonus?a:a+(REALIZADO[v.nome]||0),0); // exclui bônus
-  const bonusReal=TEAM.reduce((a,v)=>v.bonus?a+(REALIZADO[v.nome]||0):a,0); // só bônus
-  const tMP=mp(META_TOTAL),tPct=tMP?tReal/tMP*100:0;
-  const tProj=proj(tReal),tPctProj=META_TOTAL?tProj/META_TOTAL*100:0;
+  const tReal=TEAM.reduce((a,v)=>isBonus(v,ACTIVE_MONTH)?a:a+(REALIZADO[v.nome]||0),0);
+  const bonusReal=TEAM.reduce((a,v)=>isBonus(v,ACTIVE_MONTH)?a+(REALIZADO[v.nome]||0):a,0);
+  const tMP=mp(metaTotal),tPct=tMP?tReal/tMP*100:0;
+  const tProj=proj(tReal),tPctProj=metaTotal?tProj/metaTotal*100:0;
   document.getElementById('ranking-body').innerHTML=rows.map((r,i)=>{
     const st=stOf(r.pct),cv=convOf(r.nome);
     const stP=r.pctProj>=100?'ok':r.pctProj>=80?'warn':'down';
     return`<tr style="cursor:pointer;" onclick="switchTab('${tabId(r.nome)}')">
       <td>${i+1}</td>
-      <td><div class="seller-name"><span class="avatar" style="background:${r.cor}">${inits(r.nome)}</span>${r.nome}${r.bonus?'<span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:5px;">bônus</span>':''}</div></td>
+      <td><div class="seller-name"><span class="avatar" style="background:${r.cor}">${inits(r.nome)}</span>${r.nome}${isBonus(r,ACTIVE_MONTH)?'<span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:5px;">bônus</span>':''}</div></td>
       <td><span class="conv-pill ${cv.cls}">${fmtPct(cv.pct)}</span><span class="conv-sub">${cv.p}/${cv.l} · meta ${cv.convMeta}%</span></td>
-      <td class="num mono">${fmt(r.meta)}</td>
+      <td class="num mono">${fmt(r.metaV)}</td>
       <td class="num mono">${fmt(Math.round(r.mpV))}</td>
       <td class="num mono">${fmt(r.r)}</td>
       <td class="num"><span class="bar-mini"><span class="f" style="width:${Math.min(r.pctM,100)}%;background:${stOf(r.pctM).bar}"></span></span>&nbsp;<b>${fmtPct(r.pctM)}</b></td>
@@ -906,10 +1197,10 @@ function renderRanking(){
     </tr>`;
   }).join('')+`<tr class="total-row">
     <td></td><td>TOTAL EQUIPE</td><td></td>
-    <td class="num mono">${fmt(META_TOTAL)}</td>
+    <td class="num mono">${fmt(metaTotal)}</td>
     <td class="num mono">${fmt(Math.round(tMP))}</td>
     <td class="num mono">${fmt(tReal)}</td>
-    <td class="num">${fmtPct(META_TOTAL?tReal/META_TOTAL*100:0)}</td>
+    <td class="num">${fmtPct(metaTotal?tReal/metaTotal*100:0)}</td>
     <td class="num">${fmt(Math.round(tProj))} <span style="opacity:.7;font-size:11px;">${fmtPct(tPctProj)}</span></td>
     <td></td><td></td>
   </tr>${bonusReal>0?`<tr style="background:#fefce8;border-top:1px dashed var(--warn);">
@@ -918,18 +1209,18 @@ function renderRanking(){
     <td class="num mono" style="color:var(--warn);font-weight:700;">+ ${fmt(bonusReal)}</td>
     <td></td><td></td><td></td><td></td>
   </tr>`:''}`;
-
 }
 
 function renderCards(){
   document.getElementById('seller-grid').innerHTML=TEAM.map(v=>{
-    const real=REALIZADO[v.nome]||0,mpV=mp(v.meta),pct=mpV?real/mpV*100:0;
-    const projV=proj(real),pctProj=v.meta?projV/v.meta*100:0,st=stOf(pct),cv=convOf(v.nome);
+    const metaV=getActiveMeta(v.nome);
+    const real=REALIZADO[v.nome]||0,mpV=mp(metaV),pct=mpV?real/mpV*100:0;
+    const projV=proj(real),pctProj=metaV?projV/metaV*100:0,st=stOf(pct),cv=convOf(v.nome);
     const stP=pctProj>=100?'ok':pctProj>=80?'warn':'down';
     return`<div class="seller-card" style="border-left:4px solid ${v.cor};" onclick="switchTab('${tabId(v.nome)}')">
       <div class="top">
         <span class="avatar" style="background:${v.cor};width:34px;height:34px;">${inits(v.nome)}</span>
-        <div><div class="name">${v.nome}</div><div class="role">${CL[v.ks]} · Meta ${fmt(v.meta)}</div></div>
+        <div><div class="name">${v.nome}</div><div class="role">${CL[v.ks]} · Meta ${fmt(metaV)}</div></div>
         <span class="conv-pill ${cv.cls}" style="margin-left:auto;font-size:10.5px;">${fmtPct(cv.pct)}</span>
       </div>
       <div class="mr"><span>Realizado</span><span class="mono">${fmt(real)}</span></div>
@@ -957,11 +1248,9 @@ function calcComissaoLivre(){
     el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px 0;">Preencha a meta e o realizado.</div>';
     return;
   }
-  // 100% = realizado == meta
   const pct=realizado/meta*100;
   const r=calcComissao(_calcCargo,pct,bateu);
   const clsPct=pct>=100?'var(--ok)':pct>=80?'var(--warn)':'var(--error)';
-  const bgTotal=pct>=100?'var(--darkgreen)':'var(--darkgreen)';
   el.innerHTML=`
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:14px 16px;background:var(--bg);border-radius:10px;">
       <span style="font-size:32px;font-weight:800;font-family:'JetBrains Mono';color:${clsPct}">${fmtPct(pct)}</span>
@@ -988,10 +1277,12 @@ function calcComissaoLivre(){
 
 // ─── RENDER ALL ───────────────────────────────────────────────
 function renderAll(){
+  renderMonthNav();
   renderHeader();renderKPIs();renderRanking();renderCards();
   TEAM.forEach(v=>renderIndividualPanel(v));
   calcComissaoLivre();
   renderHistorico();
+  renderHistoricoMeses();
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
@@ -1001,10 +1292,8 @@ buildIndividualPanels();
 fetch('./data.json?t='+Date.now())
   .then(r=>{if(!r.ok)throw new Error();return r.json();})
   .then(d=>{
-    // suporta novo formato DIAS e formato antigo
     if(d.DIAS) DIAS=d.DIAS;
     else{
-      // migra formato antigo para DIAS com data de hoje
       const today=todayStr();
       DIAS[today]={};
       TEAM.forEach(v=>{
@@ -1015,6 +1304,8 @@ fetch('./data.json?t='+Date.now())
         };
       });
     }
+    if(d.METAS_BY_MONTH) METAS_BY_MONTH=d.METAS_BY_MONTH;
+    updateActiveDU();
     computeTotals();saveLS();
     const el=document.getElementById('data-updated');
     if(el&&d.updated) el.textContent='GitHub: '+d.updated;
