@@ -497,16 +497,19 @@ function getActiveYrMo(){ const [yr,mo]=ACTIVE_MONTH.split('-').map(Number); ret
 let ACTIVE_MONTH = todayMonthStr(); // e.g. "2026-09"
 let METAS_BY_MONTH = {};            // { "2026-08": {Silas:73000,...}, ... }
 
-function getActiveMeta(nome){
-  const mm=METAS_BY_MONTH[ACTIVE_MONTH];
-  const v=TEAM.find(t=>t.nome===nome);
+function getActiveMeta(nome,mo){
+  mo=mo||ACTIVE_MONTH;
+  const mm=METAS_BY_MONTH[mo];
+  const v=[...TEAM,...getMonthExtra(mo)].find(t=>t.nome===nome);
   const def=v?v.meta:0;
   return (mm&&mm[nome]!==undefined)?mm[nome]:def;
 }
-function getMetaTotal(){ return TEAM.reduce((a,v)=>isBonus(v,ACTIVE_MONTH)?a:a+getActiveMeta(v.nome),0); }
+function getMetaTotal(){
+  return getActiveTeam(ACTIVE_MONTH).reduce((a,v)=>isBonus(v,ACTIVE_MONTH)?a:a+getActiveMeta(v.nome),0);
+}
 function getMonthMetaTotal(mo){
   const mm=METAS_BY_MONTH[mo];
-  return TEAM.reduce((a,v)=>{
+  return getActiveTeam(mo).reduce((a,v)=>{
     if(isBonus(v,mo)) return a;
     return a+((mm&&mm[v.nome]!==undefined)?mm[v.nome]:v.meta);
   },0);
@@ -531,16 +534,30 @@ const TEAM=[
 // isBonus: considera bonusUntil para saber se é bônus em um mês específico
 function isBonus(v, mo){ if(!v.bonus) return false; if(!v.bonusUntil) return true; return mo<=v.bonusUntil; }
 
+// ─── TIME ATIVO POR MÊS ───────────────────────────────────────
+// _inactive: ["Nome"] — vendedores desativados neste mês
+// _extra: [{nome,meta,cor,ks,convMeta}] — vendedores adicionados só neste mês
+const EXTRA_COLORS=['#d97706','#7c3aed','#0891b2','#be185d','#059669','#dc2626','#6366f1','#0369a1'];
+function getMonthInactive(mo){ return (METAS_BY_MONTH[mo]&&METAS_BY_MONTH[mo]._inactive)||[]; }
+function getMonthExtra(mo){ return (METAS_BY_MONTH[mo]&&METAS_BY_MONTH[mo]._extra)||[]; }
+function getActiveTeam(mo){
+  const inactive=getMonthInactive(mo);
+  const extra=getMonthExtra(mo);
+  const base=TEAM.filter(v=>!inactive.includes(v.nome));
+  return [...base,...extra.map(e=>({ks:'ks1',convMeta:7,...e,_extra:true}))];
+}
+
 // ─── ESTADO ───────────────────────────────────────────────────
 // DIAS: { "2026-08-12": { "Silas": {leads:5, pagos:2, fat:10000}, ... } }
 let DIAS={};
 let REALIZADO={},LEADS={},PAGOS_COUNT={};
 
 function computeTotals(){
-  TEAM.forEach(v=>{REALIZADO[v.nome]=0;LEADS[v.nome]=0;PAGOS_COUNT[v.nome]=0;});
+  const activeT=getActiveTeam(ACTIVE_MONTH);
+  activeT.forEach(v=>{REALIZADO[v.nome]=0;LEADS[v.nome]=0;PAGOS_COUNT[v.nome]=0;});
   // Filter by ACTIVE_MONTH
   Object.entries(DIAS).filter(([dk])=>dk.startsWith(ACTIVE_MONTH)).forEach(([,day])=>{
-    TEAM.forEach(v=>{
+    activeT.forEach(v=>{
       if(day[v.nome]){
         REALIZADO[v.nome]+=(day[v.nome].fat||0);
         LEADS[v.nome]+=(day[v.nome].leads||0);
@@ -575,6 +592,8 @@ function changeMonth(delta){
   ACTIVE_MONTH=`${d.getFullYear()}-${p(d.getMonth()+1)}`;
   updateActiveDU();
   computeTotals();
+  buildTabs();
+  buildIndividualPanels();
   renderAll();
 }
 
@@ -582,6 +601,8 @@ function switchToMonth(mo){
   ACTIVE_MONTH=mo;
   updateActiveDU();
   computeTotals();
+  buildTabs();
+  buildIndividualPanels();
   renderAll();
   switchTab('geral');
 }
@@ -613,7 +634,7 @@ const proj  =real=>DU_ATUAL>0?real/DU_ATUAL*DIAS_UTEIS_MES:0;
 const ritmo =(meta,real)=>{const r=Math.max(0,meta-real);return DIAS_RESTANTES>0?r/DIAS_RESTANTES:r;};
 const stOf  =pct=>pct>=100?{cls:'ok',lbl:'Na meta',bar:'var(--ok)'}:pct>=80?{cls:'warn',lbl:'Atenção',bar:'var(--warn)'}:{cls:'down',lbl:'Abaixo',bar:'var(--error)'};
 const convOf=nome=>{
-  const v=TEAM.find(t=>t.nome===nome);const cm=v?.convMeta||7;
+  const v=getActiveTeam(ACTIVE_MONTH).find(t=>t.nome===nome);const cm=v?.convMeta||7;
   const l=LEADS[nome]||0,p=PAGOS_COUNT[nome]||0,pct=l?p/l*100:0;
   return{pct,l,p,cls:pct>=cm?'ok':pct>=cm*0.7?'warn':'down',convMeta:cm};
 };
@@ -663,26 +684,126 @@ function toggleMetaConfig(){
 function renderMetaConfigForm(){
   const tbody=document.getElementById('meta-config-tbody');
   if(!tbody) return;
-  tbody.innerHTML=TEAM.map(v=>{
+  const inactive=getMonthInactive(ACTIVE_MONTH);
+  const extra=getMonthExtra(ACTIVE_MONTH);
+  // Base team rows (with active toggle)
+  const baseRows=TEAM.map(v=>{
     const cur=getActiveMeta(v.nome);
-    return`<tr>
-      <td><div class="seller-name"><span class="avatar" style="background:${v.cor};width:24px;height:24px;">${inits(v.nome)}</span><b>${v.nome}</b>${isBonus(v,ACTIVE_MONTH)?'<span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:4px;">bônus</span>':''}</div></td>
-      <td class="num"><input class="lider-input" type="number" min="0" id="meta-inp-${tabId(v.nome)}" value="${cur}" placeholder="${v.meta}"></td>
+    const isInact=inactive.includes(v.nome);
+    return`<tr style="${isInact?'opacity:.45;':''}">
+      <td>
+        <div class="seller-name">
+          <span class="avatar" style="background:${v.cor};width:24px;height:24px;">${inits(v.nome)}</span>
+          <b>${v.nome}</b>
+          ${isBonus(v,ACTIVE_MONTH)?'<span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:4px;">bônus</span>':''}
+        </div>
+      </td>
+      <td class="num"><input class="lider-input" type="number" min="0" id="meta-inp-${tabId(v.nome)}" value="${cur}" placeholder="${v.meta}" ${isInact?'disabled':''}></td>
       <td class="num" style="color:var(--muted);font-size:12px;">${fmt(v.meta)}</td>
+      <td style="text-align:center;">
+        <label style="cursor:pointer;font-size:12px;font-weight:600;color:${isInact?'var(--error)':'var(--ok)'};">
+          <input type="checkbox" id="meta-ativo-${tabId(v.nome)}" ${isInact?'':'checked'} onchange="toggleMetaActive('${v.nome}',this)" style="accent-color:var(--green);width:15px;height:15px;cursor:pointer;">
+          ${isInact?'Inativo':'Ativo'}
+        </label>
+      </td>
     </tr>`;
   }).join('');
+  // Extra sellers added this month
+  const extraRows=extra.map((e,i)=>
+    `<tr style="background:#fffbeb;">
+      <td><div class="seller-name"><span class="avatar" style="background:${e.cor};width:24px;height:24px;">${inits(e.nome)}</span><b>${e.nome}</b><span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:4px;">extra</span></div></td>
+      <td class="num"><input class="lider-input" type="number" min="0" id="meta-inp-extra-${i}" value="${e.meta}"></td>
+      <td class="num" style="color:var(--muted);font-size:12px;">—</td>
+      <td style="text-align:center;"><button class="hist-del-btn" onclick="removeExtraSeller(${i})">🗑 Remover</button></td>
+    </tr>`
+  ).join('');
+  // Add seller form
+  const addRow=`<tr style="background:#f0faf7;">
+    <td colspan="4" style="padding:10px 14px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span style="font-size:12px;font-weight:700;color:var(--darkgreen);">➕ Adicionar vendedor neste mês:</span>
+        <input id="new-seller-nome" placeholder="Nome" style="padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;width:140px;">
+        <input id="new-seller-meta" type="number" placeholder="Meta (R$)" style="padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;width:130px;">
+        <select id="new-seller-ks" style="padding:6px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;">
+          <option value="ks1">KS1</option><option value="ks2">KS2</option><option value="ks3">KS3</option><option value="ks4">KS4</option>
+        </select>
+        <button class="btn btn-primary" style="font-size:12px;padding:6px 14px;" onclick="addExtraSeller()">Adicionar</button>
+      </div>
+    </td>
+  </tr>`;
+  tbody.innerHTML=baseRows+extraRows+addRow;
 }
+
+function toggleMetaActive(nome, cb){
+  if(!METAS_BY_MONTH[ACTIVE_MONTH]) METAS_BY_MONTH[ACTIVE_MONTH]={};
+  let inactive=getMonthInactive(ACTIVE_MONTH);
+  if(cb.checked){ inactive=inactive.filter(n=>n!==nome); }
+  else { if(!inactive.includes(nome)) inactive.push(nome); }
+  METAS_BY_MONTH[ACTIVE_MONTH]._inactive=inactive;
+  // update label text
+  const lbl=cb.parentElement;
+  if(lbl){lbl.style.color=cb.checked?'var(--ok)':'var(--error)';lbl.lastChild.textContent=cb.checked?' Ativo':' Inativo';}
+  // gray the row
+  cb.closest('tr').style.opacity=cb.checked?'':'0.45';
+  const inp=document.getElementById('meta-inp-'+tabId(nome));
+  if(inp) inp.disabled=!cb.checked;
+  saveLS();
+}
+
+function addExtraSeller(){
+  const nome=document.getElementById('new-seller-nome')?.value.trim();
+  const meta=parseFloat(document.getElementById('new-seller-meta')?.value)||46000;
+  const ks=document.getElementById('new-seller-ks')?.value||'ks1';
+  if(!nome){showToast('Digite o nome do vendedor.','⚠️');return;}
+  const allNames=[...TEAM.map(v=>v.nome),...getMonthExtra(ACTIVE_MONTH).map(e=>e.nome)];
+  if(allNames.map(n=>n.toLowerCase()).includes(nome.toLowerCase())){showToast('Vendedor já existe.','⚠️');return;}
+  if(!METAS_BY_MONTH[ACTIVE_MONTH]) METAS_BY_MONTH[ACTIVE_MONTH]={};
+  if(!METAS_BY_MONTH[ACTIVE_MONTH]._extra) METAS_BY_MONTH[ACTIVE_MONTH]._extra=[];
+  const usedColors=getMonthExtra(ACTIVE_MONTH).map(e=>e.cor);
+  const cor=EXTRA_COLORS.find(c=>!usedColors.includes(c))||EXTRA_COLORS[0];
+  METAS_BY_MONTH[ACTIVE_MONTH]._extra.push({nome,meta,cor,ks,convMeta:7});
+  saveLS();
+  buildTabs();
+  buildIndividualPanels();
+  computeTotals();
+  renderAll();
+  renderMetaConfigForm();
+  showToast(`${nome} adicionado para ${moLabel(ACTIVE_MONTH)} ✔`);
+}
+
+function removeExtraSeller(idx){
+  if(!confirm('Remover este vendedor do mês?')) return;
+  if(METAS_BY_MONTH[ACTIVE_MONTH]&&METAS_BY_MONTH[ACTIVE_MONTH]._extra){
+    METAS_BY_MONTH[ACTIVE_MONTH]._extra.splice(idx,1);
+    saveLS();
+    buildTabs();
+    buildIndividualPanels();
+    computeTotals();
+    renderAll();
+    renderMetaConfigForm();
+    showToast('Vendedor removido.','🗑️');
+  }
+}
+
 function saveMetas(){
   if(!METAS_BY_MONTH[ACTIVE_MONTH]) METAS_BY_MONTH[ACTIVE_MONTH]={};
+  // Save base team metas
   TEAM.forEach(v=>{
     const inp=document.getElementById('meta-inp-'+tabId(v.nome));
-    if(inp) METAS_BY_MONTH[ACTIVE_MONTH][v.nome]=parseFloat(inp.value)||v.meta;
+    if(inp&&!inp.disabled) METAS_BY_MONTH[ACTIVE_MONTH][v.nome]=parseFloat(inp.value)||v.meta;
+  });
+  // Save extra seller metas
+  const extra=getMonthExtra(ACTIVE_MONTH);
+  extra.forEach((e,i)=>{
+    const inp=document.getElementById('meta-inp-extra-'+i);
+    if(inp) { e.meta=parseFloat(inp.value)||e.meta; METAS_BY_MONTH[ACTIVE_MONTH][e.nome]=e.meta; }
   });
   saveLS();
   computeTotals();
+  buildTabs();
+  buildIndividualPanels();
   renderAll();
   showToast(`Metas de ${moLabel(ACTIVE_MONTH)} salvas ✔`);
-  // collapse
   const body=document.getElementById('meta-config-body');
   if(body) body.style.display='none';
 }
@@ -1001,7 +1122,7 @@ function saveAndExport(){
 // ─── TABS ─────────────────────────────────────────────────────
 function buildTabs(){
   let h=`<button class="nav-tab active" id="tab-geral" onclick="switchTab('geral')">📊 Time</button>`;
-  TEAM.forEach(v=>{
+  getActiveTeam(ACTIVE_MONTH).forEach(v=>{
     const id=tabId(v.nome);
     h+=`<button class="nav-tab" id="tab-${id}" onclick="switchTab('${id}')"><span class="av" style="background:${v.cor}">${inits(v.nome)}</span>${v.nome}</button>`;
   });
@@ -1020,7 +1141,7 @@ function switchTab(id){
 
 // ─── PAINÉIS INDIVIDUAIS ──────────────────────────────────────
 function buildIndividualPanels(){
-  document.getElementById('individual-panels').innerHTML=TEAM.map(v=>{
+  document.getElementById('individual-panels').innerHTML=getActiveTeam(ACTIVE_MONTH).map(v=>{
     const id=tabId(v.nome);
     return`
     <div class="tab-panel" id="panel-${id}"><div class="content">
@@ -1288,10 +1409,20 @@ function calcComissaoLivre(){
 function renderAll(){
   renderMonthNav();
   renderHeader();renderKPIs();renderRanking();renderCards();
-  TEAM.forEach(v=>renderIndividualPanel(v));
+  getActiveTeam(ACTIVE_MONTH).forEach(v=>renderIndividualPanel(v));
   calcComissaoLivre();
   renderHistorico();
   renderHistoricoMeses();
+}
+
+// ─── MIGRATIONS ───────────────────────────────────────────────
+// Garante que Madson está inativo em setembro/2026 (saiu do time)
+function applyMigrations(){
+  if(!METAS_BY_MONTH['2026-09']) METAS_BY_MONTH['2026-09']={};
+  if(!METAS_BY_MONTH['2026-09']._inactive) METAS_BY_MONTH['2026-09']._inactive=[];
+  if(!METAS_BY_MONTH['2026-09']._inactive.includes('Madson')){
+    METAS_BY_MONTH['2026-09']._inactive.push('Madson');
+  }
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
@@ -1320,7 +1451,7 @@ fetch('./data.json?t='+Date.now())
     if(el&&d.updated) el.textContent='GitHub: '+d.updated;
   })
   .catch(()=>loadLS())
-  .finally(()=>renderAll());
+  .finally(()=>{applyMigrations();saveLS();renderAll();});
 </script>
 </body>
 </html>
