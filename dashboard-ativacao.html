@@ -400,6 +400,9 @@
           <th class="num">Meta Time</th>
           <th class="num">Realizado</th>
           <th class="num">% Meta</th>
+          <th class="num">Leads</th>
+          <th class="num">Pagos</th>
+          <th class="num">Conv.</th>
           <th class="num">Dias Reg.</th>
           <th></th>
         </tr></thead>
@@ -917,6 +920,9 @@ function renderHistoricoMeses(){
     });
 
     const realTotal=TEAM.reduce((a,v)=>isBonus(v,mo)?a:a+sellerTotals[v.nome].fat,0);
+    const leadsTotal=TEAM.reduce((a,v)=>a+sellerTotals[v.nome].leads,0);
+    const pagosTotal=TEAM.reduce((a,v)=>a+sellerTotals[v.nome].pagos,0);
+    const convTotal=leadsTotal?pagosTotal/leadsTotal*100:0;
     const metaT=getMonthMetaTotal(mo);
     const pctMeta=metaT?realTotal/metaT*100:0;
     const cls=pctMeta>=100?'ok':pctMeta>=80?'warn':'down';
@@ -949,12 +955,15 @@ function renderHistoricoMeses(){
       <td class="num mono">${fmt(metaT)}</td>
       <td class="num mono">${fmt(realTotal)}</td>
       <td class="num">${dates.length>0?`<span class="pill ${cls}">${fmtPct(pctMeta)}</span>`:'<span style="color:var(--muted);">—</span>'}</td>
+      <td class="num">${leadsTotal||'—'}</td>
+      <td class="num">${pagosTotal||'—'}</td>
+      <td class="num">${leadsTotal>0?`<span class="pill ${convTotal>=10?'ok':convTotal>=7?'warn':'down'}" style="font-size:10.5px;">${fmtPct(convTotal)}</span>`:'<span style="color:var(--muted);">—</span>'}</td>
       <td class="num">${dates.length}</td>
       <td><button class="btn btn-ghost" style="font-size:11px;padding:4px 12px;" onclick="event.stopPropagation();switchToMonth('${mo}')">Ver →</button></td>
     </tr>`;
 
     const expandRow=`<tr class="hist-mes-expand" id="hist-exp-${moId}">
-      <td colspan="7">
+      <td colspan="10">
         <div class="hist-expand-inner">
           <table>
             <thead><tr>
