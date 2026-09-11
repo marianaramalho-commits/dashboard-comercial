@@ -1481,6 +1481,10 @@ function applyMigrations(){
 buildTabs();
 buildIndividualPanels();
 
+// Carrega localStorage ANTES do fetch para preservar metas salvas pelo usuário
+const _lsRaw=(()=>{try{const r=localStorage.getItem(LS_KEY);return r?JSON.parse(r):null;}catch(e){return null;}})();
+const _lsMetas=_lsRaw?.METAS_BY_MONTH||null;
+
 fetch('./data.json?t='+Date.now())
   .then(r=>{if(!r.ok)throw new Error();return r.json();})
   .then(d=>{
@@ -1496,7 +1500,19 @@ fetch('./data.json?t='+Date.now())
         };
       });
     }
-    if(d.METAS_BY_MONTH) METAS_BY_MONTH=d.METAS_BY_MONTH;
+    // Metas: localStorage tem prioridade (usuário configurou); data.json só preenche o que não existe
+    if(d.METAS_BY_MONTH){
+      const base=d.METAS_BY_MONTH;
+      const merged={...base};
+      if(_lsMetas){
+        Object.keys(_lsMetas).forEach(mo=>{
+          merged[mo]={...(base[mo]||{}),..._lsMetas[mo]};
+        });
+      }
+      METAS_BY_MONTH=merged;
+    } else if(_lsMetas){
+      METAS_BY_MONTH=_lsMetas;
+    }
     updateActiveDU();
     computeTotals();saveLS();
     const el=document.getElementById('data-updated');
