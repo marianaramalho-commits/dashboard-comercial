@@ -60,7 +60,8 @@
   .section-title:first-child{margin-top:0;}
 
   .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
-  @media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(2,1fr);}}
+  .kpi-grid-2{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px;}
+  @media(max-width:1100px){.kpi-grid,.kpi-grid-2{grid-template-columns:repeat(2,1fr);}}
   .kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:15px 18px;position:relative;overflow:hidden;}
   .kpi-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--kc,var(--green));}
   .kpi-label{font-size:10.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;}
@@ -268,6 +269,8 @@
   <div class="content">
     <div class="section-title">📊 Visão Geral</div>
     <div class="kpi-grid" id="kpi-grid"></div>
+    <div class="section-title" style="margin-top:20px;">📞 Conversão do Time</div>
+    <div class="kpi-grid" id="kpi-conv-grid"></div>
     <div class="big-progress" id="team-progress-wrap" style="margin-top:14px;">
       <div class="lr">
         <span id="team-prog-label">% da Meta Mensal do Time</span>
@@ -802,6 +805,7 @@ function saveMetas(){
   computeTotals();
   buildTabs();
   buildIndividualPanels();
+  switchTab('geral');
   renderAll();
   showToast(`Metas de ${moLabel(ACTIVE_MONTH)} salvas ✔`);
   const body=document.getElementById('meta-config-body');
@@ -1411,10 +1415,52 @@ function calcComissaoLivre(){
     </div>`;
 }
 
+// ─── CONVERSÃO DO TIME ────────────────────────────────────────
+function calcConvForMonth(mo){
+  const moTeam=getActiveTeam(mo);
+  let leads=0,pagos=0;
+  Object.entries(DIAS).filter(([dk])=>dk.startsWith(mo)).forEach(([,day])=>{
+    moTeam.forEach(v=>{
+      leads+=(day[v.nome]?.leads||0);
+      pagos+=(day[v.nome]?.pagos||0);
+    });
+  });
+  return{leads,pagos,conv:leads?pagos/leads*100:0};
+}
+
+function renderConvGrid(){
+  const el=document.getElementById('kpi-conv-grid');
+  if(!el) return;
+  const cur=calcConvForMonth(ACTIVE_MONTH);
+  // previous month = any month with data that isn't the active one
+  const allMos=[...new Set(Object.keys(DIAS).map(dk=>dk.substring(0,7)))].filter(m=>m!==ACTIVE_MONTH).sort();
+  const prevMo=allMos.length?allMos[allMos.length-1]:null;
+  const prev=prevMo?calcConvForMonth(prevMo):null;
+  const curLabel=moLabel(ACTIVE_MONTH);
+  const prevLabel=prevMo?moLabel(prevMo):null;
+
+  const kpis=[
+    {label:`Leads — ${curLabel}`,value:cur.leads.toLocaleString('pt-BR'),color:'#0891b2'},
+    {label:`Pagos — ${curLabel}`,value:cur.pagos.toLocaleString('pt-BR'),color:'var(--green)'},
+    {label:`Conversão — ${curLabel}`,value:fmtPct(cur.conv),color:cur.conv>=10?'var(--ok)':cur.conv>=7?'var(--warn)':'var(--error)',badge:{text:cur.conv>=10?'✔ Na meta':cur.conv>=7?'Atenção':'Abaixo',cls:cur.conv>=10?'up':cur.conv>=7?'warn':'down'}},
+  ];
+  if(prev){
+    kpis.push({label:`Leads — ${prevLabel}`,value:prev.leads.toLocaleString('pt-BR'),color:'#64748b'});
+    kpis.push({label:`Pagos — ${prevLabel}`,value:prev.pagos.toLocaleString('pt-BR'),color:'#64748b'});
+    kpis.push({label:`Conversão — ${prevLabel}`,value:fmtPct(prev.conv),color:'#64748b',badge:{text:prev.conv>=10?'✔ Na meta':prev.conv>=7?'Atenção':'Abaixo',cls:prev.conv>=10?'up':prev.conv>=7?'warn':'down'}});
+  }
+  el.style.gridTemplateColumns=`repeat(${Math.min(kpis.length,3)},1fr)`;
+  el.innerHTML=kpis.map(k=>`<div class="kpi-card" style="--kc:${k.color}">
+    <div class="kpi-label">${k.label}</div>
+    <div class="kpi-value mono">${k.value}</div>
+    ${k.badge?`<div class="kpi-badge ${k.badge.cls}">${k.badge.text}</div>`:''}
+  </div>`).join('');
+}
+
 // ─── RENDER ALL ───────────────────────────────────────────────
 function renderAll(){
   renderMonthNav();
-  renderHeader();renderKPIs();renderRanking();renderCards();
+  renderHeader();renderKPIs();renderConvGrid();renderRanking();renderCards();
   getActiveTeam(ACTIVE_MONTH).forEach(v=>renderIndividualPanel(v));
   calcComissaoLivre();
   renderHistorico();
