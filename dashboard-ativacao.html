@@ -477,6 +477,10 @@ let TEAM=[...TEAM_DEFAULT];
 let META_TOTAL=TEAM.reduce((a,v)=>v.bonus?a:a+v.meta,0);
 function recalcMetaTotal(){ META_TOTAL=TEAM.reduce((a,v)=>v.bonus?a:a+v.meta,0); }
 
+// ─── HELPERS DE DATA (definidos cedo para uso no estado inicial) ───
+const todayStr=()=>{const n=new Date(),p=x=>String(x).padStart(2,'0');return`${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}`};
+const fmtDate=s=>{if(!s)return'';const[y,m,d]=s.split('-');return`${d}/${m}/${y}`;};
+
 // ─── ESTADO ───────────────────────────────────────────────────
 // DIAS: { "2026-08-12": { "Silas": {leads:5, pagos:2, fat:10000, leads_cart:0, pagos_cart:0, leads_ativ:0, pagos_ativ:0}, ... } }
 let DIAS={};
@@ -565,8 +569,6 @@ const convAtivOf=nome=>{
   return{pct,l,p,cls:pct>=7?'ok':pct>=5?'warn':'down'};
 };
 const tabId =nome=>'panel-'+nome.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
-const todayStr=()=>{const n=new Date(),p=x=>String(x).padStart(2,'0');return`${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}`};
-const fmtDate=s=>{if(!s)return'';const[y,m,d]=s.split('-');return`${d}/${m}/${y}`;};
 
 // ─── TOAST ────────────────────────────────────────────────────
 let toastTimer=null;
