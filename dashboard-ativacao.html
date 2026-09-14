@@ -603,14 +603,14 @@ function saveLS(){
 }
 function loadLS(){
   try{
-    const raw=localStorage.getItem(LS_KEY);if(!raw)return false;
+    const raw=localStorage.getItem(LS_KEY);if(!raw)return null;
     const d=JSON.parse(raw);
     if(d.DIAS) DIAS=d.DIAS;
     if(d.TEAM&&Array.isArray(d.TEAM)&&d.TEAM.length>0) TEAM=d.TEAM;
     recalcMetaTotal();
     computeTotals();
-    return true;
-  }catch(e){return false;}
+    return d.savedAt||null;  // retorna timestamp do localStorage
+  }catch(e){return null;}
 }
 
 // ─── LÍDER ────────────────────────────────────────────────────
@@ -845,12 +845,13 @@ function renderHistorico(){
 function saveAndExport(){
   const data={
     updated:new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo',dateStyle:'short',timeStyle:'short'}),
-    DU_ATUAL,DIAS,
+    updatedISO:new Date().toISOString(),
+    DU_ATUAL,DIAS,TEAM,
     REALIZADO,LEADS,PAGOS_COUNT
   };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='data.json';a.click();
-  showToast('data.json baixado — sobe no GitHub para o time ver.');
+  showToast('✅ data.json baixado com metas incluídas — sobe no GitHub para o time ver.');
 }
 
 // ─── TABS ─────────────────────────────────────────────────────
@@ -1247,13 +1248,13 @@ buildTabs();
 buildIndividualPanels();
 renderTeamConfig();
 
-// Carrega metas salvas ANTES do data.json para não perder edições manuais
-const _lsLoaded = loadLS();
+// Carrega localStorage primeiro (fallback ou edições locais ainda não exportadas)
+const _lsSavedAt = loadLS();  // retorna ISO timestamp ou null
 
 fetch('./data.json?t='+Date.now())
   .then(r=>{if(!r.ok)throw new Error();return r.json();})
   .then(d=>{
-    // Atualiza dados de performance (DIAS) sempre
+    // DIAS: sempre usa data.json (dados de performance são autoritativos)
     if(d.DIAS) DIAS=d.DIAS;
     else{
       const today=todayStr();
@@ -1266,15 +1267,22 @@ fetch('./data.json?t='+Date.now())
         };
       });
     }
-    // Só sobrescreve TEAM do data.json se o usuário nunca editou manualmente (sem localStorage)
-    if(!_lsLoaded && d.TEAM&&Array.isArray(d.TEAM)&&d.TEAM.length>0){
-      TEAM=d.TEAM;recalcMetaTotal();
+    // TEAM (metas): data.json é a fonte de verdade para todos
+    // Exceção: se o líder editou localmente DEPOIS da última exportação, mantém local
+    if(d.TEAM&&Array.isArray(d.TEAM)&&d.TEAM.length>0){
+      const jsonTs = d.updatedISO ? new Date(d.updatedISO).getTime() : 0;
+      const lsTs   = _lsSavedAt  ? new Date(_lsSavedAt).getTime()   : 0;
+      if(lsTs <= jsonTs){
+        // data.json é mais recente → usa metas do GitHub (caso normal para o time)
+        TEAM=d.TEAM; recalcMetaTotal();
+      }
+      // else: localStorage é mais recente → líder editou e ainda não exportou → mantém local
     }
-    computeTotals();saveLS();
+    computeTotals(); saveLS();
     const el=document.getElementById('data-updated');
     if(el&&d.updated) el.textContent='GitHub: '+d.updated;
   })
-  .catch(()=>{if(!_lsLoaded)loadLS();})
+  .catch(()=>{ /* localStorage já foi carregado acima */ })
   .finally(()=>renderAll());
 </script>
 </body>
