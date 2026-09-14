@@ -469,7 +469,7 @@ function calcDUTotal(yr,mo){
 const _now=new Date();
 const DIAS_UTEIS_MES=calcDUTotal(_now.getFullYear(),_now.getMonth());
 let DU_ATUAL=Math.max(1,calcDUFromDate(_now));
-let DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;
+let DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL+1; // +1 inclui o dia de hoje como DU restante
 
 const TEAM_DEFAULT=[
   {nome:"Silas",        meta:73000,cor:"#0A9F82",ks:"ks3",convMeta:33,convMetaCart:7,convMetaAtiv:7},
