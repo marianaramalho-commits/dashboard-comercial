@@ -566,8 +566,9 @@ const stOf  =pct=>pct>=100?{cls:'ok',lbl:'Na meta',bar:'var(--ok)'}:pct>=80?{cls
 const convOf=nome=>{
   const v=TEAM.find(t=>t.nome===nome);const cm=v?.convMeta||7;
   const cvc=convCartOf(nome),cva=convAtivOf(nome);
-  const pct=(cvc.l>0||cva.l>0)?(cvc.pct+cva.pct)/2:0;
-  return{pct,cls:pct>=cm?'ok':pct>=cm*0.7?'warn':'down',convMeta:cm};
+  const l=cvc.l+cva.l,p=cvc.p+cva.p;
+  const pct=l?p/l*100:0;
+  return{pct,l,p,cls:pct>=cm?'ok':pct>=cm*0.7?'warn':'down',convMeta:cm};
 };
 const convCartOf=nome=>{
   const v=TEAM.find(t=>t.nome===nome);const cm=v?.convMetaCart||7;
@@ -1246,13 +1247,15 @@ buildTabs();
 buildIndividualPanels();
 renderTeamConfig();
 
+// Carrega metas salvas ANTES do data.json para não perder edições manuais
+const _lsLoaded = loadLS();
+
 fetch('./data.json?t='+Date.now())
   .then(r=>{if(!r.ok)throw new Error();return r.json();})
   .then(d=>{
-    // suporta novo formato DIAS e formato antigo
+    // Atualiza dados de performance (DIAS) sempre
     if(d.DIAS) DIAS=d.DIAS;
     else{
-      // migra formato antigo para DIAS com data de hoje
       const today=todayStr();
       DIAS[today]={};
       TEAM.forEach(v=>{
@@ -1263,12 +1266,15 @@ fetch('./data.json?t='+Date.now())
         };
       });
     }
-    if(d.TEAM&&Array.isArray(d.TEAM)&&d.TEAM.length>0){TEAM=d.TEAM;recalcMetaTotal();}
+    // Só sobrescreve TEAM do data.json se o usuário nunca editou manualmente (sem localStorage)
+    if(!_lsLoaded && d.TEAM&&Array.isArray(d.TEAM)&&d.TEAM.length>0){
+      TEAM=d.TEAM;recalcMetaTotal();
+    }
     computeTotals();saveLS();
     const el=document.getElementById('data-updated');
     if(el&&d.updated) el.textContent='GitHub: '+d.updated;
   })
-  .catch(()=>loadLS())
+  .catch(()=>{if(!_lsLoaded)loadLS();})
   .finally(()=>renderAll());
 </script>
 </body>
