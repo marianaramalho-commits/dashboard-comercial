@@ -1,5 +1,6 @@
 {
-  "updated": "14/09/2026, 15:56",
+  "updated": "14/09/2026, 16:49",
+  "updatedISO": "2026-09-14T19:49:30.144Z",
   "DU_ATUAL": 9,
   "DIAS": {
     "2026-08-03": {
@@ -1405,12 +1406,83 @@
       }
     }
   },
+  "TEAM": [
+    {
+      "nome": "Silas",
+      "meta": 105000,
+      "cor": "#0A9F82",
+      "ks": "ks3",
+      "convMeta": 39,
+      "convMetaCart": 45,
+      "convMetaAtiv": 33,
+      "bonus": false
+    },
+    {
+      "nome": "Luana",
+      "meta": 68000,
+      "cor": "#0DC7A2",
+      "ks": "ks2",
+      "convMeta": 16,
+      "convMetaCart": 24,
+      "convMetaAtiv": 7,
+      "bonus": false
+    },
+    {
+      "nome": "Ana Carolina",
+      "meta": 68000,
+      "cor": "#04513F",
+      "ks": "ks2",
+      "convMeta": 16,
+      "convMetaCart": 24,
+      "convMetaAtiv": 7,
+      "bonus": false
+    },
+    {
+      "nome": "Lucas Rangel",
+      "meta": 68000,
+      "cor": "#F3A42E",
+      "ks": "ks2",
+      "convMeta": 16,
+      "convMetaCart": 24,
+      "convMetaAtiv": 7,
+      "bonus": false
+    },
+    {
+      "nome": "Larissa",
+      "meta": 68000,
+      "cor": "#0891b2",
+      "ks": "ks2",
+      "convMeta": 16,
+      "convMetaCart": 24,
+      "convMetaAtiv": 7,
+      "bonus": false
+    },
+    {
+      "nome": "Camile",
+      "meta": 68000,
+      "cor": "#e11d48",
+      "ks": "ks2",
+      "convMeta": 16,
+      "convMetaCart": 24,
+      "convMetaAtiv": 7,
+      "bonus": false
+    },
+    {
+      "nome": "Tanner",
+      "meta": 60000,
+      "cor": "#16a34a",
+      "ks": "ks1",
+      "convMeta": 16,
+      "convMetaCart": 24,
+      "convMetaAtiv": 7,
+      "bonus": false
+    }
+  ],
   "REALIZADO": {
     "Silas": 41965,
     "Luana": 18551,
     "Ana Carolina": 27302,
     "Lucas Rangel": 16275,
-    "Madson": 0,
     "Larissa": 16952,
     "Camile": 13344,
     "Tanner": 2718
@@ -1420,7 +1492,6 @@
     "Luana": 0,
     "Ana Carolina": 0,
     "Lucas Rangel": 0,
-    "Madson": 0,
     "Larissa": 0,
     "Camile": 0,
     "Tanner": 0
@@ -1430,7 +1501,6 @@
     "Luana": 0,
     "Ana Carolina": 0,
     "Lucas Rangel": 0,
-    "Madson": 0,
     "Larissa": 0,
     "Camile": 0,
     "Tanner": 0
