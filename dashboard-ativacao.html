@@ -249,11 +249,18 @@
       <div class="track"><div class="fill" id="team-prog-bar" style="width:0%;background:var(--ok)"></div></div>
       <div class="sublabel" id="team-prog-sub"></div>
     </div>
-    <div class="section-title">🏆 Ranking</div>
+    <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>🏆 Ranking</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="btn btn-ghost" style="padding:4px 10px;font-size:13px;" onclick="changeMonth(-1)">◀</button>
+        <span id="month-display" style="font-size:14px;font-weight:700;color:var(--darkgreen);min-width:110px;text-align:center;"></span>
+        <button class="btn btn-ghost" style="padding:4px 10px;font-size:13px;" onclick="changeMonth(1)">▶</button>
+      </div>
+    </div>
     <div class="table-wrap">
-      <table style="min-width:860px;">
+      <table style="min-width:1120px;">
         <thead><tr>
-          <th>#</th><th>Vendedor</th><th>Conversão</th>
+          <th>#</th><th>Vendedor</th><th>Conversão</th><th>Conv. Cart.</th><th>Conv. Ativ.</th>
           <th class="num">Meta Mensal</th>
           <th class="num">Meta Prop. DU <span id="th-du">–</span></th>
           <th class="num">Realizado</th>
@@ -282,6 +289,30 @@
     </div>
     <div id="lider-unlocked" style="display:none;">
 
+      <!-- CONFIGURAÇÕES DO TIME -->
+      <div class="lider-day-card" style="margin-bottom:24px;">
+        <div class="lider-day-header">
+          <div style="font-weight:700;font-size:15px;color:var(--darkgreen);">⚙️ Configurações do Time</div>
+          <div><span style="font-size:12px;color:var(--muted);">Meta total: <b id="cfg-meta-total">—</b></span></div>
+        </div>
+        <table class="lider-table">
+          <thead><tr>
+            <th>Vendedor</th><th class="num">Meta (R$)</th><th>Cargo</th><th class="num">Conv %</th><th>Bônus</th><th></th>
+          </tr></thead>
+          <tbody id="cfg-team-tbody"></tbody>
+        </table>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap;">
+          <input id="cfg-new-nome" class="lider-input" placeholder="Nome" style="width:140px;">
+          <input id="cfg-new-meta" class="lider-input" type="number" placeholder="Meta R$" style="width:100px;">
+          <select id="cfg-new-cargo" class="lider-input" style="width:75px;padding:4px 6px;"><option value="ks1">KS1</option><option value="ks2" selected>KS2</option><option value="ks3">KS3</option><option value="ks4">KS4</option></select>
+          <input id="cfg-new-conv" class="lider-input" type="number" placeholder="Conv%" style="width:70px;" value="7">
+          <label style="font-size:13px;"><input type="checkbox" id="cfg-new-bonus"> Bônus</label>
+          <button class="btn btn-primary" style="font-size:13px;padding:7px 14px;" onclick="addVendedor()">➕ Adicionar</button>
+          <button class="btn btn-export" style="font-size:13px;padding:7px 14px;" onclick="saveTeamConfig()">💾 Salvar Time</button>
+        </div>
+        <div id="cfg-status" style="font-size:12px;color:var(--muted);margin-top:6px;"></div>
+      </div>
+
       <!-- ENTRADA DO DIA -->
       <div class="lider-day-card">
         <div class="lider-day-header">
@@ -297,10 +328,14 @@
         <table class="lider-table">
           <thead><tr>
             <th>Vendedor</th>
-            <th class="num">Leads do dia</th>
-            <th class="num">Pagos do dia (qtd)</th>
-            <th class="num">Faturamento do dia (R$)</th>
-            <th class="num">Acum. mês (fat.)</th>
+            <th class="num">Leads</th>
+            <th class="num">Pagos</th>
+            <th class="num">Fat. (R$)</th>
+            <th class="num">Leads Cart.</th>
+            <th class="num">Pagos Cart.</th>
+            <th class="num">Leads Ativ.</th>
+            <th class="num">Pagos Ativ.</th>
+            <th class="num">Acum. mês</th>
             <th class="num">Projeção mês</th>
           </tr></thead>
           <tbody id="lider-tbody"></tbody>
@@ -428,7 +463,7 @@ const DIAS_UTEIS_MES=calcDUTotal(_now.getFullYear(),_now.getMonth());
 let DU_ATUAL=Math.max(1,calcDUFromDate(_now));
 let DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;
 
-const TEAM=[
+const TEAM_DEFAULT=[
   {nome:"Silas",        meta:73000,cor:"#0A9F82",ks:"ks3",convMeta:33},
   {nome:"Luana",        meta:51000,cor:"#0DC7A2",ks:"ks2",convMeta:7},
   {nome:"Ana Carolina", meta:51000,cor:"#04513F",ks:"ks2",convMeta:7},
@@ -438,33 +473,56 @@ const TEAM=[
   {nome:"Camile",       meta:46000,cor:"#e11d48",ks:"ks1",convMeta:7},
   {nome:"Tanner",       meta:40000,cor:"#16a34a",ks:"ks1",convMeta:7,bonus:true},
 ];
-const META_TOTAL=TEAM.reduce((a,v)=>v.bonus?a:a+v.meta,0); // Tanner (bonus) não conta na meta do time
+let TEAM=[...TEAM_DEFAULT];
+let META_TOTAL=TEAM.reduce((a,v)=>v.bonus?a:a+v.meta,0);
+function recalcMetaTotal(){ META_TOTAL=TEAM.reduce((a,v)=>v.bonus?a:a+v.meta,0); }
 
 // ─── ESTADO ───────────────────────────────────────────────────
-// DIAS: { "2026-08-12": { "Silas": {leads:5, pagos:2, fat:10000}, ... } }
+// DIAS: { "2026-08-12": { "Silas": {leads:5, pagos:2, fat:10000, leads_cart:0, pagos_cart:0, leads_ativ:0, pagos_ativ:0}, ... } }
 let DIAS={};
 
-// Totais calculados a partir de DIAS:
+// Mês exibido
+let DISPLAY_MONTH=todayStr().substring(0,7);
+let DIAS_UTEIS_MES_DISP=DIAS_UTEIS_MES;
+
+// Totais calculados a partir de DIAS (filtrado por DISPLAY_MONTH):
 let REALIZADO={},LEADS={},PAGOS_COUNT={};
+let LEADS_CART={},PAGOS_CART={},LEADS_ATIV={},PAGOS_ATIV={};
 
 function computeTotals(){
-  TEAM.forEach(v=>{REALIZADO[v.nome]=0;LEADS[v.nome]=0;PAGOS_COUNT[v.nome]=0;});
-  Object.values(DIAS).forEach(day=>{
+  TEAM.forEach(v=>{
+    REALIZADO[v.nome]=0;LEADS[v.nome]=0;PAGOS_COUNT[v.nome]=0;
+    LEADS_CART[v.nome]=0;PAGOS_CART[v.nome]=0;LEADS_ATIV[v.nome]=0;PAGOS_ATIV[v.nome]=0;
+  });
+  Object.entries(DIAS).filter(([dk])=>dk.startsWith(DISPLAY_MONTH)).forEach(([,day])=>{
     TEAM.forEach(v=>{
       if(day[v.nome]){
         REALIZADO[v.nome]+=(day[v.nome].fat||0);
         LEADS[v.nome]+=(day[v.nome].leads||0);
         PAGOS_COUNT[v.nome]+=(day[v.nome].pagos||0);
+        LEADS_CART[v.nome]+=(day[v.nome].leads_cart||0);
+        PAGOS_CART[v.nome]+=(day[v.nome].pagos_cart||0);
+        LEADS_ATIV[v.nome]+=(day[v.nome].leads_ativ||0);
+        PAGOS_ATIV[v.nome]+=(day[v.nome].pagos_ativ||0);
       }
     });
   });
-  // DU da data mais recente registrada
-  const dates=Object.keys(DIAS).sort();
-  if(dates.length>0){
-    const d=new Date(dates[dates.length-1]+'T12:00:00');
-    DU_ATUAL=Math.max(1,calcDUFromDate(d));
-    DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;
+  const [dmy,dmm]=DISPLAY_MONTH.split('-').map(Number);
+  DIAS_UTEIS_MES_DISP=calcDUTotal(dmy,dmm-1);
+  const todayM=todayStr().substring(0,7);
+  if(DISPLAY_MONTH===todayM){
+    DU_ATUAL=Math.max(1,calcDUFromDate(_now));
+  } else {
+    const mDates=Object.keys(DIAS).filter(dk=>dk.startsWith(DISPLAY_MONTH)).sort();
+    if(mDates.length>0){
+      const d=new Date(mDates[mDates.length-1]+'T12:00:00');
+      DU_ATUAL=Math.max(1,calcDUFromDate(d));
+    } else {
+      const lastDay=new Date(dmy,dmm,0);
+      DU_ATUAL=Math.max(1,calcDUFromDate(lastDay));
+    }
   }
+  DIAS_RESTANTES=Math.max(0,DIAS_UTEIS_MES_DISP-DU_ATUAL);
 }
 
 // ─── COMISSIONAMENTO ──────────────────────────────────────────
@@ -489,14 +547,22 @@ const fmt   =v=>'R$ '+(v||0).toLocaleString('pt-BR',{minimumFractionDigits:0,max
 const fmtN  =v=>(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtPct=v=>(isFinite(v)?v:0).toFixed(1)+'%';
 const inits =n=>n.split(' ').map(p=>p[0]).slice(0,2).join('').toUpperCase();
-const mp    =meta=>meta/DIAS_UTEIS_MES*DU_ATUAL;
-const proj  =real=>DU_ATUAL>0?real/DU_ATUAL*DIAS_UTEIS_MES:0;
+const mp    =meta=>meta/Math.max(1,DIAS_UTEIS_MES_DISP)*DU_ATUAL;
+const proj  =real=>DU_ATUAL>0?real/DU_ATUAL*Math.max(1,DIAS_UTEIS_MES_DISP):0;
 const ritmo =(meta,real)=>{const r=Math.max(0,meta-real);return DIAS_RESTANTES>0?r/DIAS_RESTANTES:r;};
 const stOf  =pct=>pct>=100?{cls:'ok',lbl:'Na meta',bar:'var(--ok)'}:pct>=80?{cls:'warn',lbl:'Atenção',bar:'var(--warn)'}:{cls:'down',lbl:'Abaixo',bar:'var(--error)'};
 const convOf=nome=>{
   const v=TEAM.find(t=>t.nome===nome);const cm=v?.convMeta||7;
   const l=LEADS[nome]||0,p=PAGOS_COUNT[nome]||0,pct=l?p/l*100:0;
   return{pct,l,p,cls:pct>=cm?'ok':pct>=cm*0.7?'warn':'down',convMeta:cm};
+};
+const convCartOf=nome=>{
+  const l=LEADS_CART[nome]||0,p=PAGOS_CART[nome]||0,pct=l?p/l*100:0;
+  return{pct,l,p,cls:pct>=7?'ok':pct>=5?'warn':'down'};
+};
+const convAtivOf=nome=>{
+  const l=LEADS_ATIV[nome]||0,p=PAGOS_ATIV[nome]||0,pct=l?p/l*100:0;
+  return{pct,l,p,cls:pct>=7?'ok':pct>=5?'warn':'down'};
 };
 const tabId =nome=>'panel-'+nome.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
 const todayStr=()=>{const n=new Date(),p=x=>String(x).padStart(2,'0');return`${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}`};
@@ -518,7 +584,7 @@ function showToast(msg,ic='✅'){
 const LS_KEY='konsi-ativ-v2';
 function saveLS(){
   try{localStorage.setItem(LS_KEY,JSON.stringify({
-    savedAt:new Date().toISOString(),DIAS
+    savedAt:new Date().toISOString(),DIAS,TEAM
   }));}catch(e){}
 }
 function loadLS(){
@@ -526,6 +592,8 @@ function loadLS(){
     const raw=localStorage.getItem(LS_KEY);if(!raw)return false;
     const d=JSON.parse(raw);
     if(d.DIAS) DIAS=d.DIAS;
+    if(d.TEAM&&Array.isArray(d.TEAM)&&d.TEAM.length>0) TEAM=d.TEAM;
+    recalcMetaTotal();
     computeTotals();
     return true;
   }catch(e){return false;}
@@ -556,13 +624,13 @@ function onDateChange(){
   if(!val) return;
   const d=new Date(val+'T12:00:00');
   const du=Math.max(1,calcDUFromDate(d));
-  const rest=DIAS_UTEIS_MES-du;
-  document.getElementById('lider-du-badge').textContent=`DU ${du} de ${DIAS_UTEIS_MES} · ${rest} restantes`;
+  const duTotalM=calcDUTotal(d.getFullYear(),d.getMonth());
+  const rest=Math.max(0,duTotalM-du);
+  document.getElementById('lider-du-badge').textContent=`DU ${du} de ${duTotalM} · ${rest} restantes`;
   const exists=!!DIAS[val];
   const eb=document.getElementById('lider-exists-badge');
   eb.style.display=exists?'inline':'none';
   renderDayForm(val,du);
-  // auto-salva a seleção de data
   saveLS();
   showToast(`Data ${fmtDate(val)} · DU ${du} — pode fechar e voltar quando quiser.`);
 }
@@ -574,7 +642,8 @@ function renderDayForm(dateKey,du){
   TEAM.forEach(v=>{
     let s=0;
     Object.entries(DIAS).forEach(([dk,dv])=>{
-      if(dk!==dateKey&&dv[v.nome]) s+=dv[v.nome].fat||0;
+      // Only accumulate data from the same month as dateKey
+      if(dk!==dateKey&&dk.substring(0,7)===dateKey.substring(0,7)&&dv[v.nome]) s+=dv[v.nome].fat||0;
     });
     acumAntes[v.nome]=s;
   });
@@ -611,6 +680,7 @@ function renderDayForm(dateKey,du){
     <td class="num">${tLeads||'–'}</td>
     <td class="num">${tPagos||'–'}</td>
     <td class="num mono">${fmt(tFatTeam)}</td>
+    <td></td><td></td><td></td><td></td>
     <td class="num mono">${fmt(tAcum)}</td>
     <td class="num">${fmt(Math.round(tProj))} <span style="opacity:.7;font-size:11px;">(${fmtPct(tPctP)})</span></td>
   </tr>${bonusAcum>0?`<tr style="background:#fefce8;">
@@ -632,7 +702,11 @@ function saveDayData(){
     const leads=parseFloat(document.getElementById('lf-leads-'+id)?.value)||0;
     const pagos=parseFloat(document.getElementById('lf-pagos-'+id)?.value)||0;
     const fat  =parseFloat(document.getElementById('lf-fat-'+id)?.value)||0;
-    DIAS[dateKey][v.nome]={leads,pagos,fat};
+    const leads_cart=parseFloat(document.getElementById('lf-leads-cart-'+id)?.value)||0;
+    const pagos_cart=parseFloat(document.getElementById('lf-pagos-cart-'+id)?.value)||0;
+    const leads_ativ=parseFloat(document.getElementById('lf-leads-ativ-'+id)?.value)||0;
+    const pagos_ativ=parseFloat(document.getElementById('lf-pagos-ativ-'+id)?.value)||0;
+    DIAS[dateKey][v.nome]={leads,pagos,fat,leads_cart,pagos_cart,leads_ativ,pagos_ativ};
   });
   computeTotals();
   saveLS();
@@ -660,42 +734,69 @@ function deleteDayData(dateKey){
 }
 
 function renderHistorico(){
-  const dates=Object.keys(DIAS).sort();
+  const allDates=Object.keys(DIAS).sort();
   const empty=document.getElementById('hist-empty');
   const table=document.getElementById('hist-table');
-  if(dates.length===0){
+  if(allDates.length===0){
     if(empty) empty.style.display='block';
     if(table) table.style.display='none';
     return;
   }
   if(empty) empty.style.display='none';
   if(table) table.style.display='table';
-  // Calcula acumulado progressivo
-  let acumFat=0,acumLeads=0,acumPagos=0;
+  // Group by month
+  const byMonth={};
+  allDates.forEach(dk=>{
+    const ym=dk.substring(0,7);
+    if(!byMonth[ym]) byMonth[ym]=[];
+    byMonth[ym].push(dk);
+  });
   const tbody=document.getElementById('hist-tbody');
-  tbody.innerHTML=dates.map(dk=>{
-    const day=DIAS[dk];
-    const d=new Date(dk+'T12:00:00');
-    const du=Math.max(1,calcDUFromDate(d));
-    const dayLeads=TEAM.reduce((a,v)=>a+(day[v.nome]?.leads||0),0);
-    const dayPagos=TEAM.reduce((a,v)=>a+(day[v.nome]?.pagos||0),0);
-    const dayFat=TEAM.reduce((a,v)=>a+(day[v.nome]?.fat||0),0);
-    acumLeads+=dayLeads;acumPagos+=dayPagos;acumFat+=dayFat;
-    return`<tr>
-      <td><b>${fmtDate(dk)}</b></td>
-      <td><span class="pill ok" style="font-size:10.5px;">DU ${du}</span></td>
-      <td class="num">${dayLeads}</td>
-      <td class="num">${dayPagos}</td>
-      <td class="num mono">${fmt(dayFat)}</td>
-      <td class="num mono" style="font-weight:700;">${fmt(acumFat)}</td>
-      <td>
-        <div class="hist-actions">
-          <button class="hist-edit-btn" onclick="loadDayIntoForm('${dk}')">✏️ Editar</button>
-          <button class="hist-del-btn" onclick="deleteDayData('${dk}')">🗑</button>
-        </div>
-      </td>
+  let rows='';
+  Object.keys(byMonth).sort().forEach(ym=>{
+    const mDates=byMonth[ym];
+    let mFat=0,mLeads=0,mPagos=0,acumFat=0;
+    // Month header row
+    const [my,mm]=ym.split('-');
+    rows+=`<tr style="background:var(--darkgreen);color:#fff;">
+      <td colspan="5" style="font-weight:700;font-size:13px;padding:8px 14px;">${monthLabel(ym)} — ${mDates.length} dia(s) inserido(s)</td>
+      <td colspan="2" style="text-align:right;padding:8px 14px;font-size:12px;">Resumo abaixo ↓</td>
     </tr>`;
-  }).join('');
+    // Day rows for this month
+    mDates.forEach(dk=>{
+      const day=DIAS[dk];
+      const d=new Date(dk+'T12:00:00');
+      const du=Math.max(1,calcDUFromDate(d));
+      const dayLeads=TEAM.reduce((a,v)=>a+(day[v.nome]?.leads||0),0);
+      const dayPagos=TEAM.reduce((a,v)=>a+(day[v.nome]?.pagos||0),0);
+      const dayFat=TEAM.reduce((a,v)=>a+(day[v.nome]?.fat||0),0);
+      mLeads+=dayLeads;mPagos+=dayPagos;mFat+=dayFat;acumFat+=dayFat;
+      rows+=`<tr>
+        <td><b>${fmtDate(dk)}</b></td>
+        <td><span class="pill ok" style="font-size:10.5px;">DU ${du}</span></td>
+        <td class="num">${dayLeads}</td>
+        <td class="num">${dayPagos}</td>
+        <td class="num mono">${fmt(dayFat)}</td>
+        <td class="num mono" style="font-weight:700;">${fmt(acumFat)}</td>
+        <td>
+          <div class="hist-actions">
+            <button class="hist-edit-btn" onclick="loadDayIntoForm('${dk}')">✏️ Editar</button>
+            <button class="hist-del-btn" onclick="deleteDayData('${dk}')">🗑</button>
+          </div>
+        </td>
+      </tr>`;
+    });
+    // Month summary row
+    rows+=`<tr style="background:#e8f5f1;border-top:2px solid var(--green);">
+      <td colspan="2" style="font-weight:700;font-size:12px;color:var(--darkgreen);">📊 Total ${monthLabel(ym)}</td>
+      <td class="num" style="font-weight:700;">${mLeads}</td>
+      <td class="num" style="font-weight:700;">${mPagos}</td>
+      <td class="num mono" style="font-weight:700;">${fmt(mFat)}</td>
+      <td class="num mono" style="font-weight:700;color:var(--darkgreen);">${fmt(mFat)}</td>
+      <td></td>
+    </tr>`;
+  });
+  tbody.innerHTML=rows;
 }
 
 function saveAndExport(){
@@ -848,19 +949,100 @@ function renderIndSim(id,nome){
 }
 
 // ─── RENDER GERAL ─────────────────────────────────────────────
+// ─── MONTH NAVIGATION ────────────────────────────────────────
+const MONTH_NAMES=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+function monthLabel(ym){
+  const [y,m]=ym.split('-');
+  return MONTH_NAMES[parseInt(m)-1]+'/'+y;
+}
+function changeMonth(dir){
+  const [y,m]=DISPLAY_MONTH.split('-').map(Number);
+  let nm=m+dir,ny=y;
+  if(nm>12){nm=1;ny++;}
+  if(nm<1){nm=12;ny--;}
+  DISPLAY_MONTH=ny+'-'+String(nm).padStart(2,'0');
+  computeTotals();
+  renderAll();
+}
+
+// ─── TEAM CONFIG ──────────────────────────────────────────────
+const TEAM_COLORS=["#0A9F82","#0DC7A2","#04513F","#F3A42E","#7c3aed","#0891b2","#e11d48","#16a34a","#ea580c","#be185d","#1d4ed8","#065f46"];
+function renderTeamConfig(){
+  const tbody=document.getElementById('cfg-team-tbody');if(!tbody)return;
+  tbody.innerHTML=TEAM.map((v,i)=>`<tr>
+    <td><span class="avatar" style="background:${v.cor};width:22px;height:22px;font-size:9px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;color:#fff;font-weight:700;">${inits(v.nome)}</span> ${v.nome}</td>
+    <td class="num"><input class="lider-input" type="number" style="width:110px;" id="cfg-meta-${i}" value="${v.meta}"></td>
+    <td><select class="lider-input" style="width:70px;padding:4px 6px;" id="cfg-cargo-${i}">
+      ${['ks1','ks2','ks3','ks4'].map(k=>`<option value="${k}"${v.ks===k?' selected':''}>${k.toUpperCase()}</option>`).join('')}
+    </select></td>
+    <td class="num"><input class="lider-input lider-input-sm" type="number" style="width:70px;" id="cfg-conv-${i}" value="${v.convMeta||7}"></td>
+    <td style="text-align:center;"><input type="checkbox" id="cfg-bonus-${i}"${v.bonus?' checked':''}></td>
+    <td><button class="hist-del-btn" onclick="removeVendedor(${i})">🗑</button></td>
+  </tr>`).join('');
+  const mt=document.getElementById('cfg-meta-total');
+  if(mt) mt.textContent='R$ '+(TEAM.reduce((a,v)=>v.bonus?a:a+v.meta,0)).toLocaleString('pt-BR');
+}
+function saveTeamConfig(){
+  TEAM.forEach((v,i)=>{
+    v.meta=parseFloat(document.getElementById('cfg-meta-'+i)?.value)||v.meta;
+    v.ks=document.getElementById('cfg-cargo-'+i)?.value||v.ks;
+    v.convMeta=parseFloat(document.getElementById('cfg-conv-'+i)?.value)||v.convMeta;
+    v.bonus=document.getElementById('cfg-bonus-'+i)?.checked||false;
+  });
+  recalcMetaTotal();
+  computeTotals();
+  saveLS();
+  renderTeamConfig();
+  renderAll();
+  const s=document.getElementById('cfg-status');
+  if(s){s.textContent='✔ Time salvo!';setTimeout(()=>s.textContent='',3000);}
+}
+function addVendedor(){
+  const nome=(document.getElementById('cfg-new-nome')?.value||'').trim();
+  if(!nome){alert('Digite o nome do vendedor.');return;}
+  if(TEAM.find(v=>v.nome===nome)){alert('Vendedor já existe.');return;}
+  const meta=parseFloat(document.getElementById('cfg-new-meta')?.value)||40000;
+  const ks=document.getElementById('cfg-new-cargo')?.value||'ks2';
+  const convMeta=parseFloat(document.getElementById('cfg-new-conv')?.value)||7;
+  const bonus=document.getElementById('cfg-new-bonus')?.checked||false;
+  const cor=TEAM_COLORS[TEAM.length%TEAM_COLORS.length];
+  TEAM.push({nome,meta,cor,ks,convMeta,bonus});
+  recalcMetaTotal();
+  computeTotals();
+  saveLS();
+  renderTeamConfig();
+  buildTabs();buildIndividualPanels();
+  renderAll();
+  document.getElementById('cfg-new-nome').value='';
+  document.getElementById('cfg-new-meta').value='';
+}
+function removeVendedor(i){
+  if(!confirm('Remover '+TEAM[i].nome+'? Os dados históricos são mantidos.')) return;
+  TEAM.splice(i,1);
+  recalcMetaTotal();
+  computeTotals();
+  saveLS();
+  renderTeamConfig();
+  buildTabs();buildIndividualPanels();
+  renderAll();
+}
+
+// ─── RENDER GERAL ─────────────────────────────────────────────
 function renderHeader(){
   document.getElementById('badge-du').textContent=DU_ATUAL;
-  document.getElementById('badge-du-total').textContent=DIAS_UTEIS_MES;
+  document.getElementById('badge-du-total').textContent=DIAS_UTEIS_MES_DISP;
   document.getElementById('badge-rest').textContent=DIAS_RESTANTES;
   document.getElementById('th-du').textContent=DU_ATUAL;
   document.getElementById('hdr-meta-total').textContent=fmt(META_TOTAL);
-  const pct=DU_ATUAL/DIAS_UTEIS_MES*100;
+  const pct=DU_ATUAL/Math.max(1,DIAS_UTEIS_MES_DISP)*100;
+  const md=document.getElementById('month-display');
+  if(md) md.textContent=monthLabel(DISPLAY_MONTH);
   document.getElementById('month-pct').textContent=pct.toFixed(0)+'%';
   document.getElementById('month-fill').style.width=pct+'%';
   // atualizado
-  const dates=Object.keys(DIAS).sort();
+  const mDates=Object.keys(DIAS).filter(dk=>dk.startsWith(DISPLAY_MONTH)).sort();
   const el=document.getElementById('data-updated');
-  if(el) el.textContent=dates.length>0?`Último dia: ${fmtDate(dates[dates.length-1])} · ${dates.length} dia(s) inserido(s)`:'Sem dados ainda';
+  if(el) el.textContent=mDates.length>0?`${monthLabel(DISPLAY_MONTH)} · Último dia: ${fmtDate(mDates[mDates.length-1])} · ${mDates.length} dia(s)`:`${monthLabel(DISPLAY_MONTH)} · Sem dados neste mês`;
 }
 
 function renderKPIs(){
@@ -901,12 +1083,14 @@ function renderRanking(){
   const tMP=mp(META_TOTAL),tPct=tMP?tReal/tMP*100:0;
   const tProj=proj(tReal),tPctProj=META_TOTAL?tProj/META_TOTAL*100:0;
   document.getElementById('ranking-body').innerHTML=rows.map((r,i)=>{
-    const st=stOf(r.pct),cv=convOf(r.nome);
+    const st=stOf(r.pct),cv=convOf(r.nome),cvc=convCartOf(r.nome),cva=convAtivOf(r.nome);
     const stP=r.pctProj>=100?'ok':r.pctProj>=80?'warn':'down';
     return`<tr style="cursor:pointer;" onclick="switchTab('${tabId(r.nome)}')">
       <td>${i+1}</td>
       <td><div class="seller-name"><span class="avatar" style="background:${r.cor}">${inits(r.nome)}</span>${r.nome}${r.bonus?'<span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:5px;">bônus</span>':''}</div></td>
       <td><span class="conv-pill ${cv.cls}">${fmtPct(cv.pct)}</span><span class="conv-sub">${cv.p}/${cv.l} · meta ${cv.convMeta}%</span></td>
+      <td>${cvc.l>0?`<span class="conv-pill ${cvc.cls}">${fmtPct(cvc.pct)}</span><span class="conv-sub">${cvc.p}/${cvc.l}</span>`:'<span style="color:var(--muted);font-size:11px;">—</span>'}</td>
+      <td>${cva.l>0?`<span class="conv-pill ${cva.cls}">${fmtPct(cva.pct)}</span><span class="conv-sub">${cva.p}/${cva.l}</span>`:'<span style="color:var(--muted);font-size:11px;">—</span>'}</td>
       <td class="num mono">${fmt(r.meta)}</td>
       <td class="num mono">${fmt(Math.round(r.mpV))}</td>
       <td class="num mono">${fmt(r.r)}</td>
@@ -916,7 +1100,7 @@ function renderRanking(){
       <td><span class="pill ${st.cls}">${st.lbl}</span></td>
     </tr>`;
   }).join('')+`<tr class="total-row">
-    <td></td><td>TOTAL EQUIPE</td><td></td>
+    <td></td><td>TOTAL EQUIPE</td><td></td><td></td><td></td>
     <td class="num mono">${fmt(META_TOTAL)}</td>
     <td class="num mono">${fmt(Math.round(tMP))}</td>
     <td class="num mono">${fmt(tReal)}</td>
@@ -924,7 +1108,7 @@ function renderRanking(){
     <td class="num">${fmt(Math.round(tProj))} <span style="opacity:.7;font-size:11px;">${fmtPct(tPctProj)}</span></td>
     <td></td><td></td>
   </tr>${bonusReal>0?`<tr style="background:#fefce8;border-top:1px dashed var(--warn);">
-    <td></td><td style="color:var(--warn);font-weight:600;">⭐ Bônus (Tanner)</td><td></td>
+    <td></td><td style="color:var(--warn);font-weight:600;">⭐ Bônus (Tanner)</td><td></td><td></td><td></td>
     <td class="num mono" style="color:var(--muted);">—</td><td></td>
     <td class="num mono" style="color:var(--warn);font-weight:700;">+ ${fmt(bonusReal)}</td>
     <td></td><td></td><td></td><td></td>
@@ -1003,11 +1187,13 @@ function renderAll(){
   TEAM.forEach(v=>renderIndividualPanel(v));
   calcComissaoLivre();
   renderHistorico();
+  renderTeamConfig();
 }
 
 // ─── INIT ─────────────────────────────────────────────────────
 buildTabs();
 buildIndividualPanels();
+renderTeamConfig();
 
 fetch('./data.json?t='+Date.now())
   .then(r=>{if(!r.ok)throw new Error();return r.json();})
@@ -1026,6 +1212,7 @@ fetch('./data.json?t='+Date.now())
         };
       });
     }
+    if(d.TEAM&&Array.isArray(d.TEAM)&&d.TEAM.length>0){TEAM=d.TEAM;recalcMetaTotal();}
     computeTotals();saveLS();
     const el=document.getElementById('data-updated');
     if(el&&d.updated) el.textContent='GitHub: '+d.updated;
