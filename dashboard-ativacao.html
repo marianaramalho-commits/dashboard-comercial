@@ -297,7 +297,7 @@
         </div>
         <table class="lider-table">
           <thead><tr>
-            <th>Vendedor</th><th class="num">Meta (R$)</th><th>Cargo</th><th class="num">Conv %</th><th>Bônus</th><th></th>
+            <th>Vendedor</th><th class="num">Meta (R$)</th><th>Cargo</th><th class="num">Conv %</th><th class="num">Conv. Cart %</th><th class="num">Conv. Ativ %</th><th>Bônus</th><th></th>
           </tr></thead>
           <tbody id="cfg-team-tbody"></tbody>
         </table>
@@ -306,6 +306,8 @@
           <input id="cfg-new-meta" class="lider-input" type="number" placeholder="Meta R$" style="width:100px;">
           <select id="cfg-new-cargo" class="lider-input" style="width:75px;padding:4px 6px;"><option value="ks1">KS1</option><option value="ks2" selected>KS2</option><option value="ks3">KS3</option><option value="ks4">KS4</option></select>
           <input id="cfg-new-conv" class="lider-input" type="number" placeholder="Conv%" style="width:70px;" value="7">
+          <input id="cfg-new-conv-cart" class="lider-input" type="number" placeholder="Cart%" style="width:65px;" value="7">
+          <input id="cfg-new-conv-ativ" class="lider-input" type="number" placeholder="Ativ%" style="width:65px;" value="7">
           <label style="font-size:13px;"><input type="checkbox" id="cfg-new-bonus"> Bônus</label>
           <button class="btn btn-primary" style="font-size:13px;padding:7px 14px;" onclick="addVendedor()">➕ Adicionar</button>
           <button class="btn btn-export" style="font-size:13px;padding:7px 14px;" onclick="saveTeamConfig()">💾 Salvar Time</button>
@@ -464,14 +466,14 @@ let DU_ATUAL=Math.max(1,calcDUFromDate(_now));
 let DIAS_RESTANTES=DIAS_UTEIS_MES-DU_ATUAL;
 
 const TEAM_DEFAULT=[
-  {nome:"Silas",        meta:73000,cor:"#0A9F82",ks:"ks3",convMeta:33},
-  {nome:"Luana",        meta:51000,cor:"#0DC7A2",ks:"ks2",convMeta:7},
-  {nome:"Ana Carolina", meta:51000,cor:"#04513F",ks:"ks2",convMeta:7},
-  {nome:"Lucas Rangel", meta:51000,cor:"#F3A42E",ks:"ks2",convMeta:7},
-  {nome:"Madson",       meta:56000,cor:"#7c3aed",ks:"ks3",convMeta:7},
-  {nome:"Larissa",      meta:46000,cor:"#0891b2",ks:"ks1",convMeta:7},
-  {nome:"Camile",       meta:46000,cor:"#e11d48",ks:"ks1",convMeta:7},
-  {nome:"Tanner",       meta:40000,cor:"#16a34a",ks:"ks1",convMeta:7,bonus:true},
+  {nome:"Silas",        meta:73000,cor:"#0A9F82",ks:"ks3",convMeta:33,convMetaCart:7,convMetaAtiv:7},
+  {nome:"Luana",        meta:51000,cor:"#0DC7A2",ks:"ks2",convMeta:7, convMetaCart:7,convMetaAtiv:7},
+  {nome:"Ana Carolina", meta:51000,cor:"#04513F",ks:"ks2",convMeta:7, convMetaCart:7,convMetaAtiv:7},
+  {nome:"Lucas Rangel", meta:51000,cor:"#F3A42E",ks:"ks2",convMeta:7, convMetaCart:7,convMetaAtiv:7},
+  {nome:"Madson",       meta:56000,cor:"#7c3aed",ks:"ks3",convMeta:7, convMetaCart:7,convMetaAtiv:7},
+  {nome:"Larissa",      meta:46000,cor:"#0891b2",ks:"ks1",convMeta:7, convMetaCart:7,convMetaAtiv:7},
+  {nome:"Camile",       meta:46000,cor:"#e11d48",ks:"ks1",convMeta:7, convMetaCart:7,convMetaAtiv:7},
+  {nome:"Tanner",       meta:40000,cor:"#16a34a",ks:"ks1",convMeta:7, convMetaCart:7,convMetaAtiv:7,bonus:true},
 ];
 let TEAM=[...TEAM_DEFAULT];
 let META_TOTAL=TEAM.reduce((a,v)=>v.bonus?a:a+v.meta,0);
@@ -561,12 +563,14 @@ const convOf=nome=>{
   return{pct,l,p,cls:pct>=cm?'ok':pct>=cm*0.7?'warn':'down',convMeta:cm};
 };
 const convCartOf=nome=>{
+  const v=TEAM.find(t=>t.nome===nome);const cm=v?.convMetaCart||7;
   const l=LEADS_CART[nome]||0,p=PAGOS_CART[nome]||0,pct=l?p/l*100:0;
-  return{pct,l,p,cls:pct>=7?'ok':pct>=5?'warn':'down'};
+  return{pct,l,p,cls:pct>=cm?'ok':pct>=cm*0.7?'warn':'down',convMeta:cm};
 };
 const convAtivOf=nome=>{
+  const v=TEAM.find(t=>t.nome===nome);const cm=v?.convMetaAtiv||7;
   const l=LEADS_ATIV[nome]||0,p=PAGOS_ATIV[nome]||0,pct=l?p/l*100:0;
-  return{pct,l,p,cls:pct>=7?'ok':pct>=5?'warn':'down'};
+  return{pct,l,p,cls:pct>=cm?'ok':pct>=cm*0.7?'warn':'down',convMeta:cm};
 };
 const tabId =nome=>'panel-'+nome.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
 
@@ -840,7 +844,7 @@ function buildIndividualPanels(){
       <div class="seller-hero">
         <div class="av-big" style="background:${v.cor}">${inits(v.nome)}</div>
         <div class="info"><h2>${v.nome}</h2>
-          <p>${CL[v.ks]} · Meta mensal: <b>${fmt(v.meta)}</b> · Meta conversão: <b>${v.convMeta}%</b></p>
+          <p>${CL[v.ks]} · Meta mensal: <b>${fmt(v.meta)}</b> · Conv: <b>${v.convMeta}%</b> · Cart: <b>${v.convMetaCart||7}%</b> · Ativ: <b>${v.convMetaAtiv||7}%</b></p>
           <div class="badges"><span class="badge">Meta/DU: ${fmt(Math.round(v.meta/DIAS_UTEIS_MES))}</span><span class="badge" id="${id}-hero-badge">–</span></div>
         </div>
       </div>
@@ -878,12 +882,15 @@ function renderIndividualPanel(v){
   if(sl)sl.textContent=`Realizado: ${fmt(real)} · Meta: ${fmt(v.meta)} · Projeção: ${fmt(Math.round(projV))} (${fmtPct(pctProj)}) · Ritmo nec.: ${fmt(rt)}/DU`;
 
   const kEl=document.getElementById(id+'-kpis');
+  const cvc=convCartOf(v.nome),cva=convAtivOf(v.nome);
   if(kEl)kEl.innerHTML=[
     {label:'Meta Mensal',value:fmt(v.meta),sub:CL[v.ks],color:'var(--green)'},
     {label:`Meta Prop. DU ${DU_ATUAL}`,value:fmt(Math.round(mpV)),sub:'Esperado até hoje',color:'var(--darkgreen)',badge:{text:fmtPct(pctP),cls:pctP>=100?'up':pctP>=80?'warn':'down'}},
     {label:'Realizado',value:fmt(real),sub:fmtPct(pctM)+' da meta',color:'var(--green2)'},
     {label:'Projeção Mês',value:fmt(Math.round(projV)),sub:fmtPct(pctProj)+' da meta',color:'var(--proj)',badge:{text:pctProj>=100?'✔ Na meta':pctProj>=80?'Atenção':'Abaixo',cls:pctProj>=100?'up':pctProj>=80?'warn':'down'}},
     {label:'Conversão',value:fmtPct(cv.pct),sub:`${cv.p}/${cv.l} · meta ${cv.convMeta}%`,color:cv.cls==='ok'?'var(--ok)':cv.cls==='warn'?'var(--warn)':'var(--error)'},
+    {label:'Conv. Carteira',value:fmtPct(cvc.pct),sub:cvc.l>0?`${cvc.p}/${cvc.l} · meta ${cvc.convMeta}%`:`sem leads · meta ${cvc.convMeta}%`,color:cvc.l>0?(cvc.cls==='ok'?'var(--ok)':cvc.cls==='warn'?'var(--warn)':'var(--error)'):'var(--muted)'},
+    {label:'Conv. Ativação',value:fmtPct(cva.pct),sub:cva.l>0?`${cva.p}/${cva.l} · meta ${cva.convMeta}%`:`sem leads · meta ${cva.convMeta}%`,color:cva.l>0?(cva.cls==='ok'?'var(--ok)':cva.cls==='warn'?'var(--warn)':'var(--error)'):'var(--muted)'},
   ].map(k=>`<div class="kpi-card" style="--kc:${k.color}">
     <div class="kpi-label">${k.label}</div><div class="kpi-value mono">${k.value}</div><div class="kpi-sub">${k.sub}</div>
     ${k.badge?`<div class="kpi-badge ${k.badge.cls}">${k.badge.text}</div>`:''}
@@ -977,7 +984,9 @@ function renderTeamConfig(){
     <td><select class="lider-input" style="width:70px;padding:4px 6px;" id="cfg-cargo-${i}">
       ${['ks1','ks2','ks3','ks4'].map(k=>`<option value="${k}"${v.ks===k?' selected':''}>${k.toUpperCase()}</option>`).join('')}
     </select></td>
-    <td class="num"><input class="lider-input lider-input-sm" type="number" style="width:70px;" id="cfg-conv-${i}" value="${v.convMeta||7}"></td>
+    <td class="num"><input class="lider-input lider-input-sm" type="number" style="width:60px;" id="cfg-conv-${i}" value="${v.convMeta||7}"></td>
+    <td class="num"><input class="lider-input lider-input-sm" type="number" style="width:60px;" id="cfg-conv-cart-${i}" value="${v.convMetaCart||7}"></td>
+    <td class="num"><input class="lider-input lider-input-sm" type="number" style="width:60px;" id="cfg-conv-ativ-${i}" value="${v.convMetaAtiv||7}"></td>
     <td style="text-align:center;"><input type="checkbox" id="cfg-bonus-${i}"${v.bonus?' checked':''}></td>
     <td><button class="hist-del-btn" onclick="removeVendedor(${i})">🗑</button></td>
   </tr>`).join('');
@@ -989,6 +998,8 @@ function saveTeamConfig(){
     v.meta=parseFloat(document.getElementById('cfg-meta-'+i)?.value)||v.meta;
     v.ks=document.getElementById('cfg-cargo-'+i)?.value||v.ks;
     v.convMeta=parseFloat(document.getElementById('cfg-conv-'+i)?.value)||v.convMeta;
+    v.convMetaCart=parseFloat(document.getElementById('cfg-conv-cart-'+i)?.value)||v.convMetaCart||7;
+    v.convMetaAtiv=parseFloat(document.getElementById('cfg-conv-ativ-'+i)?.value)||v.convMetaAtiv||7;
     v.bonus=document.getElementById('cfg-bonus-'+i)?.checked||false;
   });
   recalcMetaTotal();
@@ -1006,9 +1017,11 @@ function addVendedor(){
   const meta=parseFloat(document.getElementById('cfg-new-meta')?.value)||40000;
   const ks=document.getElementById('cfg-new-cargo')?.value||'ks2';
   const convMeta=parseFloat(document.getElementById('cfg-new-conv')?.value)||7;
+  const convMetaCart=parseFloat(document.getElementById('cfg-new-conv-cart')?.value)||7;
+  const convMetaAtiv=parseFloat(document.getElementById('cfg-new-conv-ativ')?.value)||7;
   const bonus=document.getElementById('cfg-new-bonus')?.checked||false;
   const cor=TEAM_COLORS[TEAM.length%TEAM_COLORS.length];
-  TEAM.push({nome,meta,cor,ks,convMeta,bonus});
+  TEAM.push({nome,meta,cor,ks,convMeta,convMetaCart,convMetaAtiv,bonus});
   recalcMetaTotal();
   computeTotals();
   saveLS();
@@ -1091,8 +1104,8 @@ function renderRanking(){
       <td>${i+1}</td>
       <td><div class="seller-name"><span class="avatar" style="background:${r.cor}">${inits(r.nome)}</span>${r.nome}${r.bonus?'<span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:5px;">bônus</span>':''}</div></td>
       <td><span class="conv-pill ${cv.cls}">${fmtPct(cv.pct)}</span><span class="conv-sub">${cv.p}/${cv.l} · meta ${cv.convMeta}%</span></td>
-      <td>${cvc.l>0?`<span class="conv-pill ${cvc.cls}">${fmtPct(cvc.pct)}</span><span class="conv-sub">${cvc.p}/${cvc.l}</span>`:'<span style="color:var(--muted);font-size:11px;">—</span>'}</td>
-      <td>${cva.l>0?`<span class="conv-pill ${cva.cls}">${fmtPct(cva.pct)}</span><span class="conv-sub">${cva.p}/${cva.l}</span>`:'<span style="color:var(--muted);font-size:11px;">—</span>'}</td>
+      <td>${cvc.l>0?`<span class="conv-pill ${cvc.cls}">${fmtPct(cvc.pct)}</span><span class="conv-sub">${cvc.p}/${cvc.l} · meta ${cvc.convMeta}%</span>`:`<span style="color:var(--muted);font-size:11px;">— meta ${cvc.convMeta}%</span>`}</td>
+      <td>${cva.l>0?`<span class="conv-pill ${cva.cls}">${fmtPct(cva.pct)}</span><span class="conv-sub">${cva.p}/${cva.l} · meta ${cva.convMeta}%</span>`:`<span style="color:var(--muted);font-size:11px;">— meta ${cva.convMeta}%</span>`}</td>
       <td class="num mono">${fmt(r.meta)}</td>
       <td class="num mono">${fmt(Math.round(r.mpV))}</td>
       <td class="num mono">${fmt(r.r)}</td>
