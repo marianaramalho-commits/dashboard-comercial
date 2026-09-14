@@ -1,6 +1,6 @@
 {
-  "updated": "10/09/2026, 16:21",
-  "DU_ATUAL": 21,
+  "updated": "14/09/2026, 15:56",
+  "DU_ATUAL": 9,
   "DIAS": {
     "2026-08-03": {
       "Silas": {
@@ -883,37 +883,556 @@
         "pagos": 0,
         "fat": 0
       }
+    },
+    "2026-09-01": {
+      "Silas": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 1773,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 12,
+        "pagos_ativ": 3
+      },
+      "Luana": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 0,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 0,
+        "pagos_ativ": 0
+      },
+      "Ana Carolina": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 3614,
+        "leads_cart": 0,
+        "pagos_cart": 1,
+        "leads_ativ": 41,
+        "pagos_ativ": 0
+      },
+      "Lucas Rangel": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 601,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 48,
+        "pagos_ativ": 1
+      },
+      "Larissa": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 130,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 1,
+        "pagos_ativ": 1
+      },
+      "Camile": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 760,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 46,
+        "pagos_ativ": 0
+      },
+      "Tanner": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 0,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 0,
+        "pagos_ativ": 0
+      }
+    },
+    "2026-09-02": {
+      "Silas": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 2960,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 21,
+        "pagos_ativ": 8
+      },
+      "Luana": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 0,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 0,
+        "pagos_ativ": 0
+      },
+      "Ana Carolina": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 3497,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 25,
+        "pagos_ativ": 3
+      },
+      "Lucas Rangel": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 0,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 26,
+        "pagos_ativ": 0
+      },
+      "Larissa": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 1128,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 30,
+        "pagos_ativ": 1
+      },
+      "Camile": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 1446,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 30,
+        "pagos_ativ": 1
+      },
+      "Tanner": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 0,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 0,
+        "pagos_ativ": 0
+      }
+    },
+    "2026-09-03": {
+      "Silas": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 4754,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 23,
+        "pagos_ativ": 3
+      },
+      "Luana": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 0,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 0,
+        "pagos_ativ": 0
+      },
+      "Ana Carolina": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 8430,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 23,
+        "pagos_ativ": 3
+      },
+      "Lucas Rangel": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 218,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 41,
+        "pagos_ativ": 2
+      },
+      "Larissa": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 182,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 20,
+        "pagos_ativ": 1
+      },
+      "Camile": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 2923,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 40,
+        "pagos_ativ": 2
+      },
+      "Tanner": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 432,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 0,
+        "pagos_ativ": 0
+      }
+    },
+    "2026-09-04": {
+      "Silas": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 4168,
+        "leads_cart": 11,
+        "pagos_cart": 1,
+        "leads_ativ": 6,
+        "pagos_ativ": 3
+      },
+      "Luana": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 0,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 0,
+        "pagos_ativ": 0
+      },
+      "Ana Carolina": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 2009,
+        "leads_cart": 5,
+        "pagos_cart": 1,
+        "leads_ativ": 6,
+        "pagos_ativ": 2
+      },
+      "Lucas Rangel": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 9748,
+        "leads_cart": 2,
+        "pagos_cart": 0,
+        "leads_ativ": 16,
+        "pagos_ativ": 3
+      },
+      "Larissa": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 7684,
+        "leads_cart": 7,
+        "pagos_cart": 1,
+        "leads_ativ": 10,
+        "pagos_ativ": 4
+      },
+      "Camile": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 352,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 30,
+        "pagos_ativ": 1
+      },
+      "Tanner": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 314,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 0,
+        "pagos_ativ": 0
+      }
+    },
+    "2026-09-08": {
+      "Silas": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 9831,
+        "leads_cart": 11,
+        "pagos_cart": 1,
+        "leads_ativ": 6,
+        "pagos_ativ": 3
+      },
+      "Luana": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 4049,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 0,
+        "pagos_ativ": 0
+      },
+      "Ana Carolina": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 3757,
+        "leads_cart": 5,
+        "pagos_cart": 1,
+        "leads_ativ": 6,
+        "pagos_ativ": 2
+      },
+      "Lucas Rangel": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 0,
+        "leads_cart": 2,
+        "pagos_cart": 0,
+        "leads_ativ": 16,
+        "pagos_ativ": 3
+      },
+      "Larissa": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 528,
+        "leads_cart": 7,
+        "pagos_cart": 1,
+        "leads_ativ": 10,
+        "pagos_ativ": 4
+      },
+      "Camile": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 436,
+        "leads_cart": 3,
+        "pagos_cart": 1,
+        "leads_ativ": 16,
+        "pagos_ativ": 0
+      },
+      "Tanner": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 377,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 0,
+        "pagos_ativ": 0
+      }
+    },
+    "2026-09-09": {
+      "Silas": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 2006,
+        "leads_cart": 16,
+        "pagos_cart": 9,
+        "leads_ativ": 5,
+        "pagos_ativ": 3
+      },
+      "Luana": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 8228,
+        "leads_cart": 11,
+        "pagos_cart": 3,
+        "leads_ativ": 21,
+        "pagos_ativ": 4
+      },
+      "Ana Carolina": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 2128,
+        "leads_cart": 9,
+        "pagos_cart": 0,
+        "leads_ativ": 23,
+        "pagos_ativ": 2
+      },
+      "Lucas Rangel": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 3798,
+        "leads_cart": 5,
+        "pagos_cart": 0,
+        "leads_ativ": 22,
+        "pagos_ativ": 2
+      },
+      "Larissa": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 270,
+        "leads_cart": 11,
+        "pagos_cart": 0,
+        "leads_ativ": 9,
+        "pagos_ativ": 1
+      },
+      "Camile": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 4909,
+        "leads_cart": 7,
+        "pagos_cart": 2,
+        "leads_ativ": 21,
+        "pagos_ativ": 3
+      },
+      "Tanner": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 1374,
+        "leads_cart": 0,
+        "pagos_cart": 0,
+        "leads_ativ": 0,
+        "pagos_ativ": 0
+      }
+    },
+    "2026-09-10": {
+      "Silas": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 10185,
+        "leads_cart": 5,
+        "pagos_cart": 7,
+        "leads_ativ": 15,
+        "pagos_ativ": 2
+      },
+      "Luana": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 4192,
+        "leads_cart": 14,
+        "pagos_cart": 0,
+        "leads_ativ": 15,
+        "pagos_ativ": 1
+      },
+      "Ana Carolina": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 2297,
+        "leads_cart": 14,
+        "pagos_cart": 2,
+        "leads_ativ": 14,
+        "pagos_ativ": 0
+      },
+      "Lucas Rangel": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 284,
+        "leads_cart": 12,
+        "pagos_cart": 1,
+        "leads_ativ": 14,
+        "pagos_ativ": 0
+      },
+      "Larissa": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 679,
+        "leads_cart": 16,
+        "pagos_cart": 1,
+        "leads_ativ": 13,
+        "pagos_ativ": 0
+      },
+      "Camile": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 2318,
+        "leads_cart": 17,
+        "pagos_cart": 2,
+        "leads_ativ": 12,
+        "pagos_ativ": 1
+      },
+      "Tanner": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 221,
+        "leads_cart": 15,
+        "pagos_cart": 0,
+        "leads_ativ": 16,
+        "pagos_ativ": 0
+      }
+    },
+    "2026-09-11": {
+      "Silas": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 6288,
+        "leads_cart": 6,
+        "pagos_cart": 4,
+        "leads_ativ": 6,
+        "pagos_ativ": 3
+      },
+      "Luana": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 2082,
+        "leads_cart": 13,
+        "pagos_cart": 1,
+        "leads_ativ": 8,
+        "pagos_ativ": 1
+      },
+      "Ana Carolina": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 1570,
+        "leads_cart": 12,
+        "pagos_cart": 2,
+        "leads_ativ": 10,
+        "pagos_ativ": 2
+      },
+      "Lucas Rangel": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 1626,
+        "leads_cart": 7,
+        "pagos_cart": 1,
+        "leads_ativ": 14,
+        "pagos_ativ": 0
+      },
+      "Larissa": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 6351,
+        "leads_cart": 13,
+        "pagos_cart": 4,
+        "leads_ativ": 8,
+        "pagos_ativ": 2
+      },
+      "Camile": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 200,
+        "leads_cart": 11,
+        "pagos_cart": 0,
+        "leads_ativ": 11,
+        "pagos_ativ": 1
+      },
+      "Tanner": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 0,
+        "leads_cart": 11,
+        "pagos_cart": 0,
+        "leads_ativ": 10,
+        "pagos_ativ": 0
+      }
     }
   },
-  "METAS_BY_MONTH": {},
   "REALIZADO": {
-    "Silas": 90263,
-    "Luana": 58940,
-    "Ana Carolina": 47251,
-    "Lucas Rangel": 54454,
-    "Madson": 51083,
-    "Larissa": 42078,
-    "Camile": 37342,
-    "Tanner": 193
+    "Silas": 41965,
+    "Luana": 18551,
+    "Ana Carolina": 27302,
+    "Lucas Rangel": 16275,
+    "Madson": 0,
+    "Larissa": 16952,
+    "Camile": 13344,
+    "Tanner": 2718
   },
   "LEADS": {
-    "Silas": 295,
-    "Luana": 394,
-    "Ana Carolina": 445,
-    "Lucas Rangel": 425,
-    "Madson": 428,
-    "Larissa": 423,
-    "Camile": 400,
-    "Tanner": 26
+    "Silas": 0,
+    "Luana": 0,
+    "Ana Carolina": 0,
+    "Lucas Rangel": 0,
+    "Madson": 0,
+    "Larissa": 0,
+    "Camile": 0,
+    "Tanner": 0
   },
   "PAGOS_COUNT": {
-    "Silas": 109,
-    "Luana": 39,
-    "Ana Carolina": 24,
-    "Lucas Rangel": 31,
-    "Madson": 31,
-    "Larissa": 30,
-    "Camile": 30,
-    "Tanner": 2
+    "Silas": 0,
+    "Luana": 0,
+    "Ana Carolina": 0,
+    "Lucas Rangel": 0,
+    "Madson": 0,
+    "Larissa": 0,
+    "Camile": 0,
+    "Tanner": 0
   }
 }
