@@ -328,18 +328,24 @@
           </div>
         </div>
         <table class="lider-table">
-          <thead><tr>
-            <th>Vendedor</th>
-            <th class="num">Leads</th>
-            <th class="num">Pagos</th>
-            <th class="num">Fat. (R$)</th>
-            <th class="num">Leads Cart.</th>
-            <th class="num">Pagos Cart.</th>
-            <th class="num">Leads Ativ.</th>
-            <th class="num">Pagos Ativ.</th>
-            <th class="num">Acum. mês</th>
-            <th class="num">Projeção mês</th>
-          </tr></thead>
+          <thead>
+            <tr>
+              <th rowspan="2">Vendedor</th>
+              <th rowspan="2" class="num">Fat. (R$)</th>
+              <th class="num" colspan="3" style="text-align:center;color:#0A9F82;border-bottom:2px solid #0A9F82;">📦 Carteira</th>
+              <th class="num" colspan="3" style="text-align:center;color:#065F46;border-bottom:2px solid #065F46;">⚡ Ativação</th>
+              <th rowspan="2" class="num">Acum. mês</th>
+              <th rowspan="2" class="num">Projeção mês</th>
+            </tr>
+            <tr>
+              <th class="num">Recebidos</th>
+              <th class="num">Pagos</th>
+              <th class="num">Conv.%</th>
+              <th class="num">Recebidos</th>
+              <th class="num">Pagos</th>
+              <th class="num">Conv.%</th>
+            </tr>
+          </thead>
           <tbody id="lider-tbody"></tbody>
           <tfoot id="lider-tfoot"></tfoot>
         </table>
@@ -559,8 +565,9 @@ const ritmo =(meta,real)=>{const r=Math.max(0,meta-real);return DIAS_RESTANTES>0
 const stOf  =pct=>pct>=100?{cls:'ok',lbl:'Na meta',bar:'var(--ok)'}:pct>=80?{cls:'warn',lbl:'Atenção',bar:'var(--warn)'}:{cls:'down',lbl:'Abaixo',bar:'var(--error)'};
 const convOf=nome=>{
   const v=TEAM.find(t=>t.nome===nome);const cm=v?.convMeta||7;
-  const l=LEADS[nome]||0,p=PAGOS_COUNT[nome]||0,pct=l?p/l*100:0;
-  return{pct,l,p,cls:pct>=cm?'ok':pct>=cm*0.7?'warn':'down',convMeta:cm};
+  const cvc=convCartOf(nome),cva=convAtivOf(nome);
+  const pct=(cvc.l>0||cva.l>0)?(cvc.pct+cva.pct)/2:0;
+  return{pct,cls:pct>=cm?'ok':pct>=cm*0.7?'warn':'down',convMeta:cm};
 };
 const convCartOf=nome=>{
   const v=TEAM.find(t=>t.nome===nome);const cm=v?.convMetaCart||7;
@@ -641,6 +648,19 @@ function onDateChange(){
   showToast(`Data ${fmtDate(val)} · DU ${du} — pode fechar e voltar quando quiser.`);
 }
 
+function calcConvRow(id){
+  const lc=parseFloat(document.getElementById('lf-leads-cart-'+id)?.value)||0;
+  const pc=parseFloat(document.getElementById('lf-pagos-cart-'+id)?.value)||0;
+  const la=parseFloat(document.getElementById('lf-leads-ativ-'+id)?.value)||0;
+  const pa=parseFloat(document.getElementById('lf-pagos-ativ-'+id)?.value)||0;
+  const convC=lc?pc/lc*100:0;
+  const convA=la?pa/la*100:0;
+  const dispC=document.getElementById('lf-conv-cart-disp-'+id);
+  const dispA=document.getElementById('lf-conv-ativ-disp-'+id);
+  if(dispC){dispC.textContent=lc?convC.toFixed(1)+'%':'—';dispC.style.color=lc&&convC>=7?'var(--ok)':'var(--muted)';}
+  if(dispA){dispA.textContent=la?convA.toFixed(1)+'%':'—';dispA.style.color=la&&convA>=7?'var(--ok)':'var(--muted)';}
+}
+
 function renderDayForm(dateKey,du){
   const day=DIAS[dateKey]||{};
   // acumulados até agora (sem este dia, recomputed)
@@ -656,16 +676,25 @@ function renderDayForm(dateKey,du){
   const tbody=document.getElementById('lider-tbody');
   tbody.innerHTML=TEAM.map(v=>{
     const existing=day[v.nome]||{};
-    const leads=existing.leads||0,pagos=existing.pagos||0,fat=existing.fat||0;
+    const fat=existing.fat||0;
+    const lc=existing.leads_cart||0,pc=existing.pagos_cart||0;
+    const la=existing.leads_ativ||0,pa=existing.pagos_ativ||0;
+    const convCdis=lc?(pc/lc*100).toFixed(1)+'%':'—';
+    const convAdis=la?(pa/la*100).toFixed(1)+'%':'—';
     const acumTotal=acumAntes[v.nome]+fat;
     const projV=du>0?(acumTotal/du)*DIAS_UTEIS_MES:0;
     const pctP=v.meta?projV/v.meta*100:0;
     const sc=pctP>=100?'ok':pctP>=80?'warn':'down';
+    const id=tabId(v.nome);
     return`<tr>
       <td><div class="seller-name"><span class="avatar" style="background:${v.cor};width:26px;height:26px;">${inits(v.nome)}</span><b>${v.nome}</b>${v.bonus?'<span class="pill warn" style="font-size:10px;padding:1px 6px;margin-left:5px;">bônus</span>':''}</div></td>
-      <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="lf-leads-${tabId(v.nome)}" value="${leads||''}" placeholder="0"></td>
-      <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="lf-pagos-${tabId(v.nome)}" value="${pagos||''}" placeholder="0"></td>
-      <td class="num"><input class="lider-input" type="number" min="0" step="0.01" id="lf-fat-${tabId(v.nome)}" value="${fat||''}" placeholder="0,00"></td>
+      <td class="num"><input class="lider-input" type="number" min="0" step="0.01" id="lf-fat-${id}" value="${fat||''}" placeholder="0,00"></td>
+      <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="lf-leads-cart-${id}" value="${lc||''}" placeholder="0" oninput="calcConvRow('${id}')"></td>
+      <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="lf-pagos-cart-${id}" value="${pc||''}" placeholder="0" oninput="calcConvRow('${id}')"></td>
+      <td class="num" id="lf-conv-cart-disp-${id}" style="font-weight:700;color:${lc&&pc/lc>=0.07?'var(--ok)':'var(--muted)'};">${convCdis}</td>
+      <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="lf-leads-ativ-${id}" value="${la||''}" placeholder="0" oninput="calcConvRow('${id}')"></td>
+      <td class="num"><input class="lider-input lider-input-sm" type="number" min="0" id="lf-pagos-ativ-${id}" value="${pa||''}" placeholder="0" oninput="calcConvRow('${id}')"></td>
+      <td class="num" id="lf-conv-ativ-disp-${id}" style="font-weight:700;color:${la&&pa/la>=0.07?'var(--ok)':'var(--muted)'};">${convAdis}</td>
       <td class="num mono" style="color:var(--muted);">${fmt(acumTotal)}</td>
       <td class="num"><span class="pill ${sc}">${fmt(Math.round(projV))}</span><br><span style="font-size:10px;color:var(--muted);">${fmtPct(pctP)} da meta</span></td>
     </tr>`;
@@ -673,29 +702,36 @@ function renderDayForm(dateKey,du){
 
   // totais da linha do rodapé
   const tfoot=document.getElementById('lider-tfoot');
-  const tLeads=TEAM.reduce((a,v)=>a+(day[v.nome]?.leads||0),0);
-  const tPagos=TEAM.reduce((a,v)=>a+(day[v.nome]?.pagos||0),0);
-  const tFat=TEAM.reduce((a,v)=>a+(day[v.nome]?.fat||0),0);
-  const tAcum=TEAM.reduce((a,v)=>v.bonus?a:a+acumAntes[v.nome]+(day[v.nome]?.fat||0),0); // exclui bônus
+  const tLeadsCart=TEAM.reduce((a,v)=>a+(day[v.nome]?.leads_cart||0),0);
+  const tPagosCart=TEAM.reduce((a,v)=>a+(day[v.nome]?.pagos_cart||0),0);
+  const tLeadsAtiv=TEAM.reduce((a,v)=>a+(day[v.nome]?.leads_ativ||0),0);
+  const tPagosAtiv=TEAM.reduce((a,v)=>a+(day[v.nome]?.pagos_ativ||0),0);
+  const tConvCart=tLeadsCart?(tPagosCart/tLeadsCart*100).toFixed(1)+'%':'—';
+  const tConvAtiv=tLeadsAtiv?(tPagosAtiv/tLeadsAtiv*100).toFixed(1)+'%':'—';
+  const tAcum=TEAM.reduce((a,v)=>v.bonus?a:a+acumAntes[v.nome]+(day[v.nome]?.fat||0),0);
   const bonusAcum=TEAM.reduce((a,v)=>v.bonus?a+acumAntes[v.nome]+(day[v.nome]?.fat||0):a,0);
   const tFatTeam=TEAM.reduce((a,v)=>v.bonus?a:a+(day[v.nome]?.fat||0),0);
   const tProj=du>0?(tAcum/du)*DIAS_UTEIS_MES:0;
   const tPctP=META_TOTAL?tProj/META_TOTAL*100:0;
   tfoot.innerHTML=`<tr class="total-row">
     <td><b>TOTAL EQUIPE</b></td>
-    <td class="num">${tLeads||'–'}</td>
-    <td class="num">${tPagos||'–'}</td>
     <td class="num mono">${fmt(tFatTeam)}</td>
-    <td></td><td></td><td></td><td></td>
+    <td class="num">${tLeadsCart||'–'}</td>
+    <td class="num">${tPagosCart||'–'}</td>
+    <td class="num" style="font-weight:700;">${tConvCart}</td>
+    <td class="num">${tLeadsAtiv||'–'}</td>
+    <td class="num">${tPagosAtiv||'–'}</td>
+    <td class="num" style="font-weight:700;">${tConvAtiv}</td>
     <td class="num mono">${fmt(tAcum)}</td>
     <td class="num">${fmt(Math.round(tProj))} <span style="opacity:.7;font-size:11px;">(${fmtPct(tPctP)})</span></td>
   </tr>${bonusAcum>0?`<tr style="background:#fefce8;">
     <td style="color:var(--warn);font-weight:600;">⭐ Bônus (Tanner)</td>
-    <td></td><td></td>
     <td class="num mono" style="color:var(--warn);font-weight:700;">+ ${fmt(day['Tanner']?.fat||0)}</td>
+    <td></td><td></td><td></td><td></td><td></td><td></td>
     <td class="num mono" style="color:var(--warn);font-weight:700;">+ ${fmt(bonusAcum)}</td>
     <td></td>
   </tr>`:''}`;
+
 
 }
 
