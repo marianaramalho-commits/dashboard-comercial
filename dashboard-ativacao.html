@@ -534,7 +534,12 @@ function computeTotals(){
       DU_ATUAL=Math.max(1,calcDUFromDate(lastDay));
     }
   }
-  DIAS_RESTANTES=Math.max(0,DIAS_UTEIS_MES_DISP-DU_ATUAL);
+  // +1: inclui o dia atual/último como DU restante
+  if(DISPLAY_MONTH===todayStr().substring(0,7)){
+    DIAS_RESTANTES=Math.max(0,DIAS_UTEIS_MES_DISP-DU_ATUAL+1);
+  } else {
+    DIAS_RESTANTES=0; // mês passado — sem dias restantes
+  }
 }
 
 // ─── COMISSIONAMENTO ──────────────────────────────────────────
