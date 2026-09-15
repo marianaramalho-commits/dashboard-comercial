@@ -1,7 +1,7 @@
 {
-  "updated": "14/09/2026, 16:49",
-  "updatedISO": "2026-09-14T19:49:30.144Z",
-  "DU_ATUAL": 9,
+  "updated": "15/09/2026, 07:54",
+  "updatedISO": "2026-09-15T10:54:24.532Z",
+  "DU_ATUAL": 10,
   "DIAS": {
     "2026-08-03": {
       "Silas": {
@@ -1404,6 +1404,71 @@
         "leads_ativ": 10,
         "pagos_ativ": 0
       }
+    },
+    "2026-09-15": {
+      "Silas": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 4553,
+        "leads_cart": 18,
+        "pagos_cart": 5,
+        "leads_ativ": 8,
+        "pagos_ativ": 3
+      },
+      "Luana": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 173,
+        "leads_cart": 6,
+        "pagos_cart": 1,
+        "leads_ativ": 18,
+        "pagos_ativ": 0
+      },
+      "Ana Carolina": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 0,
+        "leads_cart": 9,
+        "pagos_cart": 0,
+        "leads_ativ": 15,
+        "pagos_ativ": 0
+      },
+      "Lucas Rangel": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 2073,
+        "leads_cart": 3,
+        "pagos_cart": 0,
+        "leads_ativ": 21,
+        "pagos_ativ": 1
+      },
+      "Larissa": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 1836,
+        "leads_cart": 6,
+        "pagos_cart": 2,
+        "leads_ativ": 19,
+        "pagos_ativ": 0
+      },
+      "Camile": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 6981,
+        "leads_cart": 1,
+        "pagos_cart": 3,
+        "leads_ativ": 24,
+        "pagos_ativ": 1
+      },
+      "Tanner": {
+        "leads": 0,
+        "pagos": 0,
+        "fat": 0,
+        "leads_cart": 1,
+        "pagos_cart": 0,
+        "leads_ativ": 22,
+        "pagos_ativ": 0
+      }
     }
   },
   "TEAM": [
@@ -1479,12 +1544,12 @@
     }
   ],
   "REALIZADO": {
-    "Silas": 41965,
-    "Luana": 18551,
+    "Silas": 46518,
+    "Luana": 18724,
     "Ana Carolina": 27302,
-    "Lucas Rangel": 16275,
-    "Larissa": 16952,
-    "Camile": 13344,
+    "Lucas Rangel": 18348,
+    "Larissa": 18788,
+    "Camile": 20325,
     "Tanner": 2718
   },
   "LEADS": {
